@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GameManager" Collapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYBAAAAACAAAAAAAAAABAAAAABAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Manager\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ManagerBase" Collapsed="true">
+    <Position X="2.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAIAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Manager\ManagerBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ObserverManager" Collapsed="true">
+    <Position X="5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEEAAAABACAIAAAAAAAAAAABBAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Manager\ObserverManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneManager" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAARBAAAAAQACAABAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Manager\SceneManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UIManager" Collapsed="true">
+    <Position X="2.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAABAAAIAAAAAAAAAAABAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Manager\UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GEnum.Getter" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Utility\GEnum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="GEnum.SceneType" Collapsed="true">
+    <Position X="9.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAQAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Utility\GEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GEnum.ObserverNoticeType" Collapsed="true">
+    <Position X="7.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAEgAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Utility\GEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="GEnum.UIPrefab" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\2.Scripts\Utility\GEnum.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>
