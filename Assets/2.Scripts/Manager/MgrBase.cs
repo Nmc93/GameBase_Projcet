@@ -4,4 +4,5 @@ using UnityEngine;
 
 public abstract class MgrBase : MonoBehaviour
 {
+    public abstract void Init();
 }

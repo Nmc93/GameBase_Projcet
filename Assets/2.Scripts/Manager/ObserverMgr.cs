@@ -6,4 +6,8 @@ using GEnum;
 
 public class ObserverMgr : MgrBase
 {
+    public override void Init()
+    {
+
+    }
 }

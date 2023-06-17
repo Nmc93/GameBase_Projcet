@@ -11,6 +11,18 @@ namespace GEnum
     {
         SceneMgr = 0,
         UIMgr,
+        SaveMgr,
+    }
+
+    public enum eScene
+    {
+        Login = 0,
+        Game,
+    }
+
+    public enum ePage
+    {
+        
     }
 
 }

@@ -9,18 +9,27 @@ using GEnum;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     /// <summary> 매니저 클래스 저장 </summary>
     public static Dictionary<eMgr, MgrBase> mgrDic;
 
     private void Awake()
     {
-        //씬 매니저
-        GameObject sceneMgrObj = new GameObject();
-        mgrDic.Add(eMgr.SceneMgr, sceneMgrObj.AddComponent<SceneMgr>());
+        DontDestroyOnLoad(gameObject);
+        instance = this;
 
         //UI 매니저
         GameObject uiMgrObj = new GameObject();
         mgrDic.Add(eMgr.UIMgr, uiMgrObj.AddComponent<UIMgr>());
+
+        //세이브 매니저
+        GameObject saveMgrObj = new GameObject();
+        mgrDic.Add(eMgr.SaveMgr, saveMgrObj.AddComponent<SaveMgr>());
+
+        //씬 매니저
+        GameObject sceneMgrObj = new GameObject();
+        mgrDic.Add(eMgr.SceneMgr, sceneMgrObj.AddComponent<SceneMgr>());
     }
 
     #region Get

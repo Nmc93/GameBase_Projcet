@@ -6,5 +6,8 @@ using GEnum;
 
 public class UIMgr : MgrBase
 {
+    public override void Init()
+    {
 
+    }
 }

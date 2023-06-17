@@ -6,4 +6,7 @@ using GEnum;
 
 public class PoolMgr : MgrBase
 {
+    public override void Init()
+    {
+    }
 }
