@@ -9,9 +9,8 @@ public class SaveMgr : MgrBase
     [Header("최대 저장소 숫자")]
     [SerializeField] private int saveMaxCount = 3;
 
-    public override void Init()
+    private void Awake()
     {
         instance = this;
-
     }
 }

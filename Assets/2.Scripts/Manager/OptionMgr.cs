@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class OptionMgr : MgrBase
 {
-    public override void Init()
-    {
+    public static OptionMgr instance;
 
+    private void Awake()
+    {
+        instance = this;
     }
 }

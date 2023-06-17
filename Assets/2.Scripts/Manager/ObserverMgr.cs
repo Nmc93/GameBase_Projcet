@@ -6,8 +6,10 @@ using GEnum;
 
 public class ObserverMgr : MgrBase
 {
-    public override void Init()
-    {
+    public static ObserverMgr instance;
 
+    private void Awake()
+    {
+        instance = this;
     }
 }

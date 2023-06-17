@@ -14,10 +14,11 @@ namespace GEnum
         SaveMgr,
     }
 
+    /// <summary> 씬 타입, 씬 이름과 동일</summary>
     public enum eScene
     {
-        Login = 0,
-        Game,
+        LobbyScene = 0,
+        GameScene,
     }
 
     public enum ePage

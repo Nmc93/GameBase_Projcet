@@ -12,14 +12,15 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     /// <summary> 매니저 클래스 저장 </summary>
-    public static Dictionary<eMgr, MgrBase> mgrDic;
+    public static Dictionary<eMgr, MgrBase> mgrDic = new Dictionary<eMgr, MgrBase>();
 
+    /// <summary> 시작시 최초 매니저 세팅 </summary>
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //UI 매니저
+        //UI 매니저 세팅
         GameObject uiMgrObj = new GameObject();
         mgrDic.Add(eMgr.UIMgr, uiMgrObj.AddComponent<UIMgr>());
 
@@ -31,6 +32,13 @@ public class GameManager : MonoBehaviour
         GameObject sceneMgrObj = new GameObject();
         mgrDic.Add(eMgr.SceneMgr, sceneMgrObj.AddComponent<SceneMgr>());
     }
+
+    /// <summary> 매니저 세팅 후 게임 세팅 </summary>
+    private void Start()
+    {
+        
+    }
+
 
     #region Get
 

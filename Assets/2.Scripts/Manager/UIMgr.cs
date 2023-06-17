@@ -6,8 +6,10 @@ using GEnum;
 
 public class UIMgr : MgrBase
 {
-    public override void Init()
-    {
+    public static UIMgr instance;
 
+    private void Awake()
+    {
+        instance = this;
     }
 }
