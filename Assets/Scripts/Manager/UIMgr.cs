@@ -9,10 +9,12 @@ public class UIMgr : MgrBase
 {
     public static UIMgr instance;
 
+    /// <summary> 씬 UI 캔버스 </summary>
+    private CanvasData scene;
     /// <summary> 페이지 UI 캔버스 </summary>
-    private Canvas pageCanvas;
+    private CanvasData page;
     /// <summary> 팝업 UI 캔버스 </summary>
-    private Canvas popupCanvas;
+    private CanvasData popup;
 
     /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
     private Transform uiPool;
@@ -40,6 +42,25 @@ public class UIMgr : MgrBase
         canvasParent.transform.SetParent(transform);
         canvasParent.name = "UICanvas";
 
+        #region 씬 캔버스
+        //씬 캔버스 세팅
+        Canvas sceneCanvas = new GameObject().AddComponent<Canvas>();
+        sceneCanvas.transform.SetParent(canvasParent.transform);
+        sceneCanvas.name = "PageCanvas";
+        sceneCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        sceneCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 |
+            AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
+        //씬 캔버스 스케일러 세팅
+        CanvasScaler sceneScale = sceneCanvas.gameObject.AddComponent<CanvasScaler>();
+        sceneScale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        sceneScale.referenceResolution = new Vector2(Screen.width, Screen.height);
+        sceneScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
+        //캔버스 데이터 세팅
+        scene = new CanvasData(sceneCanvas, sceneScale, sceneCanvas.gameObject.AddComponent<GraphicRaycaster>());
+
+        #endregion 씬 캔버스
+
+        #region 페이지 캔버스
         //페이지 캔버스 세팅
         Canvas pageCanvas = new GameObject().AddComponent<Canvas>();
         pageCanvas.transform.SetParent(canvasParent.transform);
@@ -52,10 +73,11 @@ public class UIMgr : MgrBase
         pageScale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         pageScale.referenceResolution = new Vector2(Screen.width,Screen.height);
         pageScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-        //페이지 캔버스 레이캐스터 세팅
-        pageCanvas.gameObject.AddComponent<GraphicRaycaster>();
-        this.pageCanvas = pageCanvas;
+        //캔버스 데이터 세팅
+        page = new CanvasData(pageCanvas, pageScale, pageCanvas.gameObject.AddComponent<GraphicRaycaster>());
+        #endregion 페이지 캔버스
 
+        #region 팝업 캔버스
         //팝업 캔버스 세팅
         Canvas popupCanvas = new GameObject().AddComponent<Canvas>();
         popupCanvas.transform.SetParent(canvasParent.transform);
@@ -69,8 +91,8 @@ public class UIMgr : MgrBase
         popupScale.referenceResolution = new Vector2(Screen.width, Screen.height);
         popupScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
         //팝업 캔버스 레이캐스터 세팅
-        popupCanvas.gameObject.AddComponent<GraphicRaycaster>();
-        this.popupCanvas = popupCanvas;
+        popup = new CanvasData(popupCanvas, popupScale, popupCanvas.gameObject.AddComponent<GraphicRaycaster>());
+        #endregion 팝업 캔버스
     }
 
     /// <summary> UI의 오브젝트 풀과 UI 데이터를 세팅 </summary>
@@ -85,5 +107,31 @@ public class UIMgr : MgrBase
         //로딩 화면 UI
         dicUI.Add(eUIName.UILoading, null);
     }
-
 }
+
+#region 캔버스 정보
+/// <summary> 캔버스 데이터 </summary>
+public class CanvasData
+{
+    public CanvasData(Canvas canvas, CanvasScaler scale, GraphicRaycaster rayCast)
+    {
+        this.canvas = canvas;
+        this.scale = scale;
+        this.rayCast = rayCast;
+    }
+
+    /// <summary> 캔버스 </summary>
+    public Canvas canvas;
+    /// <summary> 스케일러 </summary>
+    public CanvasScaler scale;
+    /// <summary> 그래픽 레이캐스트 </summary>
+    public GraphicRaycaster rayCast;
+
+    /// <summary> 캔버스 컴포넌트 활성화 변경 </summary>
+    public void SetActivate(bool isActive)
+    {
+        canvas.enabled = isActive;
+        rayCast.enabled = isActive;
+    }
+}
+#endregion 캔버스 정보
