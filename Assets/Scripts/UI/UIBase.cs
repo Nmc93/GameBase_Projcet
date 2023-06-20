@@ -8,11 +8,15 @@ using System;
 [Serializable]
 public abstract class UIBase : MonoBehaviour
 {
+
     /// <summary> UI의 Page, Popup 여부 </summary>
     public abstract eUIType uiType { get; }
 
     /// <summary> 해당 UI의 타입 </summary>
     public abstract eUIName uiName { get; }
+
+    /// <summary> UI 오픈 여부 </summary>
+    public bool IsOpen { get; private set; }
 
     public virtual void Init()
     {
@@ -21,6 +25,7 @@ public abstract class UIBase : MonoBehaviour
 
     public virtual void Open()
     {
+        IsOpen = true;
         DataSetting();
     }
 
@@ -42,6 +47,7 @@ public abstract class UIBase : MonoBehaviour
 
     public virtual void BackThePool()
     {
+        IsOpen = false;
         //UIMgr.
     }
 

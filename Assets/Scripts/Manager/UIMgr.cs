@@ -16,11 +16,11 @@ public class UIMgr : MgrBase
     /// <summary> 팝업 UI 캔버스 </summary>
     private CanvasData popup;
 
+    /// <summary> UI 저장소 </summary>
+    private static Dictionary<eUIName, UIBase> dicUI = new Dictionary<eUIName, UIBase>();
+
     /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
     private Transform uiPool;
-
-    /// <summary> UI 저장소 </summary>
-    private Dictionary<eUIName, UIBase> dicUI = new Dictionary<eUIName, UIBase>(); 
 
     private void Awake()
     {
@@ -107,6 +107,19 @@ public class UIMgr : MgrBase
         //로딩 화면 UI
         dicUI.Add(eUIName.UILoading, null);
     }
+
+    /// <summary> UI 오픈 </summary>
+    public static bool OpenUI<T>()
+    {
+        Type uiType = typeof(T);
+        eUIName name = (eUIName)Enum.Parse(typeof(eUIName),uiType.Name);
+        return false;
+    }
+
+    public void CloseUI()
+    {
+    }
+
 }
 
 #region 캔버스 정보
@@ -135,3 +148,19 @@ public class CanvasData
     }
 }
 #endregion 캔버스 정보
+
+public class UIData
+{
+    public UIData(string path, string name)
+    {
+        this.path = path;
+        this.name = name;
+    }
+
+    /// <summary> 프리팹 패스 </summary>
+    public string path;
+    /// <summary> 클래스 이름 </summary>
+    public string name;
+    /// <summary> UI클래스 </summary>
+    public UIBase uiClass;
+}
