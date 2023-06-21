@@ -24,7 +24,8 @@ namespace GEnum
     /// <summary> UIÀÇ Page, Popup ¿©ºÎ </summary>
     public enum eUIType : byte
     {
-        Page = 0,
+        Scene = 0,
+        Page,
         Popup
     }
 

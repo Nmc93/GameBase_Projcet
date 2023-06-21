@@ -10,14 +10,14 @@ public class UIMgr : MgrBase
     public static UIMgr instance;
 
     /// <summary> 씬 UI 캔버스 </summary>
-    private CanvasData scene;
+    private static CanvasData scene;
     /// <summary> 페이지 UI 캔버스 </summary>
-    private CanvasData page;
+    private static CanvasData page;
     /// <summary> 팝업 UI 캔버스 </summary>
-    private CanvasData popup;
+    private static CanvasData popup;
 
     /// <summary> UI 저장소 </summary>
-    private static Dictionary<eUIName, UIBase> dicUI = new Dictionary<eUIName, UIBase>();
+    private static Dictionary<eUIName, UIData> dicUI = new Dictionary<eUIName, UIData>();
 
     /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
     private Transform uiPool;
@@ -105,21 +105,89 @@ public class UIMgr : MgrBase
         this.uiPool = uiPool.transform;
 
         //로딩 화면 UI
-        dicUI.Add(eUIName.UILoading, null);
+        dicUI.Add(eUIName.UILoading, new UIData("", typeof(UILoading)));
+    }
+
+    #region Open
+
+    /// <summary> UI 오픈 </summary>
+    public static bool OpenUI<T>() where T : UIBase
+    {
+        return OpenUI((eUIName)Enum.Parse(typeof(eUIName), typeof(T).Name));
     }
 
     /// <summary> UI 오픈 </summary>
-    public static bool OpenUI<T>()
+    public static bool OpenUI(eUIName ui)
     {
-        Type uiType = typeof(T);
-        eUIName name = (eUIName)Enum.Parse(typeof(eUIName),uiType.Name);
+        if(dicUI.TryGetValue(ui, out UIData data))
+        {
+            UIBase uiBase = data.uiClass;
+            //로드된 UI일 경우
+            if (uiBase != null)
+            {
+                uiBase.transform.SetParent(GetCanvas(uiBase.uiType));
+                uiBase.Open();
+            }
+            //지금까지 로드된적이 없는 UI일 경우
+            else
+            {
+
+            }
+        }
+        else
+        {
+            Debug.LogError($"{ui} : 등록되지 않은 UI입니다.");
+        }
+
         return false;
     }
+
+    #endregion Open
+
+    #region Close
 
     public void CloseUI()
     {
     }
 
+    #endregion Close
+
+    #region Get
+
+    /// <summary> UI 클래스를 받는 함수 </summary>
+    public static UIBase GetUI<T>() where T : UIBase
+    {
+        return GetUI((eUIName)Enum.Parse(typeof(eUIName), typeof(T).Name));
+    }
+
+    /// <summary> UI 클래스를 받는 함수 </summary>
+    public static UIBase GetUI(eUIName ui)
+    {
+        if (dicUI.TryGetValue(ui, out UIData data))
+        {
+            return data.uiClass;
+        }
+
+        return null;
+    }
+
+    /// <summary> 타입에 맞는 캔버스의 Transform을 반환 </summary>
+    private static Transform GetCanvas(eUIType uIType)
+    {
+        switch (uIType)
+        {
+            case eUIType.Scene:
+                return scene.canvas.transform;
+            case eUIType.Page:
+                return page.canvas.transform;
+            case eUIType.Popup:
+                return popup.canvas.transform;
+        }
+
+        return null;
+    }
+
+    #endregion Get
 }
 
 #region 캔버스 정보
@@ -151,16 +219,16 @@ public class CanvasData
 
 public class UIData
 {
-    public UIData(string path, string name)
+    public UIData(string path, Type classType)
     {
         this.path = path;
-        this.name = name;
+        this.classType = classType;
     }
 
     /// <summary> 프리팹 패스 </summary>
     public string path;
-    /// <summary> 클래스 이름 </summary>
-    public string name;
+    /// <summary> 클래스 타입 </summary>
+    public Type classType;
     /// <summary> UI클래스 </summary>
     public UIBase uiClass;
 }
