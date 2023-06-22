@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class AssetsMgr : MgrBase
@@ -34,6 +35,9 @@ public class AssetsMgr : MgrBase
     /// <param name="path"> 오브젝트 경로 </param>
     public static bool LoadResourcesUIPrefab(string path, out GameObject obj)
     {
+        path = $"{PrefabPath}{path}";
+        
+        //obj = PrefabUtility.InstantiatePrefab(Resources.Load(path)) as GameObject;
         obj = Resources.Load<GameObject>(path);
 
         if (obj == null)

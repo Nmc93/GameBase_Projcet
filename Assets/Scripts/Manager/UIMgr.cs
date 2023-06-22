@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
 using UnityEngine.UI;
+using UnityEditor;
+using DG.Tweening;
+using System.Threading;
+using UnityEditor.Experimental.GraphView;
 
 public class UIMgr : MgrBase
 {
@@ -16,11 +20,12 @@ public class UIMgr : MgrBase
     /// <summary> 팝업 UI 캔버스 </summary>
     private static CanvasData popup;
 
+    /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
+    private RectTransform uiPool;
+
     /// <summary> UI 저장소 </summary>
     private static Dictionary<eUI, UIData> dicUI = new Dictionary<eUI, UIData>();
 
-    /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
-    private static Transform uiPool;
 
     private void Awake()
     {
@@ -46,7 +51,7 @@ public class UIMgr : MgrBase
         //씬 캔버스 세팅
         Canvas sceneCanvas = new GameObject().AddComponent<Canvas>();
         sceneCanvas.transform.SetParent(canvasParent.transform);
-        sceneCanvas.name = "PageCanvas";
+        sceneCanvas.name = "sceneCanvas";
         sceneCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         sceneCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 |
             AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
@@ -93,17 +98,25 @@ public class UIMgr : MgrBase
         //팝업 캔버스 레이캐스터 세팅
         popup = new CanvasData(popupCanvas, popupScale, popupCanvas.gameObject.AddComponent<GraphicRaycaster>());
         #endregion 팝업 캔버스
+
+        #region 풀 오브젝트
+
+        // 풀 오브젝트 생성
+        RectTransform uiPool = new GameObject().AddComponent<RectTransform>();
+        uiPool.transform.SetParent(canvasParent.transform);
+        uiPool.sizeDelta = new Vector2(Screen.width, Screen.height);
+        uiPool.position = new Vector2(Screen.width / 2, Screen.height / 2);
+        uiPool.gameObject.SetActive(false);
+        uiPool.name = "UIPool";
+        this.uiPool = uiPool;
+
+        #endregion 풀 오브젝트
+
     }
 
     /// <summary> UI의 오브젝트 풀과 UI 데이터를 세팅 </summary>
     private void UIDataSetting()
     {
-        // 풀 오브젝트 생성
-        GameObject uiPool = new GameObject();
-        uiPool.transform.SetParent(transform);
-        uiPool.name = "UIPool";
-        UIMgr.uiPool = uiPool.transform;
-
         //로딩 화면 UI
         dicUI.Add(eUI.UILoading, new UIData("UI/UILoading"));
     }
@@ -136,7 +149,7 @@ public class UIMgr : MgrBase
                 if(AssetsMgr.LoadResourcesUIPrefab(data.path,out GameObject obj))
                 {
                     //저장
-                    data.uiClass = obj.GetComponent<UIBase>();
+                    data.uiClass = Instantiate(obj, uiPool).GetComponent<UIBase>();
                     uiBase = data.uiClass;
                 }
                 //UI를 찾을 수 없을 경우
@@ -157,7 +170,7 @@ public class UIMgr : MgrBase
                 foreach (var item in dicUI.Values)
                 {
                     //열려있고 캔버스 타입이 페이지고 현재 열리고 있는 페이지가 아닐 경우
-                    if (item.uiClass .IsOpen && 
+                    if (item.uiClass.IsOpen && 
                         item.uiClass.canvasType == eCanvas.Page &&
                         item.uiClass.uiType != data.uiClass.uiType)
                     {
@@ -167,9 +180,9 @@ public class UIMgr : MgrBase
             }
 
             //UI를 캔버스에 올리고 UI를 활성화
+            Debug.Log($"UIOpen : [{ui}]");
             uiBase.transform.SetParent(GetCanvas(uiBase.canvasType));
             uiBase.Open();
-            Debug.Log($"UIOpen : [{ui}]");
             return true;
         }
 
@@ -213,8 +226,8 @@ public class UIMgr : MgrBase
                 }
 
                 //UI 풀로 이동
-                uiData.uiClass.transform.SetParent(uiPool);
                 Debug.Log($"UIClose : [{ui}]");
+                uiData.uiClass.transform.SetParent(uiPool);
                 return true;
             }
             //호출된적 없거나 오픈중이 아닐 경우
