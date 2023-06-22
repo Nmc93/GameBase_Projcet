@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class UIOption : UIBase
 {
-    public override eUIType uiType => eUIType.Popup;
+    public override eCanvas canvasType => eCanvas.Popup;
 
-    public override eUIName uiName => throw new System.NotImplementedException();
+    public override eUI uiType => throw new System.NotImplementedException();
 
 }

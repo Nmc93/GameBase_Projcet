@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class UILoading : UIBase
 {
-    public override eUIType uiType => eUIType.Page;
+    public override eCanvas canvasType => eCanvas.Page;
 
-    public override eUIName uiName => eUIName.UILoading;
+    public override eUI uiType => eUI.UILoading;
 
     #region ¿ŒΩ∫∆Â≈Õ
 

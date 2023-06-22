@@ -9,11 +9,11 @@ using System;
 public abstract class UIBase : MonoBehaviour
 {
 
-    /// <summary> UI의 Page, Popup 여부 </summary>
-    public abstract eUIType uiType { get; }
+    /// <summary> 캔버스 타입 </summary>
+    public abstract eCanvas canvasType { get; }
 
     /// <summary> 해당 UI의 타입 </summary>
-    public abstract eUIName uiName { get; }
+    public abstract eUI uiType { get; }
 
     /// <summary> UI 오픈 여부 </summary>
     public bool IsOpen { get; private set; }

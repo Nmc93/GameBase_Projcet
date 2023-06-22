@@ -15,16 +15,17 @@ namespace GEnum
         GameScene,
     }
 
-    /// <summary> UI의 Page, Popup 여부 </summary>
-    public enum eUIType : byte
+    /// <summary> 캔버스 타입 </summary>
+    public enum eCanvas : byte
     {
         Scene = 0,
         Page,
         Popup
     }
 
-    /// <summary> UI의 분류 </summary>
-    public enum eUIName : short
+    /// <summary> UI를 쉽게 찾기 위해 지정된 enum <br/> 
+    /// [UI 프리팹의 대표 컴포넌트와 이름이 동일함] </summary>
+    public enum eUI : short
     {
         UILoading = 0,
     }
