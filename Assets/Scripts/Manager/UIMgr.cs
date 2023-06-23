@@ -2,12 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GEnum;
 using UnityEngine.UI;
 using UnityEditor;
-using DG.Tweening;
-using System.Threading;
-using UnityEditor.Experimental.GraphView;
+
+using GEnum;
 
 public class UIMgr : MgrBase
 {
@@ -166,6 +164,7 @@ public class UIMgr : MgrBase
             {
                 //씬 캔버스 비활성화
                 scene.SetActivate(false);
+
                 //페이지 모두 종료
                 foreach (var item in dicUI.Values)
                 {
@@ -225,9 +224,8 @@ public class UIMgr : MgrBase
                     }
                 }
 
-                //UI 풀로 이동
-                Debug.Log($"UIClose : [{ui}]");
-                uiData.uiClass.transform.SetParent(uiPool);
+                //대상 UI 종료 프로세스 시작
+                uiData.uiClass.Close();
                 return true;
             }
             //호출된적 없거나 오픈중이 아닐 경우
@@ -245,26 +243,68 @@ public class UIMgr : MgrBase
         return false;
     }
 
+    //종료 후 Pool로 돌아감
+    public void ReturnToUIPool(UIBase uiBase)
+    {
+        //UI 풀로 이동
+        Debug.Log($"UIClose : [{uiBase.uiType}]");
+        uiBase.transform.SetParent(uiPool);
+    }
+
     #endregion Close
 
     #region Get
 
+    #region UI의 메인 컴포넌트 반환 (GetUI)
+
     /// <summary> UI 클래스를 받는 함수 </summary>
+    /// <typeparam name="T"> 대상 UI에 있는 UIBase를 상속받은 메인 클래스 </typeparam>
+    /// <returns> 검색 실패시 null 반환 </returns>
     public UIBase GetUI<T>() where T : UIBase
     {
         return GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
     }
 
     /// <summary> UI 클래스를 받는 함수 </summary>
+    /// <param name="ui"> 대상 UI에 할당된 eUI </param>
+    /// <returns> 검색 실패시 null 반환 </returns>
     public UIBase GetUI(eUI ui)
     {
-        if (dicUI.TryGetValue(ui, out UIData data))
+        if (!dicUI.TryGetValue(ui, out UIData data))
         {
+            Debug.LogError($"[{ui}]타입의 UI를 찾을 수 없습니다.");
             return data.uiClass;
         }
 
         return null;
     }
+
+    /// <summary> UI 클래스를 받는 함수 </summary>
+    /// <typeparam name="T">UIBase 를 상속받은 UI 클래스</typeparam>
+    /// <param name="uiBase"> 검색 결과 반환 </param>
+    /// <returns> 검색 성공시 true </returns>
+    public bool GetUI<T>(out UIBase uiBase) where T : UIBase
+    {
+        uiBase = GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
+        return uiBase != null;
+    }
+
+    /// <summary> UI 클래스를 받는 함수 </summary>
+    /// <param name="ui"> 대상 UI에 할당된 eUI </param>
+    /// <param name="uiBase"> 검색 결과 반환 </param>
+    /// <returns> 검색 성공시 true </returns>
+    public bool GetUI(eUI ui, out UIBase uiBase)
+    {
+        if (!dicUI.TryGetValue(ui, out UIData data))
+        {
+            Debug.LogError($"[{ui}]타입의 UI를 찾을 수 없습니다.");
+        }
+
+        uiBase = data.uiClass;
+        return uiBase != null;
+    }
+
+    #endregion UI의 메인 컴포넌트 반환 (GetUI)
 
     /// <summary> 타입에 맞는 캔버스의 Transform을 반환 </summary>
     private Transform GetCanvas(eCanvas uIType)

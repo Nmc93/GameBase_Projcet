@@ -1,11 +1,14 @@
 
 namespace GEnum
 {
+    /// <summary> 매니저에 지정된 enum <br/> 
+    /// [매니저 클래스와 이름이 동일함] </summary>
     public enum eMgr
     {
         SceneMgr = 0,
         UIMgr,
         SaveMgr,
+        TableMgr,
     }
 
     /// <summary> 씬 타입, 씬 이름과 동일 </summary>

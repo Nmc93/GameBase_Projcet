@@ -20,20 +20,29 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         instance = this;
 
+        //테이블 매니저 세팅
+        GameObject tableMgr = new GameObject();
+        tableMgr.name = "TableMgr";
+        mgrDic.Add(eMgr.TableMgr, tableMgr.AddComponent<TableMgr>());
+
         //UI 매니저 세팅
         GameObject uiMgrObj = new GameObject();
         uiMgrObj.name = "UIMgr";
         mgrDic.Add(eMgr.UIMgr, uiMgrObj.AddComponent<UIMgr>());
 
-        //세이브 매니저
-        GameObject saveMgrObj = new GameObject();
-        saveMgrObj.name = "SaveMgr";
-        mgrDic.Add(eMgr.SaveMgr, saveMgrObj.AddComponent<SaveMgr>());
-
         //씬 매니저
         GameObject sceneMgrObj = new GameObject();
         sceneMgrObj.name = "SceneMgr";
         mgrDic.Add(eMgr.SceneMgr, sceneMgrObj.AddComponent<SceneMgr>());
+
+        #region 추후 추가
+
+        ////세이브 매니저
+        //GameObject saveMgrObj = new GameObject();
+        //saveMgrObj.name = "SaveMgr";
+        //mgrDic.Add(eMgr.SaveMgr, saveMgrObj.AddComponent<SaveMgr>());
+
+        #endregion 추후 추가
     }
 
     /// <summary> 매니저 세팅 후 게임 세팅 </summary>

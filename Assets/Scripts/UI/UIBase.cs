@@ -48,7 +48,7 @@ public abstract class UIBase : MonoBehaviour
     public virtual void BackThePool()
     {
         IsOpen = false;
-        //UIMgr.
+        UIMgr.instance.ReturnToUIPool(this);
     }
 
 }

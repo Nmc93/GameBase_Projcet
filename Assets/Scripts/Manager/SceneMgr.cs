@@ -14,8 +14,8 @@ public class SceneMgr : MgrBase
     /// <summary> 현재 씬 </summary>
     public eScene CurScene => curScene;
 
+    /// <summary> 비동기 씬 변경 코루틴 </summary>
     private Coroutine changeCoroutine;
-
 
     private void Awake()
     {
