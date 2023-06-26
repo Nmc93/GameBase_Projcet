@@ -10,6 +10,7 @@ using UnityEditorInternal.VersionControl;
 using System.Diagnostics;
 using DG.Tweening.Plugins.Core.PathCore;
 using static UnityEngine.Rendering.DebugUI;
+using Codice.Client.Common.GameUI;
 
 public class ExcelEdit : EditorWindow
 {
@@ -381,4 +382,95 @@ public class ExcelEdit : EditorWindow
         }
     }
     #endregion 엑셀파일을 CSV로 변환
+
+    #region 엑셀파일을 CS로 변환
+    /// <summary> 엑셀을 CS 파일로 변경 </summary>
+    public void ConvertExcelToCS()
+    {
+        //클래스 이름
+        string tableCSName = $"{selectTableName}Data";
+
+        //클래스 몸통 (0 : 이름, 1 : 변수와 프로퍼티, 2 : 생성자)
+        string cBody = "public class {0} \n{ \n\t\t{1} \n\t\t{2} \n}";
+
+        //변수와 프로퍼티 (0 : 타입, 1 : 소문자 변수이름, 2 : 변수 이름)
+        string cValue = "\tprivate {0} {1}; \n\t public {0} {2} { get => {1}; }";
+        
+        //생성자(0 : 클래스 이름, 매개변수, 생성자)
+        string cConstBody = "\tpublic {0} ({1}) \n\t{ \n\t\t{2} \n\t}";
+        //생성자 매개변수(0 :type, 1 : name)
+        string cConstVal1 = "{0} {1}";
+        //생성자 데이터 세팅(0 : name)
+        string cConstval2 = "this.{0} = {0};";
+
+
+        //1. 변수와 프로퍼티 세팅
+        string valueString = string.Empty;
+        for(int i = 0; i < selectColumnNameList.Count; ++i)
+        {
+            if(string.IsNullOrEmpty(valueString))
+            {
+                //ex : private int a;
+                //     public int A { get => a; }
+                valueString = string.Format(cValue, selectColumnTypeList[i], selectColumnNameList[i].ToLower(), selectColumnNameList[i]);
+            }
+            else
+            {
+                //ex : private int a;
+                //     public int A { get => a; }
+                //     private int b;
+                //     public int B { get => b; }
+                valueString = string.Format("{0}\n{1}", valueString, string.Format(cValue, selectColumnTypeList[i], selectColumnNameList[i]));
+            }
+        }
+
+        //2-1. 생성자 생성 - 생성자의 매개변수와 데이터 세팅
+        string constString1 = string.Empty;
+        string constString2 = string.Empty;
+        for (int i = 0; i < selectColumnNameList.Count; ++i)
+        {
+            if (string.IsNullOrEmpty(constString1))
+            {
+                if (selectColumnTypeList[i] != eDataType.None)
+                {
+                    //ex : int a
+                    constString1 = string.Format(cConstVal1, selectColumnTypeList[i], selectColumnNameList[i]);
+                    //ex : this.a = a;
+                    constString2 = string.Format(cConstval2, selectColumnNameList[i]);
+                }
+            }
+            else
+            {
+                if (selectColumnTypeList[i] != eDataType.None)
+                {
+                    //ex : int a,int b
+                    constString1 = string.Format("{0}, {1}", constString1, string.Format(cConstVal1, selectColumnTypeList[i], selectColumnNameList[i]));
+                    //ex : this.a = a;
+                    //     this.b = b;
+                    constString2 = string.Format("{0}\n\t\t{1}", constString2, string.Format(cConstval2, selectColumnNameList[i]));
+                }
+            }
+        }
+
+        //2-2 생성자 생성(클래스 이름, 매개변수, 내용)
+        cConstBody = string.Format(cConstBody, tableCSName, constString1, constString2);
+    }
+    #endregion 엑셀파일을 CS로 변환
+
+    //예시
+    /*
+        private int a; 
+        public int A { get => a; }
+        private int b; 
+        public int B { get => b; }
+    
+        2-1 ~ 2-2
+        public AA (int a, int b) 
+        { 
+            this.a = a;
+            this.b = b;
+        }
+    
+    */
+
 }
