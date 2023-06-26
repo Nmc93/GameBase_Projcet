@@ -13,12 +13,21 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class ExcelEdit : EditorWindow
 {
+    public enum eDataType
+    {
+        None = 0,
+        String,
+        Int,
+        Long,
+        Bool,
+    }
+
     /// <summary> 엑셀 테이블 폴더 경로 </summary>
     private string tablePath = "Table";
     /// <summary> 테이블의 CSV 폴더 경로 </summary>
-    private string tableCSVPath = string.Empty;
+    private string tableCSVPath = "Assets\\Resources\\TableCSV";
     /// <summary> 테이블의 CS 폴더 경로 </summary>
-    private string tableCSPath = string.Empty;
+    private string tableCSPath = "Assets\\Scripts\\TableData";
 
     /// <summary> 검색 테이블용 텍스트 </summary>
     private string tableNameText = string.Empty;
@@ -28,10 +37,19 @@ public class ExcelEdit : EditorWindow
     /// <summary> 검색된 테이블의 스크롤 포지션 </summary>
     private Vector2 searchScrollPosition;
 
-    /// <summary> 선택된 테이블 경로 </summary>
-    string selectTablePath = string.Empty;
     /// <summary> 선택된 테이블 이름 </summary>
     string selectTableName = string.Empty;
+    /// <summary> 선택된 엑셀 테이블 경로 </summary>
+    string selectTablePath = string.Empty;
+    /// <summary> 선택된 엑셀 테이블 경로 </summary>
+    string selectTableCSVPath = string.Empty;
+    /// <summary> 선택된 엑셀 테이블 경로 </summary>
+    string selectTableCSPath = string.Empty;
+
+    /// <summary> 선택된 테이블의 각 열의 이름들 </summary>
+    List<string> selectColumnNameList = new List<string>();
+    /// <summary> 선택된 테이블의 각 열의 타입들 </summary>
+    List<eDataType> selectColumnTypeList = new List<eDataType>();
 
     /// <summary> 검색된 테이블의 스크롤 포지션 </summary>
     private Vector2 selectScrollPosition;
@@ -42,7 +60,7 @@ public class ExcelEdit : EditorWindow
         //에디터 대상 클래스 획득
         EditorWindow wnd = GetWindow<ExcelEdit>();
         //에디터 이름 지정
-        wnd.titleContent = new GUIContent("엑셀 에디터");
+        wnd.titleContent = new GUIContent("ExcelEdit");
     }
 
     private void OnGUI()
@@ -97,8 +115,10 @@ public class ExcelEdit : EditorWindow
             {
                 if(GUILayout.Button(tableArray[i]))
                 {
-                    selectTablePath = tableArray[i];
-                    selectTableName = GetTableName(selectTablePath);
+                    //테이블 데이터 세팅
+                    SetSelectTableDatas(tableArray[i]);
+
+                    //갱신
                     Repaint();
                 }
             }
@@ -109,13 +129,13 @@ public class ExcelEdit : EditorWindow
         GUILayout.EndArea();
         #endregion 검색된 엑셀 스크롤(왼쪽 박스)
 
-        #region 검색한 테이블 컨버트
+        #region 검색한 테이블 컨버트(오른쪽 박스)
         GUILayout.BeginArea(new Rect(position.width / 2, 90, position.width / 2, 200), GUI.skin.window);
 
         #region 테이블 csv 생성 및 갱신
         if (GUILayout.Button($"{selectTableName}.csv 생성/갱신"))
         {
-            ConvertExcelToCSV(selectTablePath);
+            ConvertExcelToCSV();
         }
         #endregion 테이블 csv 생성 및 갱신
 
@@ -146,7 +166,7 @@ public class ExcelEdit : EditorWindow
         #endregion 엑셀 테이블 폴더 열기
 
         GUILayout.EndArea();
-        #endregion 검색한 테이블 컨버트
+        #endregion 검색한 테이블 컨버트(오른쪽 박스)
 
         #region 테이블 정보
         //스크롤 크기 설정
@@ -156,23 +176,23 @@ public class ExcelEdit : EditorWindow
         //검색된 테이블이 있을 경우에만
         if (!string.IsNullOrEmpty(selectTablePath))
         {
-            List<string> tableList = GetExcelData(selectTablePath);
-            if (tableList != null && tableList.Count > 0)
+            //selectColumnNameList[i]
+            //selectColumnTypeList[i]
+
+            if (selectColumnNameList != null && selectColumnNameList.Count > 0)
             {
                 selectScrollPosition = EditorGUILayout.BeginScrollView(selectScrollPosition);
 
-                for(int i = 0; i < tableList.Count; ++i)
+                for (int i = 0; i < selectColumnNameList.Count; ++i)
                 {
-                    string[] tablecell = tableList[i].Split('-');
-
-                    if (tablecell.Length > 1)
+                    if (selectColumnTypeList[i] != eDataType.None)
                     {
-                        int size = 90 - tablecell[0].Length;
+                        int size = 90 - selectColumnNameList[i].Length;
                         GUILayout.BeginHorizontal();
-                        GUILayout.Label($"이름 : {tablecell[0].PadRight(size > 0 ? size : 0)} 타입 : {tablecell[1]}");
+                        GUILayout.Label($"이름 : {selectColumnNameList[i].PadRight(size > 0 ? size : 0)} 타입 : {selectColumnTypeList[i]}");
                         GUILayout.EndHorizontal();
                         GUILayout.Space(2);
-                    }
+                    } 
                 }
 
                 GUILayout.EndScrollView();
@@ -181,8 +201,26 @@ public class ExcelEdit : EditorWindow
 
         GUILayout.EndArea();
         #endregion 테이블 정보
-
     }
+
+    #region 선택한 테이블의 정보를 획득
+    /// <summary> 선택한 테이블의 정보를 획득 </summary>
+    public void SetSelectTableDatas(string excelPath)
+    {
+        //테이블의 이름 세팅
+        selectTableName = GetTableName(excelPath);
+
+        //엑셀 테이블의 경로 세팅
+        selectTablePath = excelPath;
+        //CSV 테이블의 경로 세팅
+        selectTableCSVPath = string.Format("{0}\\{1}.csv", tableCSVPath, selectTableName);
+        //CS 데이터 클래스의 경로 세팅
+        selectTableCSPath = string.Format("{0}\\{1}.cs", tableCSPath, selectTableName);
+
+        //테이블의 이름과 타입 세팅
+        SetExcelData(selectTablePath);
+    }
+    #endregion 선택한 테이블의 정보를 획득 
 
     #region 선택한 경로에 있는 엑셀파일 이름을 반환
 
@@ -209,8 +247,11 @@ public class ExcelEdit : EditorWindow
 
     #region 선택된 엑셀의 데이터 이름과 타입을 반환
     /// <summary> 선택된 엑셀의 데이터 이름과 타입을 반환 </summary>
-    public List<string> GetExcelData(string path)
+    public void SetExcelData(string path)
     {
+        selectColumnNameList.Clear();
+        selectColumnTypeList.Clear();
+
         //경로에 있는 파일을 읽기 모드로 오픈
         using (FileStream file = File.Open(path, FileMode.Open, FileAccess.Read))
         {
@@ -242,46 +283,101 @@ public class ExcelEdit : EditorWindow
                         List<string> list = new List<string>();
                         foreach (var item in firstData)
                         {
-                            list.Add(item.ToString());
+                            string[] values = item.ToString().Split("-");
+                            
+                            //테이블 값 열
+                            if(values.Length == 2)
+                            {
+                                selectColumnNameList.Add(values[0].ToString());
+                                selectColumnTypeList.Add(ConvertStringToeDataType(values[1].ToString()));
+                            }
+                            //설명용 열
+                            else if(values.Length == 1)
+                            {
+                                selectColumnNameList.Add(values[0].ToString());
+                                selectColumnTypeList.Add(eDataType.None);
+                            }
+                            else
+                            {
+                                UnityEngine.Debug.LogError($" 잘못된 테이블 열 형식입니다. : {values.Length}");
+                            }
                         }
-
-                        return list;
                     }
                 }
             }
         }
-
-        return null;
     }
+
+    /// <summary> string에 맞는 eDataType을 반환 </summary>
+    private eDataType ConvertStringToeDataType(string typeName)
+    {
+        return typeName switch
+        {
+            "string"    => eDataType.String,
+            "int"       => eDataType.Int,
+            "long"      => eDataType.Long,
+            "bool"      => eDataType.Bool,
+            _           => eDataType.None,
+        };
+    }
+
     #endregion 선택된 엑셀의 데이터 이름과 타입을 반환
 
     #region 엑셀파일을 CSV로 변환
     /// <summary> 엑셀파일을 CSV로 변환 </summary>
-    public void ConvertExcelToCSV(string path)
+    public void ConvertExcelToCSV()
     {
-        //경로에 있는 파일을 읽기 모드로 오픈
-        using (FileStream file = File.Open(path, FileMode.Open, FileAccess.Read))
+        if (string.IsNullOrEmpty(selectTablePath) ||
+            string.IsNullOrEmpty(selectTableCSVPath))
+        {
+            UnityEngine.Debug.LogError("지정된 주소가 없습니다.");
+            return;
+        }
+
+        //csv 데이터 정리 리스트
+        List<string> scvList = new List<string>();
+
+        //경로에 있는 엑셀 파일을 읽기 모드로 오픈
+        using (FileStream file = File.Open(selectTablePath, FileMode.Open, FileAccess.Read))
         {
             //해당 파일을 엑셀 데이터로 변환할 수 있는 데이터 생성
             using (var reader = ExcelReaderFactory.CreateReader(file))
             {
+                //열의 타이틀과 타입이 저장된 첫번째 행은 스킵
                 reader.Read();
-                List<List<string>> scvList = new List<List<string>>();
 
+                //정보가 들어있는 두번째 행부터 저장
                 while (reader.Read())
                 {
-                    List<string> rowList = new List<string>();
-                    for (int ii = 0; ii < reader.FieldCount; ii++)
+                    //행 저장용
+                    string rowText = string.Empty;
+                    for (int i = 0; i < reader.FieldCount; ++i)
                     {
-                        var item = reader[ii];
+                        //
+                        var item = reader[i];
                         if (item != null)
                         {
-                            rowList.Add(item.ToString());
+                            rowText = rowText == string.Empty ? 
+                                item.ToString() : string.Format("{0},{1}", rowText, item.ToString());
                         }
                     }
-                    scvList.Add(rowList);
+                    scvList.Add(rowText);
                 }
             }
+        }
+
+        //데이터를 저장
+        using (FileStream file = File.Open(selectTableCSVPath, FileMode.OpenOrCreate, FileAccess.Write))
+        {
+            using (StreamWriter writer = new StreamWriter(file))
+            {
+                for (int i = 0; i < scvList.Count; ++i)
+                {
+                    writer.WriteLine(scvList[i]);
+                }
+            }
+
+            EditorUtility.DisplayDialog("CSV 생성/갱신", "완료", "확인");
         }
     }
     #endregion 엑셀파일을 CSV로 변환
