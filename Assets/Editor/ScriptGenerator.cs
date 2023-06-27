@@ -11,8 +11,13 @@ namespace ExcelEdit
 
         /// <summary> 클래스 이름 템플릿<br/> $CSName$ : 테이블이름</summary>
         const string csNameTemplate = "$CSName$Data";
-        /// <summary> 클래스 몸통 템플릿 <br/> $CSName$ : 이름 <br/> $Name$ : 테이블이름<br/> $Values$ : 변수와 프로퍼티<br/> $Const$ : 생성자)</summary>
-        const string csBodyTemplate = "public class $CSName$ : TableBase\n{\n\tpublic override string TableName { get => \"$Name$\"; }\n\n$Const$\n$Values$\n}";
+        /// <summary> 클래스 몸통 템플릿 <br/> $CSName$ : 이름 <br/> $TblName$ : 테이블이름<br/> $GetKey$ : 키값 <br/> $Const$ : 생성자 <br/> $Values$ : 변수와 프로퍼티</summary>
+        const string csBodyTemplate = "public class $CSName$ : TableBase\n{\n\t$TblName$\n\t$GetKey$\n\n$Const$\n$Values$\n}";
+
+        /// <summary>테이블 이름 프로퍼티 <br/> $Name$ : 이름 </summary>
+        const string csTblNameTemplate = "public override string TableName { get => \"$Name$\"; }";
+        /// <summary> 키값 <br/> $Key$ : 키값 </summary>
+        const string csGetKeyTemplat = "public override object GetKey { get => $Key$; }";
 
         /// <summary> 변수와 프로퍼티 <br/> $Type$ : 타입<br/> $LowName$ : 소문자 변수이름<br/> $Name$ : 변수 이름) </summary>
         const string csParamTemplate = "\n\tprivate $Type$ $LowName$;\n\tpublic $Type$ $Name$ { get => $LowName$; }";
@@ -126,13 +131,19 @@ namespace ExcelEdit
                 .Replace("$CSName$", tableCSName)
                 .Replace("$Params$", constString1)
                 .Replace("$Value$", constString2);
-            
+
             #endregion 생성자 생성
+
+            //테이블 이름 프로퍼티 생성
+            string tblName = csTblNameTemplate.Replace("$Name$", tableName);
+            //키값 프로퍼티 생성
+            string getKey = csGetKeyTemplat.Replace("$Key$", columnNameList[0].ToLower());
 
             //4. 클래스 몸통 생성
             string cBody = csBodyTemplate
                 .Replace("$CSName$", tableCSName)
-                .Replace("$Name$", tableName)
+                .Replace("$TblName$", tblName)
+                .Replace("$GetKey$", getKey)
                 .Replace("$Const$", cConstBody)
                 .Replace("$Values$", cValue);
             

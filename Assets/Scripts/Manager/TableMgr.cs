@@ -10,6 +10,9 @@ public class TableMgr : MgrBase
     private void Awake()
     {
         instance = this;
+
+        //테이블 세팅
+        SetTableDatas();
     }
 
     /// <summary> 테이블 세팅 </summary>
@@ -24,8 +27,26 @@ public class TableMgr : MgrBase
     private void LoadTable<T>() where T : TableBase
     {
         List<T> tableList = new List<T>();
-        Type tbl = typeof(T);
-        T ff = tbl as T;
+        Type tp = typeof(T);
+        T tbl = tp as T;
+
+
+        if(tbl.GetKey is string)
+        {
+
+        }
+        else if(tbl.GetKey is int)
+        {
+             
+        }
+        else if (tbl.GetKey is long)
+        {
+
+        }
+        else if ( tbl.GetKey is bool) 
+        {
+
+        }
     }
 }
 

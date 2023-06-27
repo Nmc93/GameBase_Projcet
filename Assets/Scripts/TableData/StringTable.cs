@@ -1,6 +1,7 @@
 public class StringTableData : TableBase
 {
 	public override string TableName { get => "StringTable"; }
+	public override object GetKey { get => id; }
 
 	public StringTableData (string id, string text) 
 	{
@@ -13,4 +14,5 @@ public class StringTableData : TableBase
 	
 	private string text;
 	public string Text { get => text; }
+}
 }
