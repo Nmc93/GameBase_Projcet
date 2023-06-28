@@ -3,12 +3,17 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.CompilerServices;
+using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.Android;
 
 public class TableMgr : MgrBase
 {
     public static TableMgr instance;
 
     private const string csvPath = "";
+
+    private Dictionary<string, TableData> dicTable = new Dictionary<string, TableData>();
 
     private void Awake()
     {
@@ -36,10 +41,11 @@ public class TableMgr : MgrBase
         {
             using (var reader = new StreamReader(file))
             {
-                //첫번째 열(각 열의 타입들)
+                //테이블 데이터 타입
                 string[] types = reader.ReadLine().Split(",");
-
-                //데이터 세팅
+                //테이블의 변수값
+                object[] tValue = new object[types.Length];
+                //테이블 세팅
                 string value;
                 string[] values;
                 while(true)
@@ -49,58 +55,105 @@ public class TableMgr : MgrBase
                     if(value != null)
                     {
                         values = value.ToString().Split(",");
-                        //types.Length == values.Length;
+                        //types와 values의 수는 같음;
                         for (int i = 0; i < values.Length; ++i)
                         {
-
+                            //테이블 하나 완성
+                            tValue[i] = GetValue(types[i], values[i]);
                         }
                     }
                     else
                     {
                         break;
                     }
-                }
-                
-                Type t = typeof(int);
 
-                object act = Activator.CreateInstance(tp);//,ObjList);
-                tableList.Add(act as T);
+                    //TableBase : 1열, 테이블 1개
+                    T tableBase = (T)Activator.CreateInstance(tp, tValue);
+                    //테이블 저장
+                    tableList.Add(tableBase);
+                }
             }
         }
+
+        TableData tableData = new TableData();
     }
 
-    /// <summary>  </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public Type GetType(string type)
+    /// <summary> 지정된 타입으로 값을 형변환해서 반환 </summary>
+    /// <param name="type"> 값의 타입 </param>
+    /// <param name="value"> 테이블값 </param>
+    /// <returns> 값이 제대로 지정되지 않으면 string으로 변환 </returns>
+    public object GetValue(string type,string value)
     {
         switch(type)
         {
-            case "int" :
-                return typeof(int);
+            case "int":
+                return int.Parse(value);
             case "long":
-                return typeof(long);
+                return long.Parse(value);
             case "string":
-                return typeof(string);
+                return value;
             case "bool":
-                return typeof(bool);
+                return bool.Parse(value);
             default:
-                return typeof(string);
+                return value;
         }
     }
 }
 
 /// <summary> 테이블 데이터 </summary>
-public class TableData<T> where T : TableBase
+public class TableData
 {
-    public T this[string key]
+    public TableBase this[object key]
     {
         get
         {
-            return null;
+            TableBase table = null;
+
+            switch (type)
+            {
+                case "int":
+                    {
+                        if (key is int)
+                        {
+                            int val = (int)key;
+                            table = tableList.Find(item => (int)item.GetKey == val);
+                        }
+                    } 
+                    break;
+                case "long":
+                    {
+                        if (key is long)
+                        {
+                            long val = (long)key;
+                            table = tableList.Find(item => item.GetKey == key);
+                        }
+                    }
+                    break;
+                case "string":
+                    {
+                        if (key is string)
+                        {
+                            string val = (string)key;
+                            table = tableList.Find(item => item.GetKey == key);
+                        }
+                    }
+                    break;
+                case "bool":
+                    {
+                        if (key is bool)
+                        {
+                            bool val = (bool)key;
+                            table = tableList.Find(item => item.GetKey == key);
+                        }
+                    }
+                    break;
+            }
+            return table;
         }
     }
 
-    /// <summary>  </summary>
-    public List<T> list = new List<T>();
+    /// <summary> 테이블의 키의 타입 </summary>
+    private string type = "string";
+    /// <summary> 테이블 딕셔너리 </summary>
+    public List<TableBase> tableList = new List<TableBase>();
 }
