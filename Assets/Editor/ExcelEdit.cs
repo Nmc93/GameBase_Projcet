@@ -327,6 +327,19 @@ namespace ExcelEdit
             };
         }
 
+        /// <summary> string에 맞는 eDataType을 반환 </summary>
+        private string ConverteDataTypeToString(eDataType type)
+        {
+            return type switch
+            {
+                eDataType.String => "string",
+                eDataType.Int => "int",
+                eDataType.Long => "long",
+                eDataType.Bool => "bool",
+                _ => string.Empty,
+            };
+        }
+
         #endregion 선택된 엑셀의 데이터 이름과 타입을 반환
 
         #region 엑셀파일을 CSV로 변환
@@ -349,17 +362,44 @@ namespace ExcelEdit
                 //해당 파일을 엑셀 데이터로 변환할 수 있는 데이터 생성
                 using (var reader = ExcelReaderFactory.CreateReader(file))
                 {
-                    //열의 타이틀과 타입이 저장된 첫번째 행은 스킵
+                    #region 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
                     reader.Read();
+                    string[] typeTexts;
+                    string typeText = string.Empty;
+                    for (int i = 0; i < reader.FieldCount; ++i)
+                    {
+                        var item = reader[i];
+                        if (item != null)
+                        {
+                            typeTexts = item.ToString().Split("-");
+                            //이름-타입의 형식을 가진 데이터 타입의 열일 경우에만 저장
+                            if (typeTexts.Length == 2)
+                            {
+                                //타입만 저장
+                                typeText = typeText == string.Empty ? 
+                                    typeTexts[1] : string.Format("{0},{1}", typeText, typeTexts[1]);
+                            }
+                        }
+                        else
+                        {
+                            EditorUtility.DisplayDialog("CSV 생성/갱신", $"실패 : {i}번째 열에 설명이 없습니다.", "확인");
+                            return;
+                        }
+                    }
+                    scvList.Add(typeText);
+                    #endregion 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
 
-                    //정보가 들어있는 두번째 행부터 저장
+                    #region 정보가 들어있는 두번째 행부터 저장
                     while (reader.Read())
                     {
                         //행 저장용
                         string rowText = string.Empty;
                         for (int i = 0; i < reader.FieldCount; ++i)
                         {
-                            //
+                            //해당 열이 설명타입일 경우 저장 캔슬
+                            if(selectColumnTypeList[i] == eDataType.None)
+                                continue;
+
                             var item = reader[i];
                             if (item != null)
                             {
@@ -369,6 +409,7 @@ namespace ExcelEdit
                         }
                         scvList.Add(rowText);
                     }
+                    #endregion 정보가 들어있는 두번째 행부터 저장
                 }
             }
 

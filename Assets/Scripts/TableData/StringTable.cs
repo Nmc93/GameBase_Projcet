@@ -15,4 +15,3 @@ public class StringTableData : TableBase
 	private string text;
 	public string Text { get => text; }
 }
-}

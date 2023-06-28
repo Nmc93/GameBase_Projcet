@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine;
 public class TableMgr : MgrBase
 {
     public static TableMgr instance;
+
+    private const string csvPath = "";
 
     private void Awake()
     {
@@ -28,24 +31,61 @@ public class TableMgr : MgrBase
     {
         List<T> tableList = new List<T>();
         Type tp = typeof(T);
-        T tbl = tp as T;
 
-
-        if(tbl.GetKey is string)
+        using (var file = new FileStream(csvPath, FileMode.Open, FileAccess.Read))
         {
+            using (var reader = new StreamReader(file))
+            {
+                //첫번째 열(각 열의 타입들)
+                string[] types = reader.ReadLine().Split(",");
 
+                //데이터 세팅
+                string value;
+                string[] values;
+                while(true)
+                {
+                    //저장할게 더 없을때까지 진행
+                    value = reader.ReadLine();
+                    if(value != null)
+                    {
+                        values = value.ToString().Split(",");
+                        //types.Length == values.Length;
+                        for (int i = 0; i < values.Length; ++i)
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                
+                Type t = typeof(int);
+
+                object act = Activator.CreateInstance(tp);//,ObjList);
+                tableList.Add(act as T);
+            }
         }
-        else if(tbl.GetKey is int)
-        {
-             
-        }
-        else if (tbl.GetKey is long)
-        {
+    }
 
-        }
-        else if ( tbl.GetKey is bool) 
+    /// <summary>  </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public Type GetType(string type)
+    {
+        switch(type)
         {
-
+            case "int" :
+                return typeof(int);
+            case "long":
+                return typeof(long);
+            case "string":
+                return typeof(string);
+            case "bool":
+                return typeof(bool);
+            default:
+                return typeof(string);
         }
     }
 }
