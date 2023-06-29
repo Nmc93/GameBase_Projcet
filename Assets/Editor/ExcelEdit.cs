@@ -381,7 +381,7 @@ namespace ExcelEdit
                 }
             }
 
-            using (StreamWriter writer = new StreamWriter(selectTableCSVPath, false))
+            using (StreamWriter writer = new StreamWriter(selectTableCSVPath, false,System.Text.Encoding.UTF8))
             {
                 for (int i = 0; i < scvList.Count; ++i)
                 {

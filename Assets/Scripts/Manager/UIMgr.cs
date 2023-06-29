@@ -19,7 +19,7 @@ public class UIMgr : MgrBase
     private static CanvasData popup;
 
     /// <summary> 비활성화된 UI를 저장하는 풀 </summary>
-    private RectTransform uiPool;
+    private static RectTransform uiPool;
 
     /// <summary> UI 저장소 </summary>
     private static Dictionary<eUI, UIData> dicUI = new Dictionary<eUI, UIData>();
@@ -105,7 +105,7 @@ public class UIMgr : MgrBase
         uiPool.position = new Vector2(Screen.width / 2, Screen.height / 2);
         uiPool.gameObject.SetActive(false);
         uiPool.name = "UIPool";
-        this.uiPool = uiPool;
+        UIMgr.uiPool = uiPool;
 
         #endregion 풀 오브젝트
 
@@ -123,7 +123,7 @@ public class UIMgr : MgrBase
     /// <summary> UI 오픈 </summary>
     /// <typeparam name="T">UIBase를 상속받은 UI의 메인 컴포넌트 타입</typeparam>
     /// <returns> UI 오픈에 성공하면 true </returns>
-    public bool OpenUI<T>() where T : UIBase
+    public static bool OpenUI<T>() where T : UIBase
     {
         //eUI와 UI의 대표 컴포넌트의 이름은 동일해야함
         return OpenUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
@@ -132,7 +132,7 @@ public class UIMgr : MgrBase
     /// <summary> UI 오픈 </summary>
     /// <param name="ui"> UI에 지정된 enum </param>
     /// <returns> UI 오픈에 성공하면 true </returns>
-    public bool OpenUI(eUI ui)
+    public static bool OpenUI(eUI ui)
     {
         //해당 UI의 데이터를 확인
         if(dicUI.TryGetValue(ui, out UIData data))
@@ -306,7 +306,7 @@ public class UIMgr : MgrBase
     #endregion UI의 메인 컴포넌트 반환 (GetUI)
 
     /// <summary> 타입에 맞는 캔버스의 Transform을 반환 </summary>
-    private Transform GetCanvas(eCanvas uIType)
+    private static Transform GetCanvas(eCanvas uIType)
     {
         switch (uIType)
         {

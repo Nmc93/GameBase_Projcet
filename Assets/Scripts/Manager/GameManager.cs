@@ -17,6 +17,11 @@ public class GameManager : MonoBehaviour
     /// <summary> 시작시 최초 매니저 세팅 </summary>
     private void Awake()
     {
+        //이미 있다면 현재 오브젝트 파괴
+        if(instance != null)
+            Destroy(this);
+
+        //파괴불가 오브젝트 지정
         DontDestroyOnLoad(gameObject);
         instance = this;
 
@@ -43,12 +48,16 @@ public class GameManager : MonoBehaviour
         //mgrDic.Add(eMgr.SaveMgr, saveMgrObj.AddComponent<SaveMgr>());
 
         #endregion 추후 추가
+
+
+        //게임 시작
+        GameStart();
     }
 
-    /// <summary> 매니저 세팅 후 게임 세팅 </summary>
-    private void Start()
+    /// <summary> 게임 시작 </summary>
+    public void GameStart()
     {
-        
+        SceneMgr.instance.OpenCurScene();
     }
 
 

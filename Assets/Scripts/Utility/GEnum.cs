@@ -31,6 +31,7 @@ namespace GEnum
     public enum eUI : short
     {
         UILoading = 0,
+        UILobby,
     }
 
     public enum ePage
