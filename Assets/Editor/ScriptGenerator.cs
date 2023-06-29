@@ -31,12 +31,14 @@ namespace ExcelEdit
 
         #endregion Const Template
 
+        #region 테이블 생성 변수
         /// <summary> 테이블 이름 </summary>
         private string tableName;
         /// <summary> 테이블 열 이름 </summary>
         private List<string> columnNameList = new List<string>();
         /// <summary> 테이블 열 타입 </summary>
         private List<eDataType> columnTypeList = new List<eDataType>();
+        #endregion  테이블 생성 변수
 
         #region 엑셀파일을 CS로 변환
 
@@ -49,7 +51,7 @@ namespace ExcelEdit
         }
 
         /// <summary> 엑셀을 CS 파일로 변경 </summary>
-        public string ConvertExcelToCS()
+        public string ConvertExcelToCSText()
         {
             //1. 클래스 이름
             string tableCSName = csNameTemplate.Replace("$CSName$", tableName);
@@ -67,7 +69,7 @@ namespace ExcelEdit
                         //ex : private int a;
                         //     public int A { get => a; }
                         cValue = string.Format("\t{0}", csParamTemplate
-                        .Replace("$Type$", ConverteDataTypeToString(columnTypeList[i]))
+                        .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
                         .Replace("$LowName$", columnNameList[i].ToLower())
                         .Replace("$Name$", columnNameList[i]));
                     }
@@ -81,7 +83,7 @@ namespace ExcelEdit
                         //     private int b;
                         //     public int B { get => b; }
                         cValue = string.Format("{0}\n\t{1}", cValue, csParamTemplate
-                        .Replace("$Type$", ConverteDataTypeToString(columnTypeList[i]))
+                        .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
                         .Replace("$LowName$", columnNameList[i].ToLower())
                         .Replace("$Name$", columnNameList[i]));
                     }
@@ -103,7 +105,7 @@ namespace ExcelEdit
                     {
                         //ex : int a
                         constString1 = csConstParam
-                            .Replace("$Type$", ConverteDataTypeToString(columnTypeList[i]))
+                            .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
                             .Replace("$LowName$", columnNameList[i].ToLower());
                         //ex : this.a = a;
                         constString2 = string.Format("\t\t{0}", csConstvalue
@@ -116,7 +118,7 @@ namespace ExcelEdit
                     {
                         //ex : int a,int b
                         constString1 = string.Format("{0}, {1}", constString1, csConstParam
-                            .Replace("$Type$", ConverteDataTypeToString(columnTypeList[i]))
+                            .Replace("$Type$", ExcelUtility.ConverteDataTypeToString(columnTypeList[i]))
                             .Replace("$LowName$", columnNameList[i].ToLower()));
                         //ex : this.a = a;
                         //     this.b = b;
@@ -150,18 +152,5 @@ namespace ExcelEdit
             return cBody;
         }
         #endregion 엑셀파일을 CS로 변환
-
-        /// <summary> string에 맞는 eDataType을 반환 </summary>
-        private string ConverteDataTypeToString(eDataType type)
-        {
-            return type switch
-            {
-                eDataType.String => "string",
-                eDataType.Int => "int",
-                eDataType.Long => "long",
-                eDataType.Bool => "bool",
-                _ => string.Empty,
-            };
-        }
     }
 }

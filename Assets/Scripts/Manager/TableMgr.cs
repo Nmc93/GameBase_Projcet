@@ -3,16 +3,15 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.CompilerServices;
-using static UnityEngine.Rendering.DebugUI;
-using UnityEngine.Android;
 
 public class TableMgr : MgrBase
 {
     public static TableMgr instance;
 
-    private const string csvPath = "";
+    /// <summary> csv파일의 저장 폴더 </summary>
+    private const string csvPath = "Assets\\Resources\\TableCSV\\{0}.csv";
 
+    /// <summary> 테이블 데이터 </summary>
     private Dictionary<string, TableData> dicTable = new Dictionary<string, TableData>();
 
     private void Awake()
@@ -23,21 +22,25 @@ public class TableMgr : MgrBase
         SetTableDatas();
     }
 
+    #region 테이블 로드
     /// <summary> 테이블 세팅 </summary>
     private void SetTableDatas()
     {
         //테이블 데이터를 세팅
-        LoadTable<StringTableData>();
+        //StringTableData 세팅
+        dicTable.Add("StringTableData", LoadTable<StringTableData>());
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>
     /// <typeparam name="T"> 테이블 클래스만 가능 </typeparam>
-    private void LoadTable<T>() where T : TableBase
+    private TableData LoadTable<T>() where T : TableBase
     {
-        List<T> tableList = new List<T>();
+        Dictionary<object, TableBase> dicTables = new Dictionary<object, TableBase>(); 
         Type tp = typeof(T);
+        string path = tp.ToString();
+        path = string.Format(csvPath, path.Substring(0, path.Length - 4));
 
-        using (var file = new FileStream(csvPath, FileMode.Open, FileAccess.Read))
+        using (var file = new FileStream(path, FileMode.Open, FileAccess.Read))
         {
             using (var reader = new StreamReader(file))
             {
@@ -45,16 +48,13 @@ public class TableMgr : MgrBase
                 string[] types = reader.ReadLine().Split(",");
                 //테이블의 변수값
                 object[] tValue = new object[types.Length];
-                //테이블 세팅
-                string value;
-                string[] values;
                 while(true)
                 {
                     //저장할게 더 없을때까지 진행
-                    value = reader.ReadLine();
+                    string value = reader.ReadLine();
                     if(value != null)
                     {
-                        values = value.ToString().Split(",");
+                        string[] values = value.ToString().Split(",");
                         //types와 values의 수는 같음;
                         for (int i = 0; i < values.Length; ++i)
                         {
@@ -70,19 +70,61 @@ public class TableMgr : MgrBase
                     //TableBase : 1열, 테이블 1개
                     T tableBase = (T)Activator.CreateInstance(tp, tValue);
                     //테이블 저장
-                    tableList.Add(tableBase);
+                    dicTables.Add(tableBase.GetKey, tableBase);
                 }
             }
         }
 
-        TableData tableData = new TableData();
+        return new TableData(dicTables);
+    }
+    #endregion 테이블 로드
+
+    #region public 유틸
+    /// <summary> 지정된 테이블의 값을 반환 </summary>
+    /// <typeparam name="T">선택할 테이블</typeparam>
+    /// <param name="key"> 원하는 테이블 데이터의 ID </param>
+    /// <returns> 찾지 못했다면 null 반환 </returns>
+    public static T Get<T>(object key) where T : TableBase
+    {
+        Type type = typeof(T);
+        if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
+        {
+            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+        }
+
+        TableBase tb = tbleData[key];
+        if(tb == null)
+        {
+            Debug.LogError($"{type}테이블에서 {key}의 ID를 가진 정보를 찾을 수 없습니다.");
+        }
+
+        return tb as T;
     }
 
+    /// <summary> 지정된 테이블의 값을 저장하고 성공 여부를 반환 </summary>
+    /// <typeparam name="T">선택할 테이블</typeparam>
+    /// <param name="key">원하는 테이블 데이터의 ID</param>
+    /// <param name="table">테이블 데이터를 저장할 저장소</param>
+    /// <returns>찾지 못했다면 false 반환</returns>
+    public static bool Get<T>(object key, out T table) where T : TableBase
+    {
+        Type type = typeof(T);
+        if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
+        {
+            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+        }
+
+        table = tbleData[key] as T;
+        return table != null;
+    }
+    #endregion public 유틸 
+
+    #region private 유틸
     /// <summary> 지정된 타입으로 값을 형변환해서 반환 </summary>
     /// <param name="type"> 값의 타입 </param>
     /// <param name="value"> 테이블값 </param>
     /// <returns> 값이 제대로 지정되지 않으면 string으로 변환 </returns>
-    public object GetValue(string type,string value)
+    private object GetValue(string type,string value)
     {
         switch(type)
         {
@@ -98,62 +140,32 @@ public class TableMgr : MgrBase
                 return value;
         }
     }
+    #endregion private 유틸
 }
 
+#region 테이블 데이터
 /// <summary> 테이블 데이터 </summary>
 public class TableData
 {
+    public TableData(Dictionary<object, TableBase> dicTable)
+    {
+        this.dicTable = dicTable;
+    }
+
     public TableBase this[object key]
     {
         get
         {
-            TableBase table = null;
-
-            switch (type)
+            if(!dicTable.TryGetValue(key,out TableBase table))
             {
-                case "int":
-                    {
-                        if (key is int)
-                        {
-                            int val = (int)key;
-                            table = tableList.Find(item => (int)item.GetKey == val);
-                        }
-                    } 
-                    break;
-                case "long":
-                    {
-                        if (key is long)
-                        {
-                            long val = (long)key;
-                            table = tableList.Find(item => item.GetKey == key);
-                        }
-                    }
-                    break;
-                case "string":
-                    {
-                        if (key is string)
-                        {
-                            string val = (string)key;
-                            table = tableList.Find(item => item.GetKey == key);
-                        }
-                    }
-                    break;
-                case "bool":
-                    {
-                        if (key is bool)
-                        {
-                            bool val = (bool)key;
-                            table = tableList.Find(item => item.GetKey == key);
-                        }
-                    }
-                    break;
+                Debug.LogError($"{key}의 값을 가진 데이터가 없습니다.");
             }
+
             return table;
         }
     }
 
-    /// <summary> 테이블의 키의 타입 </summary>
-    private string type = "string";
     /// <summary> 테이블 딕셔너리 </summary>
-    public List<TableBase> tableList = new List<TableBase>();
+    public Dictionary<object, TableBase> dicTable = new Dictionary<object, TableBase>();
 }
+#endregion 테이블 데이터

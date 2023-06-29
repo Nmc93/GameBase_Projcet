@@ -6,11 +6,7 @@ using UnityEditor;
 using System.IO;
 using ExcelDataReader;
 using System.Data;
-using UnityEditorInternal.VersionControl;
 using System.Diagnostics;
-using DG.Tweening.Plugins.Core.PathCore;
-using static UnityEngine.Rendering.DebugUI;
-using Codice.Client.Common.GameUI;
 
 namespace ExcelEdit
 {
@@ -25,21 +21,25 @@ namespace ExcelEdit
 
     public class ExcelEdit : EditorWindow
     {
+        #region 데이터 경로
         /// <summary> 엑셀 테이블 폴더 경로 </summary>
         private string tablePath = "Table";
         /// <summary> 테이블의 CSV 폴더 경로 </summary>
         private string tableCSVPath = "Assets\\Resources\\TableCSV";
         /// <summary> 테이블의 CS 폴더 경로 </summary>
         private string tableCSPath = "Assets\\Scripts\\TableData";
+        #endregion 데이터 경로 
 
+        #region 검색 변수
         /// <summary> 검색 테이블용 텍스트 </summary>
         private string tableNameText = string.Empty;
-
         /// <summary> 검색된 테이블을 저장할 저장소 </summary>
         private string[] tableArray;
         /// <summary> 검색된 테이블의 스크롤 포지션 </summary>
         private Vector2 searchScrollPosition;
+        #endregion 검색 변수
 
+        #region 선택시 사용할 변수
         /// <summary> 선택된 테이블 이름 </summary>
         private string selectTableName = string.Empty;
         /// <summary> 선택된 엑셀 테이블 경로 </summary>
@@ -53,9 +53,9 @@ namespace ExcelEdit
         private List<string> selectColumnNameList = new List<string>();
         /// <summary> 선택된 테이블의 각 열의 타입들 </summary>
         private List<eDataType> selectColumnTypeList = new List<eDataType>();
-
         /// <summary> 검색된 테이블의 스크롤 포지션 </summary>
         private Vector2 selectScrollPosition;
+        #endregion 선택시 사용할 변수
 
         /// <summary> CS생성기 </summary>
         private ScriptGenerator scGenerator = new ScriptGenerator();
@@ -182,9 +182,6 @@ namespace ExcelEdit
             //검색된 테이블이 있을 경우에만
             if (!string.IsNullOrEmpty(selectTablePath))
             {
-                //selectColumnNameList[i]
-                //selectColumnTypeList[i]
-
                 if (selectColumnNameList != null && selectColumnNameList.Count > 0)
                 {
                     selectScrollPosition = EditorGUILayout.BeginScrollView(selectScrollPosition);
@@ -200,7 +197,6 @@ namespace ExcelEdit
                             GUILayout.Space(2);
                         }
                     }
-
                     GUILayout.EndScrollView();
                 }
             }
@@ -295,7 +291,7 @@ namespace ExcelEdit
                                 if (values.Length == 2)
                                 {
                                     selectColumnNameList.Add(values[0].ToString());
-                                    selectColumnTypeList.Add(ConvertStringToeDataType(values[1].ToString()));
+                                    selectColumnTypeList.Add(ExcelUtility.ConvertStringToeDataType(values[1].ToString()));
                                 }
                                 //설명용 열
                                 else if (values.Length == 1)
@@ -313,43 +309,15 @@ namespace ExcelEdit
                 }
             }
         }
-
-        /// <summary> string에 맞는 eDataType을 반환 </summary>
-        private eDataType ConvertStringToeDataType(string typeName)
-        {
-            return typeName switch
-            {
-                "string" => eDataType.String,
-                "int" => eDataType.Int,
-                "long" => eDataType.Long,
-                "bool" => eDataType.Bool,
-                _ => eDataType.None,
-            };
-        }
-
-        /// <summary> string에 맞는 eDataType을 반환 </summary>
-        private string ConverteDataTypeToString(eDataType type)
-        {
-            return type switch
-            {
-                eDataType.String => "string",
-                eDataType.Int => "int",
-                eDataType.Long => "long",
-                eDataType.Bool => "bool",
-                _ => string.Empty,
-            };
-        }
-
         #endregion 선택된 엑셀의 데이터 이름과 타입을 반환
 
         #region 엑셀파일을 CSV로 변환
         /// <summary> 엑셀파일을 CSV로 변환 </summary>
         public void ConvertExcelToCSV()
         {
-            if (string.IsNullOrEmpty(selectTablePath) ||
-                string.IsNullOrEmpty(selectTableCSVPath))
+            if (string.IsNullOrEmpty(selectTablePath) || string.IsNullOrEmpty(selectTableCSVPath))
             {
-                UnityEngine.Debug.LogError("지정된 주소가 없습니다.");
+                EditorUtility.DisplayDialog("CSV 생성/갱신", "실패 : 지정된 주소가 없습니다.", "확인");
                 return;
             }
 
@@ -413,44 +381,69 @@ namespace ExcelEdit
                 }
             }
 
-            //데이터를 저장
-            using (FileStream file = File.Open(selectTableCSVPath, FileMode.OpenOrCreate, FileAccess.Write))
+            using (StreamWriter writer = new StreamWriter(selectTableCSVPath, false))
             {
-                using (StreamWriter writer = new StreamWriter(file))
+                for (int i = 0; i < scvList.Count; ++i)
                 {
-                    for (int i = 0; i < scvList.Count; ++i)
-                    {
-                        writer.WriteLine(scvList[i]);
-                    }
+                    writer.WriteLine(scvList[i]);
                 }
-
                 EditorUtility.DisplayDialog("CSV 생성/갱신", "완료", "확인");
             }
         }
         #endregion 엑셀파일을 CSV로 변환
 
         #region 엑셀파일을 CS로 변환
-
         private void ConvertExcelToCS()
         {
             //CS파일 생성에 필요한 데이터 세팅
             scGenerator.SetExcelData(selectTableName, selectColumnNameList, selectColumnTypeList);
 
             //CS 스크립트
-            string csText = scGenerator.ConvertExcelToCS();
+            string csText = scGenerator.ConvertExcelToCSText();
 
             //데이터를 저장
             using (FileStream file = File.Open(selectTableCSPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(file))
                 {
+                    writer.Flush();
                     writer.Write(csText);
                 }
 
                 EditorUtility.DisplayDialog("CS 생성/갱신", "완료", "확인");
             }
         }
-
         #endregion 엑셀파일을 CS로 변환
     }
+
+    #region 엑셀에디터 유틸리티
+    public static class ExcelUtility
+    {
+        /// <summary> string에 맞는 eDataType을 반환 </summary>
+        public static string ConverteDataTypeToString(eDataType type)
+        {
+            return type switch
+            {
+                eDataType.String => "string",
+                eDataType.Int => "int",
+                eDataType.Long => "long",
+                eDataType.Bool => "bool",
+                _ => string.Empty,
+            };
+        }
+
+        /// <summary> string에 맞는 eDataType을 반환 </summary>
+        public static eDataType ConvertStringToeDataType(string typeName)
+        {
+            return typeName switch
+            {
+                "string" => eDataType.String,
+                "int" => eDataType.Int,
+                "long" => eDataType.Long,
+                "bool" => eDataType.Bool,
+                _ => eDataType.None,
+            };
+        }
+    }
+    #endregion 엑셀에디터 유틸리티
 }

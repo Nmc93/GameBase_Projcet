@@ -24,7 +24,6 @@ public class UIMgr : MgrBase
     /// <summary> UI ¿˙¿Âº“ </summary>
     private static Dictionary<eUI, UIData> dicUI = new Dictionary<eUI, UIData>();
 
-
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
