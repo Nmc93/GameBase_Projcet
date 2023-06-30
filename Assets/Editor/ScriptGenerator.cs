@@ -12,7 +12,7 @@ namespace ExcelEdit
         /// <summary> 클래스 이름 템플릿<br/> $CSName$ : 테이블이름</summary>
         const string csNameTemplate = "$CSName$Data";
         /// <summary> 클래스 몸통 템플릿 <br/> $CSName$ : 이름 <br/> $TblName$ : 테이블이름<br/> $GetKey$ : 키값 <br/> $Const$ : 생성자 <br/> $Values$ : 변수와 프로퍼티</summary>
-        const string csBodyTemplate = "public class $CSName$ : TableBase\n{\n\t$TblName$\n\t$GetKey$\n\n$Const$\n$Values$\n}";
+        const string csBodyTemplate = "using System;\nusing UnityEngine;\n \n[Serializable]\npublic class $CSName$ : TableBase\n{\n\t$TblName$\n\t$GetKey$\n\n$Const$\n$Values$\n}";
 
         /// <summary>테이블 이름 프로퍼티 <br/> $Name$ : 이름 </summary>
         const string csTblNameTemplate = "public override string TableName { get => \"$Name$\"; }";
@@ -20,7 +20,7 @@ namespace ExcelEdit
         const string csGetKeyTemplat = "public override object GetKey { get => $Key$; }";
 
         /// <summary> 변수와 프로퍼티 <br/> $Type$ : 타입<br/> $LowName$ : 소문자 변수이름<br/> $Name$ : 변수 이름) </summary>
-        const string csParamTemplate = "\n\tprivate $Type$ $LowName$;\n\tpublic $Type$ $Name$ { get => $LowName$; }";
+        const string csParamTemplate = "\n\t[SerializeField]\n\tprivate $Type$ $LowName$;\n\tpublic $Type$ $Name$ { get => $LowName$; }";
 
         /// <summary> 생성자 <br/> $CSName$ : 클래스 이름<br/> $Params$ : 매개변수<br/> $Value$ : 생성자 </summary>
         const string csConstBody = "\tpublic $CSName$ ($Params$) \n\t{\n$Value$\n\t}";

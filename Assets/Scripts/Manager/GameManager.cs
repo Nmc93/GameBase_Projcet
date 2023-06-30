@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
 
         #endregion 추후 추가
 
-
         //게임 시작
         GameStart();
     }

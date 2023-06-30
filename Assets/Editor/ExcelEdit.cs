@@ -24,6 +24,8 @@ namespace ExcelEdit
         #region 데이터 경로
         /// <summary> 엑셀 테이블 폴더 경로 </summary>
         private string tablePath = "Table";
+        /// <summary> 테이블의 바이너리 폴드 경로 </summary>
+        private string tablebytesPath = "Assets\\Resources\\TableBytes";
         /// <summary> 테이블의 CSV 폴더 경로 </summary>
         private string tableCSVPath = "Assets\\Resources\\TableCSV";
         /// <summary> 테이블의 CS 폴더 경로 </summary>
@@ -44,9 +46,11 @@ namespace ExcelEdit
         private string selectTableName = string.Empty;
         /// <summary> 선택된 엑셀 테이블 경로 </summary>
         private string selectTablePath = string.Empty;
-        /// <summary> 선택된 엑셀 테이블 경로 </summary>
+        /// <summary> 선택된 테이블 바이너리 경로 </summary>
+        private string selectTableBytesPath = string.Empty;
+        /// <summary> 선택된 테이블 CSV 경로 </summary>
         private string selectTableCSVPath = string.Empty;
-        /// <summary> 선택된 엑셀 테이블 경로 </summary>
+        /// <summary> 선택된 테이블 CS 경로 </summary>
         private string selectTableCSPath = string.Empty;
 
         /// <summary> 선택된 테이블의 각 열의 이름들 </summary>
@@ -214,6 +218,8 @@ namespace ExcelEdit
 
             //엑셀 테이블의 경로 세팅
             selectTablePath = excelPath;
+            //바이너리 경로  세팅
+            selectTableBytesPath = string.Format("{0}\\{1}.bytes", selectTableBytesPath, selectTableName);
             //CSV 테이블의 경로 세팅
             selectTableCSVPath = string.Format("{0}\\{1}.csv", tableCSVPath, selectTableName);
             //CS 데이터 클래스의 경로 세팅
@@ -311,18 +317,20 @@ namespace ExcelEdit
         }
         #endregion 선택된 엑셀의 데이터 이름과 타입을 반환
 
-        #region 엑셀파일을 CSV로 변환
+        #region 엑셀파일을 CSV,바이너리로 변환
         /// <summary> 엑셀파일을 CSV로 변환 </summary>
         public void ConvertExcelToCSV()
         {
-            if (string.IsNullOrEmpty(selectTablePath) || string.IsNullOrEmpty(selectTableCSVPath))
+            if (string.IsNullOrEmpty(selectTablePath) || 
+                string.IsNullOrEmpty(selectTableCSVPath) || 
+                string.IsNullOrEmpty(selectTableBytesPath))
             {
                 EditorUtility.DisplayDialog("CSV 생성/갱신", "실패 : 지정된 주소가 없습니다.", "확인");
                 return;
             }
 
             //csv 데이터 정리 리스트
-            List<string> scvList = new List<string>();
+            List<string> tableDataList = new List<string>();
 
             //경로에 있는 엑셀 파일을 읽기 모드로 오픈
             using (FileStream file = File.Open(selectTablePath, FileMode.Open, FileAccess.Read))
@@ -354,7 +362,7 @@ namespace ExcelEdit
                             return;
                         }
                     }
-                    scvList.Add(typeText);
+                    tableDataList.Add(typeText);
                     #endregion 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
 
                     #region 정보가 들어있는 두번째 행부터 저장
@@ -375,22 +383,29 @@ namespace ExcelEdit
                                     item.ToString() : string.Format("{0},{1}", rowText, item.ToString());
                             }
                         }
-                        scvList.Add(rowText);
+                        tableDataList.Add(rowText);
                     }
                     #endregion 정보가 들어있는 두번째 행부터 저장
                 }
             }
 
-            using (StreamWriter writer = new StreamWriter(selectTableCSVPath, false,System.Text.Encoding.UTF8))
+            //바이너리 세팅
+            //using (StreamWriter bytesWriter = new StreamWriter(selectTableBytesPath, false, System.Text.Encoding.UTF8))
+            //{
+            //    BinaryReader
+            //}
+
+            //CSV 세팅
+            using (StreamWriter csvWriter = new StreamWriter(selectTableCSVPath, false, System.Text.Encoding.UTF8))
             {
-                for (int i = 0; i < scvList.Count; ++i)
+                for (int i = 0; i < tableDataList.Count; ++i)
                 {
-                    writer.WriteLine(scvList[i]);
+                    csvWriter.WriteLine(tableDataList[i]);
                 }
-                EditorUtility.DisplayDialog("CSV 생성/갱신", "완료", "확인");
+                EditorUtility.DisplayDialog("CSV,바이너리 생성/갱신", "완료", "확인");
             }
         }
-        #endregion 엑셀파일을 CSV로 변환
+        #endregion 엑셀파일을 CSV,바이너리로 변환
 
         #region 엑셀파일을 CS로 변환
         private void ConvertExcelToCS()

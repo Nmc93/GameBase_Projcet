@@ -89,13 +89,13 @@ public class TableMgr : MgrBase
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+            UnityEngine.Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
         }
 
         TableBase tb = tbleData[key];
         if(tb == null)
         {
-            Debug.LogError($"{type}테이블에서 {key}의 ID를 가진 정보를 찾을 수 없습니다.");
+            UnityEngine.Debug.LogError($"{type}테이블에서 {key}의 ID를 가진 정보를 찾을 수 없습니다.");
         }
 
         return tb as T;
@@ -111,7 +111,7 @@ public class TableMgr : MgrBase
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+            UnityEngine.Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
         }
 
         table = tbleData[key] as T;
@@ -145,6 +145,7 @@ public class TableMgr : MgrBase
 
 #region 테이블 데이터
 /// <summary> 테이블 데이터 </summary>
+[Serializable]
 public class TableData
 {
     public TableData(Dictionary<object, TableBase> dicTable)
@@ -158,7 +159,7 @@ public class TableData
         {
             if(!dicTable.TryGetValue(key,out TableBase table))
             {
-                Debug.LogError($"{key}의 값을 가진 데이터가 없습니다.");
+                UnityEngine.Debug.LogError($"{key}의 값을 가진 데이터가 없습니다.");
             }
 
             return table;

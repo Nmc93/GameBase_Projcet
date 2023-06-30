@@ -87,7 +87,7 @@ public class SceneMgr : MgrBase
             case eScene.LobbyScene:
                 {
                     //·Îºñ ¾À ¿ÀÇÂ
-                    UIMgr.OpenUI(eUI.UILoading);
+                    UIMgr.OpenUI(eUI.UILobby);
                 }
                 break;
             case eScene.GameScene:

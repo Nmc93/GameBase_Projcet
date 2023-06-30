@@ -36,6 +36,8 @@ public class UIMgr : MgrBase
         UIDataSetting();
     }
 
+    #region Setting
+
     /// <summary> 캔버스를 생성하고 세팅 </summary>
     private void CanvasSetting()
     {
@@ -116,7 +118,12 @@ public class UIMgr : MgrBase
     {
         //로딩 화면 UI
         dicUI.Add(eUI.UILoading, new UIData("UI/UILoading"));
+
+        //로비 화면 UI
+        dicUI.Add(eUI.UILobby, new UIData("UI/UILobby"));
     }
+
+    #endregion Setting
 
     #region Open
 

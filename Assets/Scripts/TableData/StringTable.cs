@@ -1,3 +1,7 @@
+using System;
+using UnityEngine;
+ 
+[Serializable]
 public class StringTableData : TableBase
 {
 	public override string TableName { get => "StringTable"; }
@@ -9,9 +13,11 @@ public class StringTableData : TableBase
 		this.text = text;
 	}
 	
+	[SerializeField]
 	private string id;
 	public string ID { get => id; }
 	
+	[SerializeField]
 	private string text;
 	public string Text { get => text; }
 }
