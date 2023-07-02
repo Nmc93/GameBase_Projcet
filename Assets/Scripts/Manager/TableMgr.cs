@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class TableMgr : MgrBase
 {
@@ -10,6 +11,8 @@ public class TableMgr : MgrBase
 
     /// <summary> csv파일의 저장 폴더 </summary>
     private const string csvPath = "Assets\\Resources\\TableCSV\\{0}.csv";
+    /// <summary> 바이너리 파일의 저장 폴더 </summary>
+    private const string binaryPath = "TableBytes\\{0}";
 
     /// <summary> 테이블 데이터 </summary>
     private Dictionary<string, TableData> dicTable = new Dictionary<string, TableData>();
@@ -29,54 +32,40 @@ public class TableMgr : MgrBase
         //테이블 데이터를 세팅
         //StringTableData 세팅
         dicTable.Add("StringTableData", LoadTable<StringTableData>());
+        //Assets\\Resources\\TableBytes\\StringTableData.bytes
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>
     /// <typeparam name="T"> 테이블 클래스만 가능 </typeparam>
     private TableData LoadTable<T>() where T : TableBase
     {
-        Dictionary<object, TableBase> dicTables = new Dictionary<object, TableBase>(); 
-        Type tp = typeof(T);
-        string path = tp.ToString();
-        path = string.Format(csvPath, path.Substring(0, path.Length - 4));
+        //해당 타입의 테이블 데이터
+        TableData tableData = null;
+        //경로 세팅
+        string path = string.Format(binaryPath, typeof(T).ToString());
 
-        using (var file = new FileStream(path, FileMode.Open, FileAccess.Read))
+        //경로에 있는 데이터 로드
+        TextAsset textAsset = Resources.Load<TextAsset>(path);
+
+        if (textAsset != null)
         {
-            using (var reader = new StreamReader(file))
+            //직렬화된 클래스를 역직렬화
+            using (MemoryStream stream = new MemoryStream(textAsset.bytes))
             {
-                //테이블 데이터 타입
-                string[] types = reader.ReadLine().Split(",");
-                //테이블의 변수값
-                object[] tValue = new object[types.Length];
-                while(true)
-                {
-                    //저장할게 더 없을때까지 진행
-                    string value = reader.ReadLine();
-                    if(value != null)
-                    {
-                        string[] values = value.ToString().Split(",");
-                        //types와 values의 수는 같음;
-                        for (int i = 0; i < values.Length; ++i)
-                        {
-                            //테이블 하나 완성
-                            tValue[i] = GetValue(types[i], values[i]);
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                    //TableBase : 1열, 테이블 1개
-                    T tableBase = (T)Activator.CreateInstance(tp, tValue);
-                    //테이블 저장
-                    dicTables.Add(tableBase.GetKey, tableBase);
-                }
+                BinaryFormatter bf = new BinaryFormatter();
+                tableData = bf.Deserialize(stream) as TableData;
             }
         }
 
-        return new TableData(dicTables);
+        //테이블을 찾을 수 없을 경우
+        if (tableData == null)
+        {
+            Debug.LogError(textAsset == null ? $"{typeof(T)}의 직렬화된 데이터를 찾을 수 없습니다." : $"{typeof(T)}의 역직렬화에 실패했습니다.");
+        }
+
+        return tableData;
     }
+
     #endregion 테이블 로드
 
     #region public 유틸
@@ -89,13 +78,13 @@ public class TableMgr : MgrBase
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            UnityEngine.Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
         }
 
         TableBase tb = tbleData[key];
         if(tb == null)
         {
-            UnityEngine.Debug.LogError($"{type}테이블에서 {key}의 ID를 가진 정보를 찾을 수 없습니다.");
+            Debug.LogError($"{type}테이블에서 {key}의 ID를 가진 정보를 찾을 수 없습니다.");
         }
 
         return tb as T;
@@ -111,7 +100,9 @@ public class TableMgr : MgrBase
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            UnityEngine.Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+            Debug.LogError($"{type}의 테이블 정보를 찾을 수 없습니다.");
+            table = null;
+            return false;
         }
 
         table = tbleData[key] as T;

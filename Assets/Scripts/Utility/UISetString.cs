@@ -14,6 +14,7 @@ public class UISetString : MonoBehaviour
     [Header("[해당 텍스트에 사용할 키값]"), Tooltip("해당 텍스트에 사용할 키값")]
     [SerializeField] string key;
 
+    /// <summary> 출력할 문자열 </summary>
     private string textString;
 
     private void OnEnable()

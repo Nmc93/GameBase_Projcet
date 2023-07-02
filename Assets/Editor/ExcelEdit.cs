@@ -7,6 +7,8 @@ using System.IO;
 using ExcelDataReader;
 using System.Data;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Reflection;
 
 namespace ExcelEdit
 {
@@ -27,7 +29,7 @@ namespace ExcelEdit
         /// <summary> 테이블의 바이너리 폴드 경로 </summary>
         private string tablebytesPath = "Assets\\Resources\\TableBytes";
         /// <summary> 테이블의 CSV 폴더 경로 </summary>
-        private string tableCSVPath = "Assets\\Resources\\TableCSV";
+        private string tableCSVPath = "TableCSV";
         /// <summary> 테이블의 CS 폴더 경로 </summary>
         private string tableCSPath = "Assets\\Scripts\\TableData";
         #endregion 데이터 경로 
@@ -85,16 +87,32 @@ namespace ExcelEdit
             //버튼(버튼 이름)
             if (GUILayout.Button("테이블 검색", GUILayout.Width(100f)))
             {
+                string[] tableNames;
+                List<string> tableList = new List<string>();
+
                 //테이블 이름을 입력하지 않았을 경우
                 if (string.IsNullOrEmpty(tableNameText))
                 {
-                    tableArray = Directory.GetFiles(tablePath, "*.xlsx");
+                    tableNames = Directory.GetFiles(tablePath, "*.xlsx");
                 }
                 //테이블 이름을 입력했을 경우
                 else
                 {
-                    tableArray = Directory.GetFiles(tablePath, $"*{tableNameText}*");
+                    tableNames = Directory.GetFiles(tablePath, $"*{tableNameText}*");
                 }
+
+                for(int i = 0; i < tableNames.Length; ++i)
+                {
+                    string tableName = tableNames[i].Substring(6);
+                    tableName = tableName.Substring(0, tableName.Length - 5);
+                    if (tableName.Contains(tableNameText, StringComparison.OrdinalIgnoreCase))
+                    {
+                        tableList.Add(tableNames[i]);
+                    }
+                }
+
+                //검색된 테이블 저장
+                tableArray = tableList.ToArray();
             }
 
             GUILayout.EndHorizontal();
@@ -143,7 +161,7 @@ namespace ExcelEdit
             GUILayout.BeginArea(new Rect(position.width / 2, 90, position.width / 2, 200), GUI.skin.window);
 
             #region 테이블 csv 생성 및 갱신
-            if (GUILayout.Button($"{selectTableName}.csv 생성/갱신"))
+            if (GUILayout.Button($"{selectTableName}.bytes(.csv) 생성/갱신"))
             {
                 ConvertExcelToCSV();
             }
@@ -157,7 +175,7 @@ namespace ExcelEdit
             #endregion 테이블 cs 생성 및 갱신
 
             #region 엑셀 테이블 폴더 열기
-            if (GUILayout.Button("폴더 열기"))
+            if (GUILayout.Button("엑셀 테이블 폴더 열기"))
             {
                 // 주소가 맞는지 확인
                 if (Directory.Exists(tablePath))
@@ -174,6 +192,63 @@ namespace ExcelEdit
                 }
             }
             #endregion 엑셀 테이블 폴더 열기
+
+            #region 바이너리 폴더 열기
+            if (GUILayout.Button("바이너리 폴더 열기"))
+            {
+                // 주소가 맞는지 확인
+                if (Directory.Exists(tablebytesPath))
+                {
+                    try
+                    {
+                        //폴더 오픈
+                        Process.Start(tablebytesPath);
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.LogError($"폴더 열기 실패 : {e.Message}");
+                    }
+                }
+            }
+            #endregion 바이너리 폴더 열기
+
+            #region CSV 폴더 열기
+            if (GUILayout.Button("CSV 폴더 열기"))
+            {
+                // 주소가 맞는지 확인
+                if (Directory.Exists(tableCSVPath))
+                {
+                    try
+                    {
+                        //폴더 오픈
+                        Process.Start(tableCSVPath);
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.LogError($"폴더 열기 실패 : {e.Message}");
+                    }
+                }
+            }
+            #endregion CSV 폴더 열기
+
+            #region CS 폴더 열기
+            if (GUILayout.Button("CS 폴더 열기"))
+            {
+                // 주소가 맞는지 확인
+                if (Directory.Exists(tableCSPath))
+                {
+                    try
+                    {
+                        //폴더 오픈
+                        Process.Start(tableCSPath);
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.LogError($"폴더 열기 실패 : {e.Message}");
+                    }
+                }
+            }
+            #endregion CS 폴더 열기
 
             GUILayout.EndArea();
             #endregion 검색한 테이블 컨버트(오른쪽 박스)
@@ -219,11 +294,11 @@ namespace ExcelEdit
             //엑셀 테이블의 경로 세팅
             selectTablePath = excelPath;
             //바이너리 경로  세팅
-            selectTableBytesPath = string.Format("{0}\\{1}.bytes", selectTableBytesPath, selectTableName);
+            selectTableBytesPath = string.Format("{0}\\{1}Data.bytes", tablebytesPath, selectTableName);
             //CSV 테이블의 경로 세팅
             selectTableCSVPath = string.Format("{0}\\{1}.csv", tableCSVPath, selectTableName);
             //CS 데이터 클래스의 경로 세팅
-            selectTableCSPath = string.Format("{0}\\{1}.cs", tableCSPath, selectTableName);
+            selectTableCSPath = string.Format("{0}\\{1}Data.cs", tableCSPath, selectTableName);
 
             //테이블의 이름과 타입 세팅
             SetExcelData(selectTablePath);
@@ -329,81 +404,148 @@ namespace ExcelEdit
                 return;
             }
 
+            TableData tData = null;
+            
+            //행 저장용
+            string csvText = string.Empty;
+            string typeName = $"{selectTableName}Data";
             //csv 데이터 정리 리스트
-            List<string> tableDataList = new List<string>();
+
+            //타입 세팅
+            Assembly ab = Assembly.LoadFrom("Library/ScriptAssemblies/Assembly-CSharp.dll");
+            Type type = ab.GetType(typeName);
+            //타입을 찾지 못했을 경우
+            if(type == null)
+            {
+                foreach(var item in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    type = item.GetType(typeName);
+                    if(type != null)
+                        break;
+                }
+            }
 
             //경로에 있는 엑셀 파일을 읽기 모드로 오픈
+            Dictionary<object, TableBase> dicTable = new Dictionary<object, TableBase>();
             using (FileStream file = File.Open(selectTablePath, FileMode.Open, FileAccess.Read))
             {
                 //해당 파일을 엑셀 데이터로 변환할 수 있는 데이터 생성
                 using (var reader = ExcelReaderFactory.CreateReader(file))
                 {
                     #region 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
+                    //첫번째 줄 - 타입 열 세팅
                     reader.Read();
-                    string[] typeTexts;
-                    string typeText = string.Empty;
+
+                    //테이블의 열의 타입들
+                    string typeStr = string.Empty;
+
+                    //타입 세팅
                     for (int i = 0; i < reader.FieldCount; ++i)
                     {
                         var item = reader[i];
                         if (item != null)
                         {
-                            typeTexts = item.ToString().Split("-");
-                            //이름-타입의 형식을 가진 데이터 타입의 열일 경우에만 저장
-                            if (typeTexts.Length == 2)
-                            {
-                                //타입만 저장
-                                typeText = typeText == string.Empty ? 
-                                    typeTexts[1] : string.Format("{0},{1}", typeText, typeTexts[1]);
-                            }
+                            //해당 열이 설명타입일 경우 저장 캔슬
+                            if (selectColumnTypeList[i] == eDataType.None)
+                                continue;
+
+                            //텍스트 세팅
+                            typeStr = i == 0 ?
+                                ExcelUtility.ConverteDataTypeToString(selectColumnTypeList[i]) : 
+                                $"{typeStr},{ExcelUtility.ConverteDataTypeToString(selectColumnTypeList[i])}";
                         }
                         else
                         {
-                            EditorUtility.DisplayDialog("CSV 생성/갱신", $"실패 : {i}번째 열에 설명이 없습니다.", "확인");
+                            EditorUtility.DisplayDialog("바이너리 생성/갱신", $"실패 : {i}번째 열에 설명이 없습니다.", "확인");
                             return;
                         }
                     }
-                    tableDataList.Add(typeText);
+
+                    //종료 후 CSV 줄 바꿈을 위해 "" 씌움
+                    csvText = $"\"{typeStr}\"";
                     #endregion 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
 
                     #region 정보가 들어있는 두번째 행부터 저장
+                    //테이블 정보 저장
+                    string rowText = string.Empty;
+
+                    //더 저장할 데이터가 없을 때 까지 진행
                     while (reader.Read())
                     {
-                        //행 저장용
-                        string rowText = string.Empty;
+                        //테이블 정보의 값 목록
+                        List<object> valueList = new List<object>();
+
                         for (int i = 0; i < reader.FieldCount; ++i)
                         {
-                            //해당 열이 설명타입일 경우 저장 캔슬
-                            if(selectColumnTypeList[i] == eDataType.None)
+                            //해당 데이터의 타입이 None(메모용)일 경우 저장 캔슬
+                            if (selectColumnTypeList[i] == eDataType.None)
                                 continue;
 
+                            //데이터에 정보가 있는 경우
                             var item = reader[i];
                             if (item != null)
                             {
-                                rowText = rowText == string.Empty ?
-                                    item.ToString() : string.Format("{0},{1}", rowText, item.ToString());
+                                //타입에 맞게 값을 형변환해서 저장
+                                valueList.Add(ExcelUtility.GetValue(selectColumnTypeList[i], item.ToString()));
                             }
+                            //데이터에 정보가 없는 경우
+                            else
+                            {
+                                //타입에 따라 디폴트 세팅 적용
+                                switch(selectColumnTypeList[i])
+                                {
+                                    case eDataType.Bool:
+                                        valueList.Add(false);
+                                        break;
+                                    case eDataType.Int:
+                                    case eDataType.Long:
+                                        valueList.Add(0);
+                                        break;
+                                    case eDataType.String:
+                                        valueList.Add(string.Empty);
+                                        break;
+                                }
+                            }
+
+                            //CSV 텍스트 세팅
+                            rowText = rowText == string.Empty ? item.ToString() : $"{rowText},{item}";
                         }
-                        tableDataList.Add(rowText);
+
+                        //종료 후 CSV 줄 바꿈을 위해 "" 씌움
+                        csvText = $"{csvText}\"{rowText}\"";
+
+                        TableBase tableObj = (TableBase)Activator.CreateInstance(type, valueList.ToArray());
+                        dicTable.Add(tableObj.GetKey, tableObj);
                     }
                     #endregion 정보가 들어있는 두번째 행부터 저장
+
+                    tData = new TableData(dicTable);
                 }
             }
 
-            //바이너리 세팅
-            //using (StreamWriter bytesWriter = new StreamWriter(selectTableBytesPath, false, System.Text.Encoding.UTF8))
-            //{
-            //    BinaryReader
-            //}
-
-            //CSV 세팅
-            using (StreamWriter csvWriter = new StreamWriter(selectTableCSVPath, false, System.Text.Encoding.UTF8))
+            #region 데이터 저장
+            if (tData != null)
             {
-                for (int i = 0; i < tableDataList.Count; ++i)
+                //바이너리 세팅
+                using (FileStream binaryFile = new FileStream(selectTableBytesPath, FileMode.OpenOrCreate, FileAccess.Write))
                 {
-                    csvWriter.WriteLine(tableDataList[i]);
+                    BinaryFormatter bf = new BinaryFormatter();
+                    bf.Serialize(binaryFile, tData);
                 }
-                EditorUtility.DisplayDialog("CSV,바이너리 생성/갱신", "완료", "확인");
+
+                //CSV 세팅
+                using (StreamWriter csvWriter = new StreamWriter(selectTableCSVPath, false, System.Text.Encoding.UTF8))
+                {
+                    csvWriter.Write(csvText);
+                    EditorUtility.DisplayDialog("CSV,바이너리 생성/갱신", "완료", "확인");
+                }
             }
+            else
+            {
+                EditorUtility.DisplayDialog("바이너리 생성/갱신", $"실패 : 테이블 데이터 생성에 실패했습니다.", "확인");
+                return;
+            }
+            #endregion 데이터 저장
         }
         #endregion 엑셀파일을 CSV,바이너리로 변환
 
@@ -458,6 +600,27 @@ namespace ExcelEdit
                 "bool" => eDataType.Bool,
                 _ => eDataType.None,
             };
+        }
+
+        /// <summary> 지정된 타입으로 값을 형변환해서 반환 </summary>
+        /// <param name="type"> 값의 타입 </param>
+        /// <param name="value"> 테이블값 </param>
+        /// <returns> 값이 제대로 지정되지 않으면 string으로 변환 </returns>
+        public static object GetValue(eDataType type, string value)
+        {
+            switch (type)
+            {
+                case eDataType.Int:
+                    return int.Parse(value);
+                case eDataType.Long:
+                    return long.Parse(value);
+                case eDataType.String :
+                    return value;
+                case eDataType.Bool :
+                    return bool.Parse(value);
+                default:
+                    return value;
+            }
         }
     }
     #endregion 엑셀에디터 유틸리티
