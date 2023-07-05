@@ -207,8 +207,8 @@ public class UIMgr : MgrBase
             //UI가 열려있는 경우에만 종료
             if (ui.uiClass != null && ui.uiClass.IsOpen)
             {
-                //로딩창이 아닌 경우에만 종료
-                if (ui.uiClass.uiType != eUI.UILoading)
+                //씬 종료시 종료되는 UI만 지정
+                if (ui.uiClass.IsSceneChangeClose)
                 {
                     ui.uiClass.Close();
                 }

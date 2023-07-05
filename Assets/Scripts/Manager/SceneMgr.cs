@@ -8,12 +8,12 @@ public class SceneMgr : MgrBase
 {
     public static SceneMgr instance;
 
-    /// <summary> 현재 씬 </summary>
-    private eScene curScene = eScene.LobbyScene;
 
     /// <summary> 현재 씬 </summary>
     public eScene CurScene => curScene;
 
+    /// <summary> 현재 씬 </summary>
+    private eScene curScene = eScene.LobbyScene;
     /// <summary> 비동기 씬 변경 코루틴 </summary>
     private Coroutine changeCoroutine;
 
@@ -27,28 +27,38 @@ public class SceneMgr : MgrBase
     /// <param name="scene"> 변경될 씬 </param>
     public void ChangeScene(eScene scene)
     {
+        if (curScene == scene)
+        {
+            Debug.LogError("현재 씬과 같은 씬으로는 이동할 수 없습니다.");
+            return;
+        }
+
+        //씬 변경 코루틴이 돌고 있지 않을 경우에만
         if (changeCoroutine == null)
         {
             //로딩 UI 활성화 및 저장
-            if (UIMgr.OpenUI(eUI.UILoading) &&
-                UIMgr.instance.GetUI(out UILoading loading))
+            if (UIMgr.OpenUI(eUI.UILoading) && UIMgr.instance.GetUI(out UILoading loading))
             {
-                //현재 씬 종료 시작
-                loading.ChangeState(UILoading.eLoadingState.CloseCurScene);
-                CloseCurScene();
+                //로딩 UI를 불러오면서 로딩 UI의 상태는 자동적으로 실행
 
-                //씬 변경 시작
+                //----------------------------- 씬 종료 --------------------------------
+                // 모든 PageUI 종료
+                UIMgr.UIAllClose();
+
+                //----------------------------- 씬 시작 --------------------------------
+                //로딩 UI의 상태를 씬 변경중으로 변경
                 loading.ChangeState(UILoading.eLoadingState.SceneChange);
+                //비동기 씬 전환 실행
                 changeCoroutine = StartCoroutine(OpenScene(scene, loading));
             }
         }
         else
         {
-            Debug.LogError($"씬 변경중에 [{scene}]으로 변경하려 했습니다.");
+            Debug.LogError($"씬 변경중에 씬을 변경할 수 없습니다.");
         }
     }
 
-    #region 씬 오픈
+    #region 씬 전환
 
     /// <summary> 씬 변경  </summary>
     private IEnumerator OpenScene(eScene sceneType, UILoading loadingUI)
@@ -105,29 +115,5 @@ public class SceneMgr : MgrBase
         }
     }
 
-    #endregion 씬 오픈
-
-    #region 씬 종료
-
-    /// <summary> 현재 씬 종료 </summary>
-    private void CloseCurScene()
-    {
-        // 모든 PageUI 종료
-        UIMgr.UIAllClose();
-
-        // 오브젝트 정리
-        switch (curScene)
-        {
-            case eScene.LobbyScene:
-                {
-                }
-                break;
-            case eScene.GameScene:
-                {
-                }
-                break;
-        }
-    }
-
-    #endregion 씬 종료
+    #endregion 씬 전환
 }

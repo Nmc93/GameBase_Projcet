@@ -14,7 +14,7 @@ public class UILobby : UIBase
     /// <summary> 게임 시작 버튼 </summary>
     public void OnClickStartGame()
     {
-
+        SceneMgr.instance.ChangeScene(eScene.GameScene);
     }
 
 }
