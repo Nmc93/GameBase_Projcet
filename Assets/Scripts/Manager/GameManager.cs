@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
         SceneMgr.instance.OpenCurScene();
     }
 
-
     #region Get
 
     /// <summary> 매니저 클래스를 반환하는 함수 </summary>

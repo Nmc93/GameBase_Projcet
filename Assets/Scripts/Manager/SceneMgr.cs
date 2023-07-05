@@ -29,11 +29,18 @@ public class SceneMgr : MgrBase
     {
         if (changeCoroutine == null)
         {
-            //현재 씬 종료
-            CloseCurScene();
+            //로딩 UI 활성화 및 저장
+            if (UIMgr.OpenUI(eUI.UILoading) &&
+                UIMgr.instance.GetUI(out UILoading loading))
+            {
+                //현재 씬 종료 시작
+                loading.ChangeState(UILoading.eLoadingState.CloseCurScene);
+                CloseCurScene();
 
-            //지정된 씬 오픈
-            changeCoroutine = StartCoroutine(OpenScene(scene));
+                //씬 변경 시작
+                loading.ChangeState(UILoading.eLoadingState.SceneChange);
+                changeCoroutine = StartCoroutine(OpenScene(scene, loading));
+            }
         }
         else
         {
@@ -44,7 +51,7 @@ public class SceneMgr : MgrBase
     #region 씬 오픈
 
     /// <summary> 씬 변경  </summary>
-    private IEnumerator OpenScene(eScene sceneType)
+    private IEnumerator OpenScene(eScene sceneType, UILoading loadingUI)
     {
         //변경된 씬을 대기시킴
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneType.ToString());
@@ -106,7 +113,8 @@ public class SceneMgr : MgrBase
     private void CloseCurScene()
     {
         // 모든 PageUI 종료
-        // 코어 UI 종료
+        UIMgr.UIAllClose();
+
         // 오브젝트 정리
         switch (curScene)
         {

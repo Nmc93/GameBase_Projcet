@@ -199,6 +199,23 @@ public class UIMgr : MgrBase
 
     #region Close
 
+    /// <summary> 현재 열려있는 모든 UI 종료 </summary>
+    public static void UIAllClose()
+    {
+        foreach(var ui in dicUI.Values)
+        {
+            //UI가 열려있는 경우에만 종료
+            if (ui.uiClass != null && ui.uiClass.IsOpen)
+            {
+                //로딩창이 아닌 경우에만 종료
+                if (ui.uiClass.uiType != eUI.UILoading)
+                {
+                    ui.uiClass.Close();
+                }
+            }
+        }
+    }
+
     /// <summary> UI 종료 </summary>
     /// <typeparam name="T"> UIBase를 상속받은 UI의 메인 컴포넌트 타입 </typeparam>
     /// <returns> 종료에 성공하면 true </returns>
@@ -288,9 +305,9 @@ public class UIMgr : MgrBase
     /// <typeparam name="T">UIBase 를 상속받은 UI 클래스</typeparam>
     /// <param name="uiBase"> 검색 결과 반환 </param>
     /// <returns> 검색 성공시 true </returns>
-    public bool GetUI<T>(out UIBase uiBase) where T : UIBase
+    public bool GetUI<T>(out T uiBase) where T : UIBase
     {
-        uiBase = GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
+        uiBase = GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name)) as T;
         return uiBase != null;
     }
 
