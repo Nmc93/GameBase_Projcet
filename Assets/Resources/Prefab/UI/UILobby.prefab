@@ -60,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e838d628051799d47a5f7231b752c6d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSceneChangeClose: 1
 --- !u!1 &220438172090523883
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,4 +408,16 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6260532019351070142}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7791441678141744467}
+        m_TargetAssemblyTypeName: UILobby, Assembly-CSharp
+        m_MethodName: OnClickStartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

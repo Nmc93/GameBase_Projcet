@@ -39,4 +39,17 @@ namespace GEnum
         
     }
 
+    /// <summary> 로딩 상태 </summary>
+    public enum eLoadingState
+    {
+        /// <summary> 씬 변경 진행중이 아님 </summary>
+        None,
+        /// <summary> UI 종료 시작 </summary>
+        CloseCurScene,
+        /// <summary> 씬 변경 시작 </summary>
+        SceneChange,
+        /// <summary> 씬 변경 대기 </summary>
+        WaitChangeScene
+    }
+
 }

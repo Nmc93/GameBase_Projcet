@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class UILoading : UIBase
 {
@@ -11,16 +12,6 @@ public class UILoading : UIBase
 
     public override eUI uiType => eUI.UILoading;
 
-    /// <summary> 로딩 상태 </summary>
-    public enum eLoadingState
-    {
-        /// <summary> UI 종료 시작 </summary>
-        CloseCurScene,
-        /// <summary> 씬 변경 시작 </summary>
-        SceneChange,
-        /// <summary> 씬 변경 대기 </summary>
-        WaitChangeScene
-    }
 
     #region 인스펙터
 
@@ -32,16 +23,10 @@ public class UILoading : UIBase
 
     #endregion 인스펙터
 
-    /// <summary> 로딩 진행 스크롤 </summary>
-    public float ScrollProgress
-    {
-        set => scrollbar.size = value;
-    }
-
     /// <summary> 텍스트 이펙트 </summary>
     private Coroutine textMove;
     /// <summary> UI의 현재 상태 </summary>
-    private eLoadingState curState = eLoadingState.CloseCurScene;
+    private eLoadingState curState = eLoadingState.None;
     /// <summary> 텍스트에 사용할 문장 </summary>
     private string moveString;
 
@@ -49,8 +34,19 @@ public class UILoading : UIBase
     {
         base.DataSetting();
 
-        //데이터 최초 세팅
-        ChangeState(eLoadingState.CloseCurScene);
+        //데이터 초기화
+        curState = eLoadingState.None;
+        moveString = string.Empty;
+        scrollbar.size = 0;
+        //텍스트 이펙트가 활성화 상태라면 비활성화
+        if (DOTween.IsTweening(txt))
+        {
+            txt.DOKill();
+        }
+
+        //이벤트 등록
+        SceneMgr.instance.onGetchanProgress += SetProgress;
+        SceneMgr.instance.onGetChanState += ChangeState;
 
         //코루틴 시작
         textMove = StartCoroutine(TextMove());
@@ -60,9 +56,19 @@ public class UILoading : UIBase
     {
         base.Close();
 
+        //이벤트 해제
+        SceneMgr.instance.onGetchanProgress -= SetProgress;
+        SceneMgr.instance.onGetChanState -= ChangeState;
+
         //코루틴 종료
-        StopCoroutine(textMove);
+        if (textMove != null)
+        {
+            StopCoroutine(textMove);
+            textMove = null;
+        }
     }
+
+    #region 이벤트
 
     /// <summary> 로딩 상태 변경 </summary>
     /// <param name="state"></param>
@@ -72,41 +78,73 @@ public class UILoading : UIBase
 
         switch (curState)
         {
+            // 현재 씬을 종료
             case eLoadingState.CloseCurScene:
-                moveString = TableMgr.Get<StringTableData>("Loading1").Text;
-                scrollbar.gameObject.SetActive(false);
+                {
+                    moveString = TableMgr.Get<StringTableData>("Loading1").Text;
+                    scrollbar.gameObject.SetActive(false);
+                }
                 break;
+            // 씬 변경
             case eLoadingState.SceneChange:
-                moveString = TableMgr.Get<StringTableData>("Loading2").Text;
-                scrollbar.gameObject.SetActive(true);
+                {
+                    moveString = TableMgr.Get<StringTableData>("Loading2").Text;
+                    scrollbar.gameObject.SetActive(true);
+                }
                 break;
+            // 변경작업을 완료하고 대기
             case eLoadingState.WaitChangeScene:
-                moveString = TableMgr.Get<StringTableData>("LoadingCom").Text;
+                {
+                    //코루틴 종료
+                    if (textMove != null)
+                    {
+                        StopCoroutine(textMove);
+                        textMove = null;
+                    }
+
+                    //텍스트 세팅 및 깜빡이는 이펙트 적용
+                    moveString = TableMgr.Get<StringTableData>("LoadingCom").Text;
+                    txt.text = moveString;
+                    txt.DOFade(0.0f, 1).SetLoops(-1,LoopType.Yoyo);
+                }
+                break;
+            //UI 종료 페이즈
+            case eLoadingState.None:
+                {
+                    Close();
+                }
                 break;
         }
     }
 
+    /// <summary> 진행 바 조절 </summary>
+    public void SetProgress(float value)
+    {
+        scrollbar.size = value;
+    }
+
+    #endregion 이벤트
+
+    #region 텍스트 이동 코루틴
     /// <summary> 텍스트 이동 코루틴 </summary>
     IEnumerator TextMove()
     {
         string middleStr = string.Empty;
-        while (true)
+        while (scrollbar.size < 1)
         {
-            //텍스트 이펙트
-            if(middleStr.Length > 6)
-                middleStr = $"{middleStr}.";
-            else
-                middleStr = string.Empty;
-
-            txt.text = string.Format("{0}{1}", moveString, middleStr);
-            yield return new WaitForSeconds(0.5f);
-
-            //스크롤바를 전부 채웠거나 현재 상태가 씬 변경 대기 타입일 경우
-            if(scrollbar.size >= 1 || curState == eLoadingState.WaitChangeScene)
+            if (string.IsNullOrEmpty(moveString))
             {
-                txt.text = string.Format("{0}{1}", moveString, ".");
-                break;
+                //텍스트 이펙트
+                if (middleStr.Length > 6)
+                    middleStr = $"{middleStr}.";
+                else
+                    middleStr = string.Empty;
+
+                txt.text = string.Format("{0}{1}", moveString, middleStr);
             }
+
+            yield return new WaitForSeconds(0.5f);
         }
     }
+    #endregion 텍스트 이동 코루틴
 }

@@ -16,5 +16,4 @@ public class UILobby : UIBase
     {
         SceneMgr.instance.ChangeScene(eScene.GameScene);
     }
-
 }
