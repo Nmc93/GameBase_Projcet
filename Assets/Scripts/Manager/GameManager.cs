@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         instance = this;
 
+        //옵션 매니저
+        GameObject optionMgrObj = new GameObject();
+        optionMgrObj.name = "OptionMgr";
+        mgrDic.Add(eMgr.OptionMgr, optionMgrObj.AddComponent<OptionMgr>());
+
         //테이블 매니저 세팅
         GameObject tableMgr = new GameObject();
         tableMgr.name = "TableMgr";

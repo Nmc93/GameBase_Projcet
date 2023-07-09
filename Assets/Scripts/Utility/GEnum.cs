@@ -9,6 +9,7 @@ namespace GEnum
         UIMgr,
         SaveMgr,
         TableMgr,
+        OptionMgr,
     }
 
     /// <summary> 씬 타입, 씬 이름과 동일 </summary>

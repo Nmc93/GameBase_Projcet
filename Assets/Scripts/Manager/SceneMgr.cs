@@ -63,7 +63,7 @@ public class SceneMgr : MgrBase
         instance = this;
 
         //추후 테이블을 읽은 뒤에 테이블에 따라서 변경
-        isWaitForNextScene = true;
+        isWaitForNextScene = OptionMgr.GetBoolOption("IsWaitNextScene");
     }
 
     /// <summary> 지정된 씬으로 변경 </summary>
