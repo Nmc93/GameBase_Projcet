@@ -33,6 +33,8 @@ public class TableMgr : MgrBase
         //StringTableData 세팅
         dicTable.Add("StringTableData", LoadTable<StringTableData>());
         //Assets\\Resources\\TableBytes\\StringTableData.bytes
+
+        dicTable.Add("OptionTableData", LoadTable<OptionTableData>());
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>

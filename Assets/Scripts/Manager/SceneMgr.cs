@@ -81,7 +81,11 @@ public class SceneMgr : MgrBase
         if (changeCoroutine == null)
         {
             //---------------------------- 씬 변경 UI 오픈 ------------------------------
-            UIMgr.OpenUI(eUI.UILoading);
+            if(!UIMgr.OpenUI(eUI.UILoading))
+            {
+                //UI활성화에 실패했는데 대기할 경우 다음씬 이동이 불가능하니 강제 이동
+                isWaitForNextScene = false;
+            }
 
             //----------------------------- 현재 씬 종료 --------------------------------
             CurState = eLoadingState.CloseCurScene;
@@ -100,7 +104,7 @@ public class SceneMgr : MgrBase
         }
     }
 
-    #region 씬 전환
+    #region 씬 오픈
 
     /// <summary> 씬 변경  </summary>
     private IEnumerator OpenScene(eScene sceneType)
@@ -185,13 +189,13 @@ public class SceneMgr : MgrBase
         CurState = eLoadingState.None;
     }
 
-    #endregion 씬 전환
+    #endregion 씬 오픈
 
     /// <summary> 씬 변경 허가 </summary>
     public void MoveNextScene()
     {
         //진행중이고 진행도가 일정 이상 높아졌을 경우
-        if(operation != null && operation.progress > 0.9f)
+        if(operation != null && operation.progress >= 0.9f)
         {
             //씬 변경 허가
             operation.allowSceneActivation = true;

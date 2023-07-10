@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 using GEnum;
 
@@ -40,6 +41,10 @@ public class UIMgr : MgrBase
     /// <summary> 캔버스를 생성하고 세팅 </summary>
     private void CanvasSetting()
     {
+        //이벤트 시스템 세팅
+        gameObject.AddComponent<EventSystem>();
+        gameObject.AddComponent<StandaloneInputModule>();
+
         //캔버스 세팅
         GameObject canvasParent = new GameObject();
         canvasParent.transform.SetParent(transform);
