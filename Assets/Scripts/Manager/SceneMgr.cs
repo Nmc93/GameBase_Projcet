@@ -21,8 +21,7 @@ public class SceneMgr : MgrBase
     /// <summary> 현재 씬 </summary>
     public eScene CurScene 
     { 
-        get => curScene; 
-        private set => curScene = value; 
+        get => curScene;
     }
 
     /// <summary> 현재 씬 변경 상태 </summary>
@@ -155,7 +154,7 @@ public class SceneMgr : MgrBase
 
         //------------------------------ 씬 변경 ------------------------------------
         //현재 씬 변경, 오픈된 씬 대응
-        CurScene = sceneType;
+        curScene = sceneType;
         OpenCurScene();
     }
 
