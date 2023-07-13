@@ -163,7 +163,7 @@ namespace ExcelEdit
             #region 테이블 csv 생성 및 갱신
             if (GUILayout.Button($"{selectTableName}.bytes(.csv) 생성/갱신"))
             {
-                ConvertExcelToCSV();
+                ConvertExcelToBytes();
             }
             #endregion 테이블 csv 생성 및 갱신
 
@@ -394,7 +394,7 @@ namespace ExcelEdit
 
         #region 엑셀파일을 CSV,바이너리로 변환
         /// <summary> 엑셀파일을 CSV로 변환 </summary>
-        public void ConvertExcelToCSV()
+        public void ConvertExcelToBytes()
         {
             if (string.IsNullOrEmpty(selectTablePath) || 
                 string.IsNullOrEmpty(selectTableCSVPath) || 
@@ -407,7 +407,7 @@ namespace ExcelEdit
             TableData tData = null;
             
             //행 저장용
-            string csvText = string.Empty;
+            List<string> csvList = new List<string>();
             string typeName = $"{selectTableName}Data";
             //csv 데이터 정리 리스트
 
@@ -462,18 +462,18 @@ namespace ExcelEdit
                     }
 
                     //종료 후 CSV 줄 바꿈을 위해 "" 씌움
-                    csvText = $"\"{typeStr}\"";
+                    csvList.Add(typeStr);
                     #endregion 타이틀과 타입이 저장된 첫번째 행 저장(타입만 저장함)
 
                     #region 정보가 들어있는 두번째 행부터 저장
-                    //테이블 정보 저장
-                    string rowText = string.Empty;
-
+                    
                     //더 저장할 데이터가 없을 때 까지 진행
                     while (reader.Read())
                     {
                         //테이블 정보의 값 목록
                         List<object> valueList = new List<object>();
+                        //테이블 정보 저장
+                        string rowText = string.Empty;
 
                         for (int i = 0; i < reader.FieldCount; ++i)
                         {
@@ -512,7 +512,7 @@ namespace ExcelEdit
                         }
 
                         //종료 후 CSV 줄 바꿈을 위해 "" 씌움
-                        csvText = $"{csvText}\"{rowText}\"";
+                        csvList.Add(rowText);
 
                         TableBase tableObj = (TableBase)Activator.CreateInstance(type, valueList.ToArray());
                         dicTable.Add(tableObj.GetKey, tableObj);
@@ -536,8 +536,13 @@ namespace ExcelEdit
                 //CSV 세팅
                 using (StreamWriter csvWriter = new StreamWriter(selectTableCSVPath, false, System.Text.Encoding.UTF8))
                 {
-                    csvWriter.Write(csvText);
-                    EditorUtility.DisplayDialog("CSV,바이너리 생성/갱신", "완료", "확인");
+                    csvWriter.Flush();
+                    for (int i = 0; i < csvList.Count; ++i)
+                    {
+                        csvWriter.WriteLine(csvList[i]);
+                    }
+
+                    EditorUtility.DisplayDialog("바이너리,CSV 생성/갱신", "완료", "확인");
                 }
             }
             else

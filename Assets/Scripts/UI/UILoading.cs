@@ -32,8 +32,6 @@ public class UILoading : UIBase
 
     public override void DataSetting()
     {
-        base.DataSetting();
-
         //데이터 초기화
         curState = eLoadingState.None;
         moveString = string.Empty;
@@ -50,12 +48,15 @@ public class UILoading : UIBase
 
         //코루틴 시작
         textMove = StartCoroutine(TextMove());
+
+        //키보드 입력 이벤트 등록(다음 씬으로 넘어가는 버튼)
+        InputMgr.AddKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+
+        base.DataSetting();
     }
 
     public override void Close()
     {
-        base.Close();
-
         //이벤트 해제
         SceneMgr.instance.onGetchanProgress -= SetProgress;
         SceneMgr.instance.onGetChanState -= ChangeState;
@@ -66,6 +67,16 @@ public class UILoading : UIBase
             StopCoroutine(textMove);
             textMove = null;
         }
+
+        base.Close();
+    }
+
+    public override void DataClear()
+    {
+        //키보드 입력 이벤트 해제(다음 씬으로 넘어가는 버튼)
+        InputMgr.RemoveKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+
+        base.DataClear();
     }
 
     #region 이벤트
@@ -121,6 +132,12 @@ public class UILoading : UIBase
     public void SetProgress(float value)
     {
         scrollbar.size = value;
+    }
+
+    /// <summary> 다음 씬으로 이동 </summary>
+    public void OnClickNextScene()
+    {
+        SceneMgr.instance.MoveNextScene();
     }
 
     #endregion 이벤트

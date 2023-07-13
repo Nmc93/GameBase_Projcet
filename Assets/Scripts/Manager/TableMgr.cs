@@ -29,12 +29,17 @@ public class TableMgr : MgrBase
     /// <summary> 테이블 세팅 </summary>
     private void SetTableDatas()
     {
+        //Assets\\Resources\\TableBytes\\StringTableData.bytes
         //테이블 데이터를 세팅
+
         //StringTableData 세팅
         dicTable.Add("StringTableData", LoadTable<StringTableData>());
-        //Assets\\Resources\\TableBytes\\StringTableData.bytes
-
+        
+        //OptionTableData 세팅
         dicTable.Add("OptionTableData", LoadTable<OptionTableData>());
+
+        //InputKeyTableData 세팅
+        dicTable.Add("InputKeyTableData", LoadTable<InputKeyTableData>());
     }
 
     /// <summary> 지정된 테이블을 로드 </summary>

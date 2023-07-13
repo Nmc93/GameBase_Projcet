@@ -49,6 +49,11 @@ public abstract class UIBase : MonoBehaviour
 
     public virtual void Close()
     {
+        DataClear();
+    }
+
+    public virtual void DataClear()
+    {
         BackThePool();
     }
 

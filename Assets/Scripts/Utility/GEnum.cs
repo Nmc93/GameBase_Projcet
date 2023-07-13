@@ -1,6 +1,8 @@
+using System;
 
 namespace GEnum
 {
+    #region 게임 매니저
     /// <summary> 매니저에 지정된 enum <br/> 
     /// [매니저 클래스와 이름이 동일함] </summary>
     public enum eMgr
@@ -10,8 +12,11 @@ namespace GEnum
         SaveMgr,
         TableMgr,
         OptionMgr,
+        InputMgr,
     }
+    #endregion 게임 매니저
 
+    #region UI 관련
     /// <summary> 씬 타입, 씬 이름과 동일 </summary>
     public enum eScene
     {
@@ -39,7 +44,9 @@ namespace GEnum
     {
         
     }
+    #endregion UI 관련
 
+    #region 로딩
     /// <summary> 로딩 상태 </summary>
     public enum eLoadingState
     {
@@ -52,5 +59,17 @@ namespace GEnum
         /// <summary> 씬 변경 대기 </summary>
         WaitChangeScene
     }
+    #endregion 로딩
 
+    #region 입력 타입
+
+    public enum eInputType
+    {
+        /// <summary> 다음 씬 이동 </summary>
+        MoveNextScene = 0,
+        /// <summary> 키의 마지막, 사용하지 않음 </summary>
+        Count
+    }
+
+    #endregion 입력 타입
 }

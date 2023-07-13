@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         optionMgrObj.name = "OptionMgr";
         mgrDic.Add(eMgr.OptionMgr, optionMgrObj.AddComponent<OptionMgr>());
 
+        //키 입력 매니저
+        GameObject inputMgr = new GameObject();
+        inputMgr.name = "InputMgr";
+        mgrDic.Add(eMgr.InputMgr, inputMgr.AddComponent<InputMgr>());
+
         //UI 매니저 세팅
         GameObject uiMgrObj = new GameObject();
         uiMgrObj.name = "UIMgr";
