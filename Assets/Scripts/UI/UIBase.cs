@@ -36,7 +36,6 @@ public abstract class UIBase : MonoBehaviour
         DataSetting();
     }
 
-
     public virtual void DataSetting()
     {
         Refresh();

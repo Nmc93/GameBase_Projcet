@@ -15,13 +15,10 @@ public class InputMgr : MgrBase
         public ClickData(KeyCode key)
         {
             this.key = key;
-            touchAction = null;
         }
 
         /// <summary> 터치키 </summary>
         public KeyCode key;
-        /// <summary> 터치 이벤트 </summary>
-        public Action touchAction;
         /// <summary> 터치 이벤트 등록 </summary>
         public HashSet<Action> Actions = new HashSet<Action>();
     }

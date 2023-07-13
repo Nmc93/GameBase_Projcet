@@ -42,24 +42,24 @@ public class UILoading : UIBase
             txt.DOKill();
         }
 
-        //이벤트 등록
-        SceneMgr.instance.onGetchanProgress += SetProgress;
-        SceneMgr.instance.onGetChanState += ChangeState;
-
         //코루틴 시작
         textMove = StartCoroutine(TextMove());
 
-        //키보드 입력 이벤트 등록(다음 씬으로 넘어가는 버튼)
+        //이벤트 등록(프로그레스바, 상태 변경, 클릭 이벤트)
+        SceneMgr.instance.onGetchanProgress += SetProgress;
+        SceneMgr.instance.onGetChanState += ChangeState;
         InputMgr.AddKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+
 
         base.DataSetting();
     }
 
     public override void Close()
     {
-        //이벤트 해제
+        //이벤트 해제(프로그레스바, 상태 변경, 클릭 이벤트)
         SceneMgr.instance.onGetchanProgress -= SetProgress;
         SceneMgr.instance.onGetChanState -= ChangeState;
+        InputMgr.RemoveKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
 
         //코루틴 종료
         if (textMove != null)
@@ -69,14 +69,6 @@ public class UILoading : UIBase
         }
 
         base.Close();
-    }
-
-    public override void DataClear()
-    {
-        //키보드 입력 이벤트 해제(다음 씬으로 넘어가는 버튼)
-        InputMgr.RemoveKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
-
-        base.DataClear();
     }
 
     #region 이벤트
