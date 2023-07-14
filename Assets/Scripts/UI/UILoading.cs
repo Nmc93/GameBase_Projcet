@@ -46,10 +46,7 @@ public class UILoading : UIBase
         textMove = StartCoroutine(TextMove());
 
         //이벤트 등록(프로그레스바, 상태 변경, 클릭 이벤트)
-        SceneMgr.instance.onGetchanProgress += SetProgress;
-        SceneMgr.instance.onGetChanState += ChangeState;
-        InputMgr.AddKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
-
+        AddEvent();
 
         base.DataSetting();
     }
@@ -57,9 +54,7 @@ public class UILoading : UIBase
     public override void Close()
     {
         //이벤트 해제(프로그레스바, 상태 변경, 클릭 이벤트)
-        SceneMgr.instance.onGetchanProgress -= SetProgress;
-        SceneMgr.instance.onGetChanState -= ChangeState;
-        InputMgr.RemoveKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+        RemoveEvent();
 
         //코루틴 종료
         if (textMove != null)
@@ -70,6 +65,26 @@ public class UILoading : UIBase
 
         base.Close();
     }
+
+    #region 이벤트 등록, 해제
+
+    /// <summary> 이벤트 등록 함수 </summary>
+    private void AddEvent()
+    {
+        SceneMgr.instance.onGetchanProgress += SetProgress;
+        SceneMgr.instance.onGetChanState += ChangeState;
+        InputMgr.AddKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+    }
+    /// <summary> 이벤트 해제 함수 </summary>
+    private void RemoveEvent()
+    {
+        //이벤트 해제(프로그레스바, 상태 변경, 클릭 이벤트)
+        SceneMgr.instance.onGetchanProgress -= SetProgress;
+        SceneMgr.instance.onGetChanState -= ChangeState;
+        InputMgr.RemoveKeyEvent(eInputType.MoveNextScene, OnClickNextScene);
+    }
+
+    #endregion 이벤트 등록, 해제 
 
     #region 이벤트
 
