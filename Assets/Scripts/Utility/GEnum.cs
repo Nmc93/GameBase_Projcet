@@ -72,4 +72,14 @@ namespace GEnum
     }
 
     #endregion 입력 타입
+
+    #region 사운드
+    public enum eSoundType
+    {
+        BGM = 0,
+        Effect,
+    }
+
+
+    #endregion 사운드
 }

@@ -2,17 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundMgr : MonoBehaviour
+public class SoundMgr : MgrBase
 {
-    // Start is called before the first frame update
-    void Start()
+    SoundMgr instance;
+
+    private void Awake()
     {
-        
+        DontDestroyOnLoad(gameObject);
+        instance = this;
+
+        SetSound();
     }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary> 시작 후 무조건 로드되는 사운드 미리 로드 </summary>
+    public void SetSound()
     {
-        
+
+    }
+
+    public static void PlaySound()
+    {
+
+    }
+
+    public static void CloseSound()
+    {
+
     }
 }

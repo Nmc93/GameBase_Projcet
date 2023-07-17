@@ -12,8 +12,9 @@ public class OptionMgr : MgrBase
         instance = this;
     }
 
+    #region Get
     /// <summary> bool 타입의 옵션을 불러옴 </summary>
-    /// <param name="key">OptionTableData의 ID</param>
+    /// <param name="id">OptionTableData의 ID</param>
     /// <returns> 받아온 테이블 데이터에 문제가 있을 경우 false 반환 </returns>
     public static bool GetBoolOption(string id)
     {
@@ -59,4 +60,6 @@ public class OptionMgr : MgrBase
     {
         return string.Empty;
     }
+    #endregion Set
+
 }
