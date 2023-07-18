@@ -76,10 +76,13 @@ namespace GEnum
     #region 사운드
     public enum eSoundType
     {
-        BGM = 0,
+        /// <summary> 타입없음, 재생불가 </summary>
+        None = 0,
+        /// <summary> 배경음 </summary>
+        BGM,
+        /// <summary> 이펙트 사운드 </summary>
         Effect,
     }
-
 
     #endregion 사운드
 }
