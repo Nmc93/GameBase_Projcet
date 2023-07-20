@@ -23,6 +23,8 @@ public class UIMgr : MgrBase
 
     /// <summary> UI 저장소 </summary>
     private static Dictionary<eUI, UIData> dicUI = new Dictionary<eUI, UIData>();
+    /// <summary> 현재 열려있는 UI 리스트 </summary>
+    private static List<eUI> openList = new List<eUI>();
 
     private void Awake()
     {
@@ -170,27 +172,42 @@ public class UIMgr : MgrBase
             }
 
             //UI의 캔버스 타입이 페이지일 경우
-            if(data.uiClass.canvasType == eCanvas.Popup)
+            if (uiBase.canvasType == eCanvas.Page)
             {
                 //씬 캔버스 비활성화
                 scene.SetActivate(false);
 
-                //페이지 모두 종료
-                foreach (var item in dicUI.Values)
+                //현재 열려있는 UI를 체크
+                for(int i = openList.Count - 1; i >= 0; -- i)
                 {
-                    //열려있고 캔버스 타입이 페이지고 현재 열리고 있는 페이지가 아닐 경우
-                    if (item.uiClass.IsOpen && 
-                        item.uiClass.canvasType == eCanvas.Page &&
-                        item.uiClass.uiType != data.uiClass.uiType)
+                    //같은 UI가 아니고 페이지일 경우 종료
+                    UIBase temp = dicUI[openList[i]].uiClass;
+                    if (temp.uiType != data.uiClass.uiType && temp.canvasType == eCanvas.Page)
                     {
-                        item.uiClass.Close();
+                        temp.Close();
+                        openList.RemoveAt(i);
                     }
                 }
+
+                //페이지 모두 종료
+                //foreach (var item in dicUI.Values)
+                //{
+                //    //열려있는 UI고 열고있는 UI와 같은 UI가 아닐 경우
+                //    if(item.uiClass.IsOpen && item.uiClass.uiType != data.uiClass.uiType)
+                //    {
+                //        //다른 팝업 모두 종료
+                //        if (item.uiClass.canvasType == eCanvas.Page)
+                //        {
+                //            item.uiClass.Close();
+                //        }
+                //    }
+                //}
             }
 
             //UI를 캔버스에 올리고 UI를 활성화
-            Debug.Log($"UIOpen : [{ui}]");
+            Debug.Log($"UIOpen : [{ui}], CanvasType : [{data.uiClass.canvasType}]");
             uiBase.transform.SetParent(GetCanvas(uiBase.canvasType));
+            openList.Add(ui);
             uiBase.Open();
             return true;
         }
@@ -212,7 +229,7 @@ public class UIMgr : MgrBase
             //UI가 열려있는 경우에만 종료
             if (ui.uiClass != null && ui.uiClass.IsOpen)
             {
-                //씬 종료시 종료되는 UI만 지정
+                //씬 종료시 종료하기로 한 UI만 종료
                 if (ui.uiClass.IsSceneChangeClose)
                 {
                     ui.uiClass.Close();
@@ -274,7 +291,7 @@ public class UIMgr : MgrBase
     public void ReturnToUIPool(UIBase uiBase)
     {
         //UI 풀로 이동
-        Debug.Log($"UIClose : [{uiBase.uiType}]");
+        Debug.Log($"UIClose : [{uiBase.uiType}], CanvasType : [{uiBase.canvasType}]");
         uiBase.transform.SetParent(uiPool);
     }
 
