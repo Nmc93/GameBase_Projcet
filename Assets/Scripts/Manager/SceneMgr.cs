@@ -89,7 +89,7 @@ public class SceneMgr : MgrBase
             //----------------------------- 현재 씬 종료 --------------------------------
             CurState = eLoadingState.CloseCurScene;
             // 모든 PageUI 종료
-            UIMgr.UIAllClose();
+            UIMgr.SceneChangeAllUIClose();
 
             //----------------------------- 다음 씬 준비 --------------------------------
             //로딩 UI의 상태를 씬 변경중으로 변경

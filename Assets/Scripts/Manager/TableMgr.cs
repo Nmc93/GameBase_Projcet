@@ -20,6 +20,7 @@ public class TableMgr : MgrBase
     private void Awake()
     {
         instance = this;
+        DontDestroyOnLoad(this);
 
         //테이블 세팅
         SetTableDatas();

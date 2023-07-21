@@ -36,27 +36,31 @@ public abstract class UIBase : MonoBehaviour
         DataSetting();
     }
 
+    /// <summary> 데이터 세팅 함수 </summary>
     public virtual void DataSetting()
     {
         Refresh();
     }
 
+    /// <summary> 변경된 데이터에 맞게 UI를 갱신하는 함수 </summary>
     public virtual void Refresh()
     {
 
     }
 
-    public virtual void Close()
+    /// <summary> UIMgr에 해당 UI의 종료를 요청하는 함수 </summary>
+    public void Close()
     {
-        DataClear();
+        UIMgr.instance.CloseUI(uiType);
     }
 
+    /// <summary> 실제로 UI 종료를 시작하는 함수 </summary>
     public virtual void DataClear()
     {
         BackThePool();
     }
 
-    public virtual void BackThePool()
+    protected virtual void BackThePool()
     {
         IsOpen = false;
         UIMgr.instance.ReturnToUIPool(this);

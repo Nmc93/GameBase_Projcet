@@ -51,7 +51,7 @@ public class UILoading : UIBase
         base.DataSetting();
     }
 
-    public override void Close()
+    public override void DataClear()
     {
         //이벤트 해제(프로그레스바, 상태 변경, 클릭 이벤트)
         RemoveEvent();
@@ -63,7 +63,7 @@ public class UILoading : UIBase
             textMove = null;
         }
 
-        base.Close();
+        base.DataClear();
     }
 
     #region 이벤트 등록, 해제

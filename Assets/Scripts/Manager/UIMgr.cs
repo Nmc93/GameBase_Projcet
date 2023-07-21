@@ -125,7 +125,7 @@ public class UIMgr : MgrBase
         //로딩 화면 UI
         dicUI.Add(eUI.UILoading, new UIData("UI/UILoading"));
 
-        //로비 화면 UI
+        //로비 씬 메인 화면 UI
         dicUI.Add(eUI.UILobby, new UIData("UI/UILobby"));
     }
 
@@ -147,68 +147,56 @@ public class UIMgr : MgrBase
     /// <returns> UI 오픈에 성공하면 true </returns>
     public static bool OpenUI(eUI ui)
     {
+        // 0. 이미 열려있는 경우 종료함
+        if(openList.Contains(ui))
+        {
+            Debug.LogError($"{ui}는 이미 열려있는 UI 입니다.");
+            return false;
+        }
+
         //해당 UI의 데이터를 확인
         if(dicUI.TryGetValue(ui, out UIData data))
         {
             UIBase uiBase = data.uiClass;
             
-            //해당 UI를 처음 사용하는 경우
+            //1. 한번도 사용하지 않은 UI의 경우 로드해서 저장한 뒤 오픈을 시작함
             if (uiBase == null)
             {
-                //UI 로드에 성공했을 경우
+                // 1-1-1. UI 로드에 성공했을 경우 데이터 저장
                 if(AssetsMgr.LoadResourcesUIPrefab(data.path,out GameObject obj))
                 {
-                    //저장
                     data.uiClass = Instantiate(obj, uiPool).GetComponent<UIBase>();
                     uiBase = data.uiClass;
                 }
-                //UI를 찾을 수 없을 경우
+                // 1-1-2. UI를 찾을 수 없을 경우 진행 종료
                 else
                 {
-                    //종료
                     Debug.LogError($"UIOpenFailed : [{ui}]는 등록되지 않은 UI입니다.");
                     return false;
                 }
             }
 
-            //UI의 캔버스 타입이 페이지일 경우
-            if (uiBase.canvasType == eCanvas.Page)
+            //2. Page 타입의 UI를 오픈할 경우 Scene 캔버스를 비활성화 하고 다른 Page와 Popup타입의 UI를 종료함
+            if (!scene.SetActivate(uiBase.canvasType != eCanvas.Page))
             {
-                //씬 캔버스 비활성화
-                scene.SetActivate(false);
-
-                //현재 열려있는 UI를 체크
+                //2-1. 현재 열려있는 UI를 체크
                 for(int i = openList.Count - 1; i >= 0; -- i)
                 {
-                    //같은 UI가 아니고 페이지일 경우 종료
+                    //2-2. 같은 UI가 아닌 Scene 타입 UI를 빼고 전부 종료
                     UIBase temp = dicUI[openList[i]].uiClass;
-                    if (temp.uiType != data.uiClass.uiType && temp.canvasType == eCanvas.Page)
+                    if (temp.uiType != data.uiClass.uiType && temp.canvasType != eCanvas.Scene)
                     {
-                        temp.Close();
-                        openList.RemoveAt(i);
+                        instance.CloseUI(temp.uiType, false);
                     }
                 }
-
-                //페이지 모두 종료
-                //foreach (var item in dicUI.Values)
-                //{
-                //    //열려있는 UI고 열고있는 UI와 같은 UI가 아닐 경우
-                //    if(item.uiClass.IsOpen && item.uiClass.uiType != data.uiClass.uiType)
-                //    {
-                //        //다른 팝업 모두 종료
-                //        if (item.uiClass.canvasType == eCanvas.Page)
-                //        {
-                //            item.uiClass.Close();
-                //        }
-                //    }
-                //}
             }
 
-            //UI를 캔버스에 올리고 UI를 활성화
-            Debug.Log($"UIOpen : [{ui}], CanvasType : [{data.uiClass.canvasType}]");
+            //3. UI를 캔버스에 올리고 UI를 활성화
             uiBase.transform.SetParent(GetCanvas(uiBase.canvasType));
             openList.Add(ui);
             uiBase.Open();
+
+            Debug.Log($"UIOpen : [{ui}], CanvasType : [{data.uiClass.canvasType}]");
             return true;
         }
 
@@ -221,19 +209,22 @@ public class UIMgr : MgrBase
 
     #region Close
 
-    /// <summary> 현재 열려있는 모든 UI 종료 </summary>
-    public static void UIAllClose()
+    /// <summary> 씬 변경으로 인해 현재 열려있는 모든 UI 종료 </summary>
+    public static void SceneChangeAllUIClose()
     {
-        foreach(var ui in dicUI.Values)
+        // 1. 현재 열려있는 모든 UI를 체크
+        for (int i = openList.Count - 1; i >= 0; --i)
         {
-            //UI가 열려있는 경우에만 종료
-            if (ui.uiClass != null && ui.uiClass.IsOpen)
+            // 2. 종료 대상 데이터 획득
+            eUI type = openList[i];
+            UIBase uIBase = dicUI[type].uiClass;
+
+            // 3. 씬 변경시 종료하기로 한 UI인지 체크
+            if (uIBase.IsSceneChangeClose)
             {
-                //씬 종료시 종료하기로 한 UI만 종료
-                if (ui.uiClass.IsSceneChangeClose)
-                {
-                    ui.uiClass.Close();
-                }
+                // 4. UI 종료
+                uIBase.DataClear();
+                openList.Remove(type);
             }
         }
     }
@@ -247,44 +238,44 @@ public class UIMgr : MgrBase
         return CloseUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
     }
 
-    public bool CloseUI(eUI ui)
+    /// <summary> UI 종료 </summary>
+    /// <param name="ui"> 종료할 UI </param>
+    /// <param name="isChainClose"> UI가 종료될때 타입에 따라 추가로 다른 UI를 종료하는 이벤트를 실행할지 여부 </param>
+    /// <returns> 종료에 성공하면 true </returns>
+    public bool CloseUI(eUI ui, bool isChainClose = true)
     {
-        //존재하는 UI인지 체크
-        if(dicUI.TryGetValue(ui,out UIData uiData))
+        // 1. 오픈 리스트 체크
+        if(!openList.Contains(ui))
         {
-            //종료가 가능한 것만 종료(호출되서 오픈중일 경우)
-            if (uiData.uiClass != null && uiData.uiClass.IsOpen)
-            {
-                //현재 종료되는 UI의 캔버스 타입이 페이지일 경우
-                if (uiData.uiClass.canvasType == eCanvas.Page)
-                {
-                    foreach (var item in dicUI.Values)
-                    {
-                        //열려있는 팝업 전부 종료
-                        if (item.uiClass.IsOpen && item.uiClass.canvasType == eCanvas.Popup)
-                        {
-                            item.uiClass.Close();
-                        }
-                    }
-                }
-
-                //대상 UI 종료 프로세스 시작
-                uiData.uiClass.Close();
-                return true;
-            }
-            //호출된적 없거나 오픈중이 아닐 경우
-            else
-            {
-                Debug.LogError($"UICloseFailed : [{ui}]는 활성화 상태가 아닙니다.");
-            }
+            return false;
         }
-        //지정되어있지 않은 UI일 경우
-        else
+
+        // 2. 종료 대상 UI 정보 획득
+        if(!dicUI.TryGetValue(ui,out UIData uiData))
         {
             Debug.LogError($"UICloseFailed : [{ui}]는 지정되지 않은 타입의 UI입니다.");
+            return false;
         }
 
-        return false;
+        // 3. 추가적 종료를 하고 해당 UI가 페이지 타입일 경우
+        if (isChainClose && uiData.uiClass.canvasType == eCanvas.Page)
+        {
+            //현재 열려있는 UI를 체크
+            for (int i = openList.Count - 1; i >= 0; --i)
+            {
+                //같은 UI가 아니고 페이지일 경우 종료
+                UIBase temp = dicUI[openList[i]].uiClass;
+                if (temp.uiType != uiData.uiClass.uiType && temp.canvasType != eCanvas.Scene)
+                {
+                    instance.CloseUI(temp.uiType, false);
+                }
+            }
+        }
+
+        //대상 UI 종료 프로세스 시작
+        uiData.uiClass.DataClear();
+        openList.Remove(ui);
+        return true;
     }
 
     //종료 후 Pool로 돌아감
@@ -314,12 +305,12 @@ public class UIMgr : MgrBase
     /// <returns> 검색 실패시 null 반환 </returns>
     public UIBase GetUI(eUI ui)
     {
-        if (!dicUI.TryGetValue(ui, out UIData data))
+        if (dicUI.TryGetValue(ui, out UIData data))
         {
-            Debug.LogError($"[{ui}]타입의 UI를 찾을 수 없습니다.");
             return data.uiClass;
         }
 
+        Debug.LogError($"[{ui}]타입의 UI를 찾을 수 없습니다.");
         return null;
     }
 
@@ -388,10 +379,12 @@ public class CanvasData
     public GraphicRaycaster rayCast;
 
     /// <summary> 캔버스 컴포넌트 활성화 변경 </summary>
-    public void SetActivate(bool isActive)
+    public bool SetActivate(bool isActive)
     {
         canvas.enabled = isActive;
         rayCast.enabled = isActive;
+
+        return isActive;
     }
 }
 #endregion 캔버스 정보
