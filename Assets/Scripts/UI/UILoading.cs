@@ -129,7 +129,8 @@ public class UILoading : UIBase
             //UI 종료 페이즈
             case eLoadingState.None:
                 {
-                    Close();
+                    //해당 UI 종료
+                    UIMgr.instance.CloseUI(uiType);
                 }
                 break;
         }

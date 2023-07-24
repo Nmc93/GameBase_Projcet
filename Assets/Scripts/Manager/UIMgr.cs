@@ -177,12 +177,15 @@ public class UIMgr : MgrBase
             }
 
             //2. Page 타입의 UI를 오픈할 경우 Scene 캔버스를 비활성화 하고 다른 Page와 Popup타입의 UI를 종료함
-            if (!scene.SetActivate(uiBase.canvasType != eCanvas.Page))
+            if (uiBase.canvasType == eCanvas.Page)
             {
-                //2-1. 현재 열려있는 UI를 체크
-                for(int i = openList.Count - 1; i >= 0; -- i)
+                //2-1. 씬 캔버스 비활성화
+                scene.SetActivate(false);
+
+                //2-2. 현재 열려있는 UI를 체크
+                for (int i = openList.Count - 1; i >= 0; -- i)
                 {
-                    //2-2. 같은 UI가 아닌 Scene 타입 UI를 빼고 전부 종료
+                    //2-3. 같은 UI가 아닌 Scene 타입 UI를 빼고 전부 종료
                     UIBase temp = dicUI[openList[i]].uiClass;
                     if (temp.uiType != data.uiClass.uiType && temp.canvasType != eCanvas.Scene)
                     {
@@ -260,10 +263,13 @@ public class UIMgr : MgrBase
         // 3. 추가적 종료를 하고 해당 UI가 페이지 타입일 경우
         if (isChainClose && uiData.uiClass.canvasType == eCanvas.Page)
         {
-            //현재 열려있는 UI를 체크
+            // 3-1.씬 캔버스를 활성화
+            scene.SetActivate(true);
+
+            // 3-2. 현재 열려있는 UI를 체크
             for (int i = openList.Count - 1; i >= 0; --i)
             {
-                //같은 UI가 아니고 페이지일 경우 종료
+                // 3-3. 같은 UI가 아니고 페이지일 경우 종료
                 UIBase temp = dicUI[openList[i]].uiClass;
                 if (temp.uiType != uiData.uiClass.uiType && temp.canvasType != eCanvas.Scene)
                 {
@@ -295,9 +301,9 @@ public class UIMgr : MgrBase
     /// <summary> UI 클래스를 받는 함수 </summary>
     /// <typeparam name="T"> 대상 UI에 있는 UIBase를 상속받은 메인 클래스 </typeparam>
     /// <returns> 검색 실패시 null 반환 </returns>
-    public UIBase GetUI<T>() where T : UIBase
+    public T GetUI<T>() where T : UIBase
     {
-        return GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
+        return GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name)) as T;
     }
 
     /// <summary> UI 클래스를 받는 함수 </summary>
@@ -305,12 +311,26 @@ public class UIMgr : MgrBase
     /// <returns> 검색 실패시 null 반환 </returns>
     public UIBase GetUI(eUI ui)
     {
+        //UI가 등록되어 있을 경우
         if (dicUI.TryGetValue(ui, out UIData data))
         {
-            return data.uiClass;
+            //UI의 로드했을 경우
+            if (data.uiClass != null)
+            {
+                return data.uiClass;
+            }
+            //UI가 단 한번도 활성화 된적이 없을 경우
+            else
+            {
+                Debug.LogError($"[{ui}]타입의 UI의 메인 컴포넌트를 찾을 수 없습니다.");
+            }
+        }
+        //UI가 등록 누락이 되어 있을 경우
+        else
+        {
+            Debug.LogError($"[{ui}]타입의 UI의 등록이 누락되어 있습니다. UIMgr.UIDataSetting() 를 참조하십시오");
         }
 
-        Debug.LogError($"[{ui}]타입의 UI를 찾을 수 없습니다.");
         return null;
     }
 
