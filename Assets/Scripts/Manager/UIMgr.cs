@@ -195,7 +195,7 @@ public class UIMgr : MgrBase
             }
 
             //3. UI를 캔버스에 올리고 UI를 활성화
-            uiBase.transform.SetParent(GetCanvas(uiBase.canvasType));
+            uiBase.transform.SetParent(GetCanvas(uiBase.canvasType).transform);
             openList.Add(ui);
             uiBase.Open();
 
@@ -362,16 +362,16 @@ public class UIMgr : MgrBase
     #endregion UI의 메인 컴포넌트 반환 (GetUI)
 
     /// <summary> 타입에 맞는 캔버스의 Transform을 반환 </summary>
-    private static Transform GetCanvas(eCanvas uIType)
+    public static Canvas GetCanvas(eCanvas uIType)
     {
         switch (uIType)
         {
             case eCanvas.Scene:
-                return scene.canvas.transform;
+                return scene.canvas;
             case eCanvas.Page:
-                return page.canvas.transform;
+                return page.canvas;
             case eCanvas.Popup:
-                return popup.canvas.transform;
+                return popup.canvas;
         }
 
         return null;
