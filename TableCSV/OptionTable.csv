@@ -1,1 +1,8 @@
-﻿"string,string""IsWaitNextScene,True"
+﻿string,string
+IsWaitNextScene,True
+Sound_Vol_BGM,1
+Sound_Mute_BGM,False
+Sound_Vol_System,1
+Sound_Mute_System,False
+Sound_Vol_Effect,1
+Sound_Mute_Effect,False

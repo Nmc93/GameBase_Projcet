@@ -61,8 +61,8 @@ public class SceneMgr : MgrBase
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //추후 테이블을 읽은 뒤에 테이블에 따라서 변경
-        isWaitForNextScene = OptionMgr.GetBoolOption("IsWaitNextScene");
+        //추후 테이블을 읽은 뒤에 테이블에 따라서 변경(프랩스 저장은 하지 않음)
+        isWaitForNextScene = OptionMgr.GetBoolOption("IsWaitNextScene", false);
     }
 
     /// <summary> 지정된 씬으로 변경 </summary>

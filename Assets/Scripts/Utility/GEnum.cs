@@ -78,9 +78,11 @@ namespace GEnum
     {
         /// <summary> 타입없음, 재생불가 </summary>
         None = 0,
-        /// <summary> 배경음 </summary>
+        /// <summary> 배경음(전체) </summary>
         BGM,
-        /// <summary> 이펙트 사운드 </summary>
+        /// <summary> 게임 시스템 관련 사운드(전체) </summary>
+        System,
+        /// <summary> 게임 관련 이펙트 사운드(위치 지정, 3D) </summary>
         Effect,
     }
 
