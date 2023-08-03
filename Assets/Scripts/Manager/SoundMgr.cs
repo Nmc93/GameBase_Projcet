@@ -37,6 +37,8 @@ public class SoundMgr : MgrBase
 
     #endregion 사운드 옵션
 
+    #region 생성 및 세팅
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -62,77 +64,35 @@ public class SoundMgr : MgrBase
         effectVol = OptionMgr.GetfloatOption("Sound_Vol_Effect");
     }
 
-    /// <summary> 사운드 실행 </summary>
-    /// <param name="soundID"> 실행할 사운드의 ID </param>
-    public static void Play(int soundID)
-    {
-        //안에 해당 ID를 가진 사운드셀이 있을 경우
-        if(dicSoundClip.TryGetValue(soundID,out List<SoundCell> list))
-        {
-            //일하지 않는 셀을 찾아서 플레이
-            foreach(var cell in list)
-            {
-                if(!cell.IsPlaying)
-                {
-                    cell.Play();
-                    return;
-                }
-            }
-
-            //못찾고 나온 경우 생성, 저장, 실행 
-            SoundCell copyCell = new SoundCell(list[0]);
-            list.Add(copyCell);
-            copyCell.Play();
-        }
-        //해당 ID를 가진 사운드 셀이 없을 경우
-        else
-        {
-            //사운드 추가
-        }
-    }
-
-    /// <summary> 사운드 종료 </summary>
-    /// <param name="soundID"> 종료할 사운드의 ID </param>
-    public static void Stop(int soundID)
-    {
-
-    }
-
-    /// <summary> 타입번호를 사운드타입으로 변환 </summary>
-    /// <param name="typeNum"> GEnum.eSoundType 참조 </param>
-    /// <returns> 0 or 지정되지 않은 번호 선택 시 eSoundType.None 반환 </returns>
-    public static eSoundType ConvertIntToSoundType(int typeNum)
-    {
-        return typeNum switch
-        {
-            1 => eSoundType.BGM,
-            2 => eSoundType.System,
-            3 => eSoundType.Effect,
-            _ => eSoundType.None
-        };
-    }
-
     /// <summary> 해당 ID의 사운드를 로드 후 반환 </summary>
     /// <param name="id"> 사운드의 ID <br/> [SoundTable 참조] </param>
     /// <param name="tbl"> 반환할 사운드 테이블 데이터 </param>
     /// <returns> ID를 찾을 수 없을 경우엔 null 반환 </returns>
-    public static AudioSource LoadAudioSource(int id, out SoundTableData tbl)
+    public static AudioSource CreateAudioSource(int id, out SoundTableData tbl)
     {
-        AudioSource source = new AudioSource();
+        AudioSource source = new GameObject().AddComponent<AudioSource>();
 
-        if(TableMgr.Get(id, out tbl))
+        if (TableMgr.Get(id, out tbl))
         {
             AudioClip clip = Resources.Load($"{path}{tbl.Path}", typeof(AudioClip)) as AudioClip;
 
             if (clip != null)
             {
+                //사운드클립 및 오브젝트 위치 세팅
                 source.clip = clip;
-
                 source.transform.SetParent(instance.transform);
                 source.transform.localPosition = Vector3.zero;
                 source.transform.localRotation = Quaternion.identity;
 
-                switch(ConvertIntToSoundType(tbl.SoundType))
+                //해당 사운드의 타입
+                eSoundType sType = ConvertIntToSoundType(tbl.SoundType);
+                #region 사운드 오브젝트 이름 설정 - 에디터 전용
+#if UNITY_EDITOR
+                //에디터에서만 구분용으로 이름 변경
+                source.transform.name = $"{id}_{sType}Sound";
+#endif
+                #endregion 사운드 오브젝트 이름 설정 - 에디터 전용
+                switch (sType)
                 {
                     case eSoundType.BGM:    //브금
                         source.loop = tbl.IsLoop;
@@ -145,7 +105,7 @@ public class SoundMgr : MgrBase
                         source.loop = tbl.IsLoop;
                         break;
                     case eSoundType.None:   //에러
-
+                        Debug.LogError($"{id}의 사운드 타입이 비정상적입니다. SoundTable 확인이 필요합니다.");
                         break;
                 }
 
@@ -164,6 +124,128 @@ public class SoundMgr : MgrBase
         }
     }
 
+#endregion 생성 및 세팅
+
+    #region 실행, 종료
+
+    /// <summary> 사운드 실행 </summary>
+    /// <param name="soundID"> 실행할 사운드의 ID </param>
+    public static void Play(int soundID)
+    {
+        SoundCell playCell = null;
+
+        //1. ID를 가진 사운드 검색
+        //안에 해당 ID를 가진 사운드셀 목록이 있을 경우
+        if(dicSoundClip.TryGetValue(soundID,out List<SoundCell> list))
+        {
+            //일하지 않는 셀을 찾음
+            for (int i = 0; i < list.Count; ++i)
+            {
+                if(list[i].IsPlaying)
+                {
+                    playCell = list[i];
+                    break;
+                }
+            }
+
+            //모든 셀이 일하고 있을 경우
+            if(playCell == null)
+            {
+                playCell = new SoundCell(list[0], list.Count);
+                list.Add(playCell);
+            }
+        }
+        //해당 ID를 가진 사운드 셀이 없을 경우
+        else
+        {
+            //사운드 추가
+            playCell = new SoundCell(soundID, 0);
+            dicSoundClip.Add(soundID, new List<SoundCell>() { playCell });
+        }
+
+        //2. 찾은 사운드를 통해 
+        //브금 타입일 경우 이전에 있는 브금을 종료하고 재생함
+        if (playCell.SoundType == eSoundType.BGM)
+        {
+            //이전 실행중인 브금이 있을 경우 브금을 종료하고 셀을 브금으로 등록
+            if (bgmPlayer != null)
+            {
+                Stop(bgmPlayer);
+                bgmPlayer = playCell;
+            }
+        }
+
+        //재생
+        playCell.Play();
+    }
+
+    /// <summary> 사운드 종료 </summary>
+    /// <param name="cell"> 종료할 사운드의 cell </param>
+    public static void Stop(SoundCell cell)
+    {
+        cell.Stop();
+
+        //해당 사운드가 현재 사용중인 BGM인지 체크
+        if (cell.ID == bgmPlayer.ID &&
+            cell.idx == bgmPlayer.idx)
+        {
+            bgmPlayer = null;
+        }
+    }
+
+    /// <summary> 사운드 종료 </summary>
+    /// <param name="id"> 사운드의 ID </param>
+    /// <param name="idx"> 해당 사운드 목록의 인덱스 </param>
+    public static void Stop(int id, int idx)
+    {
+        //사운드 검색
+        if(dicSoundClip.TryGetValue(id,out List<SoundCell> cells))
+        {
+            //idx 유효 검사
+            if(cells.Count < idx)
+            {
+                //정지
+                Stop(cells[idx]);
+            }
+            else
+            {
+                Debug.LogError($"{id}ID의 사운드 목록에서 {idx}번째 사운드소스를 찾을 수 없습니다.");
+            }
+        }
+        else
+        {
+            Debug.LogError($"{id}의 ID를 가진 사운드를 찾을 수 없습니다.");
+        }
+    }
+
+    /// <summary> 해당 ID가 걸린 사운드 전부 정지 </summary>
+    /// <param name="id"> 정지할 사운드의 ID </param>
+    public static void IDStop(int id)
+    {
+
+    }
+
+
+    #endregion 실행, 종료
+
+    #region 컨버트
+
+    /// <summary> 타입번호를 사운드타입으로 변환 </summary>
+    /// <param name="typeNum"> GEnum.eSoundType 참조 </param>
+    /// <returns> 0 or 지정되지 않은 번호 선택 시 eSoundType.None 반환 </returns>
+    public static eSoundType ConvertIntToSoundType(int typeNum)
+    {
+        return typeNum switch
+        {
+            1 => eSoundType.BGM,
+            2 => eSoundType.System,
+            3 => eSoundType.Effect,
+            _ => eSoundType.None
+        };
+    }
+
+#endregion 컨버트
+
     #region 데이터 클래스
 
     /// <summary> 오디오 소스 </summary>
@@ -177,6 +259,9 @@ public class SoundMgr : MgrBase
         /// <summary> 사운드의 재생 여부 </summary>
         public bool IsPlaying { get => source.isPlaying; }
 
+        /// <summary> 현재 셀의 인덱스 </summary>
+        public int idx;
+
         /// <summary> 해당 사운드의 테이블 데이터 </summary>
         private SoundTableData tbl;
         /// <summary> 오디오 소스 </summary>
@@ -184,16 +269,19 @@ public class SoundMgr : MgrBase
 
         /// <summary> ID와 타입을 세팅하고 그에 맞는 사운드 소스 생성 </summary>
         /// <param name="id"> 사운드의 ID <br/> [SoundTable 참조] </param>
-        public SoundCell(int id)
+        /// <param name="idx"> 사운드 셀의 인덱스 <br/> SoundMgr.dicSoundClip[i]의 idx </param>
+        public SoundCell(int id, int idx)
         {
-            source = LoadAudioSource(id, out tbl);
+            source = CreateAudioSource(id, out tbl);
+            this.idx = idx;
         }
 
         /// <summary> 매개변수로 받은 셀과 같은 설정과 타입의 셀 생성 </summary>
         /// <param name="cell"> 복사 대상 <br/> [SoundTable 참조] </param>
-        public SoundCell(SoundCell cell)
+        public SoundCell(SoundCell cell, int idx)
         {
-
+            source = Instantiate(cell.source);
+            this.idx = idx;
         }
 
         /// <summary> 실행 </summary>
@@ -214,5 +302,5 @@ public class SoundMgr : MgrBase
         }
     }
 
-    #endregion 데이터 클래스
+#endregion 데이터 클래스
 }
