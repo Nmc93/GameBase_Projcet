@@ -39,6 +39,9 @@ public class TableMgr : MgrBase
         //OptionTableData 세팅
         dicTable.Add("OptionTableData", LoadTable<OptionTableData>());
 
+        //OptionTableData 세팅
+        dicTable.Add("SoundTableData", LoadTable<SoundTableData>());
+
         //InputKeyTableData 세팅
         dicTable.Add("InputKeyTableData", LoadTable<InputKeyTableData>());
     }

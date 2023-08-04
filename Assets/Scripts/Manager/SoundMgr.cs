@@ -13,7 +13,7 @@ public class SoundMgr : MgrBase
     public static Dictionary<int, List<SoundCell>> dicSoundClip = new Dictionary<int, List<SoundCell>>();
 
     /// <summary> 배경 음악 소스 저장소 </summary>
-    public static SoundCell bgmPlayer;
+    public static SoundCell curBGMCell;
 
     /// <summary> 사운드 파일 경로 </summary>
     private const string path = "Sound\\";
@@ -124,13 +124,14 @@ public class SoundMgr : MgrBase
         }
     }
 
-#endregion 생성 및 세팅
+    #endregion 생성 및 세팅
 
-    #region 실행, 종료
+    #region 실행
 
     /// <summary> 사운드 실행 </summary>
     /// <param name="soundID"> 실행할 사운드의 ID </param>
-    public static void Play(int soundID)
+    /// <param name="tf"> 사운드 위치 지정 </param>
+    public static void Play(int soundID, Transform tf = null)
     {
         SoundCell playCell = null;
 
@@ -141,7 +142,7 @@ public class SoundMgr : MgrBase
             //일하지 않는 셀을 찾음
             for (int i = 0; i < list.Count; ++i)
             {
-                if(list[i].IsPlaying)
+                if(!list[i].IsPlaying)
                 {
                     playCell = list[i];
                     break;
@@ -163,21 +164,58 @@ public class SoundMgr : MgrBase
             dicSoundClip.Add(soundID, new List<SoundCell>() { playCell });
         }
 
+        //이랬는데도 문제가 있어 셀이 없을 경우 종료
+        if (playCell == null)
+        {
+            Debug.LogError($"[ID : {soundID}] 사운드 출력에 실패했습니다.");
+            return;
+        }
+
         //2. 찾은 사운드를 통해 
         //브금 타입일 경우 이전에 있는 브금을 종료하고 재생함
         if (playCell.SoundType == eSoundType.BGM)
         {
             //이전 실행중인 브금이 있을 경우 브금을 종료하고 셀을 브금으로 등록
-            if (bgmPlayer != null)
+            if (curBGMCell != null)
             {
-                Stop(bgmPlayer);
-                bgmPlayer = playCell;
+                Stop(curBGMCell);
+                curBGMCell = playCell;
             }
         }
 
-        //재생
-        playCell.Play();
+        // 위치가 지정되어 있을 경우 위치에 대한 관리가 필요
+        if(tf != null)
+        {
+            // 관리 코루틴 실행
+            instance.StartCoroutine(instance.PlayCoroutine(playCell,tf));
+        }
+        // 지정되어 있지 않아 관리가 필요없음
+        else
+        {
+            // 그냥 재생
+            playCell.Play();
+        }
     }
+
+    /// <summary> 위치 지정이 사용되는 사운드 관리 코루틴 </summary>
+    /// <param name="cell"> 사용되는 사운드 </param>
+    /// <param name="tf"> 사운드의 위치 tf </param>
+    IEnumerator PlayCoroutine(SoundCell cell, Transform tf)
+    {
+        //셀의 위치 지정
+        cell.SetPos(tf);
+        cell.Play();
+
+        yield return GUtility.GetWaitForSeconds(cell.Time);
+
+        //셀 위치 초기화
+        cell.Stop();
+        cell.SetPos(transform);
+    }
+
+    #endregion 실행
+
+    #region 종료
 
     /// <summary> 사운드 종료 </summary>
     /// <param name="cell"> 종료할 사운드의 cell </param>
@@ -186,10 +224,10 @@ public class SoundMgr : MgrBase
         cell.Stop();
 
         //해당 사운드가 현재 사용중인 BGM인지 체크
-        if (cell.ID == bgmPlayer.ID &&
-            cell.idx == bgmPlayer.idx)
+        if (cell.ID == curBGMCell.ID &&
+            cell.idx == curBGMCell.idx)
         {
-            bgmPlayer = null;
+            curBGMCell = null;
         }
     }
 
@@ -222,11 +260,60 @@ public class SoundMgr : MgrBase
     /// <param name="id"> 정지할 사운드의 ID </param>
     public static void IDStop(int id)
     {
+        //검색
+        if(dicSoundClip.TryGetValue(id, out List<SoundCell> list))
+        {
+            //플레이중인 모든 사운드 종료
+            foreach (var cell in list)
+            {
+                if (cell.IsPlaying)
+                {
+                    cell.Stop();
 
+                    //현재 사용중인 bgm인 경우 curBGMCell 정리
+                    if (cell.SoundType == eSoundType.BGM &&
+                        cell.ID == curBGMCell.ID && cell.idx == curBGMCell.idx)
+                    {
+                        curBGMCell = null;
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError($"{id}의 ID를 가진 사운드 그룹이 없습니다.");
+        }
     }
 
+    /// <summary> 지정된 타입의 사운드를 모두 종료 </summary>
+    /// <param name="type"> 종료할 타입, 지정하지 않을 경우 모든 사운드가 정지됨 </param>
+    public static void TypeAllStop(eSoundType type = eSoundType.None)
+    {
+        //플레이중인 모든 사운드 종료
+        foreach (var group in dicSoundClip)
+        {
+            //None이거나 타입이 지정된 경우 타입과 사운드 타입이 같은 경우
+            if (type == eSoundType.None || type == group.Value[0].SoundType)
+            {
+                foreach (var cell in group.Value)
+                {
+                    if (cell.IsPlaying)
+                    {
+                        cell.Stop();
 
-    #endregion 실행, 종료
+                        //현재 사용중인 bgm인 경우 curBGMCell 정리
+                        if (cell.SoundType == eSoundType.BGM &&
+                            cell.ID == curBGMCell.ID && cell.idx == curBGMCell.idx)
+                        {
+                            curBGMCell = null;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion 종료
 
     #region 컨버트
 
@@ -258,6 +345,8 @@ public class SoundMgr : MgrBase
         public eSoundType SoundType { get => (eSoundType)tbl.SoundType; }
         /// <summary> 사운드의 재생 여부 </summary>
         public bool IsPlaying { get => source.isPlaying; }
+        /// <summary> 사운드의 재생 시간 </summary>
+        public float Time { get => source.clip.length; }
 
         /// <summary> 현재 셀의 인덱스 </summary>
         public int idx;
@@ -280,27 +369,38 @@ public class SoundMgr : MgrBase
         /// <param name="cell"> 복사 대상 <br/> [SoundTable 참조] </param>
         public SoundCell(SoundCell cell, int idx)
         {
+            tbl = cell.tbl;
             source = Instantiate(cell.source);
+            source.transform.SetParent(instance.transform);
+            source.transform.localPosition = Vector3.zero;
             this.idx = idx;
+        }
+
+        /// <summary> 위치 지정 </summary>
+        public void SetPos(Transform tf)
+        {
+            source.transform.SetParent(tf);
+            source.transform.position = Vector3.zero;
         }
 
         /// <summary> 실행 </summary>
         public void Play()
         {
-            if (source.isPlaying)
+            if (!source.isPlaying)
             {
-                return;
+                source.Play();
             }
-
-            source.Play();
         }
 
         /// <summary> 정지 </summary>
         public void Stop()
         {
-            source.Stop();
+            if (source.isPlaying)
+            {
+                source.Stop();
+            }
         }
     }
 
-#endregion 데이터 클래스
+    #endregion 데이터 클래스
 }

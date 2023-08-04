@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         optionMgrObj.name = "OptionMgr";
         mgrDic.Add(eMgr.OptionMgr, optionMgrObj.AddComponent<OptionMgr>());
 
+        //사운드 매니저
+        GameObject soundMgr = new GameObject();
+        soundMgr.name = "SoundMgr";
+        mgrDic.Add(eMgr.SoundMgr, soundMgr.AddComponent<SoundMgr>());
+
         //키 입력 매니저
         GameObject inputMgr = new GameObject();
         inputMgr.name = "InputMgr";

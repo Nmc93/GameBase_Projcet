@@ -13,6 +13,7 @@ namespace GEnum
         TableMgr,
         OptionMgr,
         InputMgr,
+        SoundMgr,
     }
     #endregion 게임 매니저
 
@@ -85,6 +86,5 @@ namespace GEnum
         /// <summary> 게임 관련 이펙트 사운드(위치 지정, 3D) </summary>
         Effect,
     }
-
     #endregion 사운드
 }
