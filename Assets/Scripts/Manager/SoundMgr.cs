@@ -86,6 +86,7 @@ public class SoundMgr : MgrBase
 
                 //해당 사운드의 타입
                 eSoundType sType = ConvertIntToSoundType(tbl.SoundType);
+
                 #region 사운드 오브젝트 이름 설정 - 에디터 전용
 #if UNITY_EDITOR
                 //에디터에서만 구분용으로 이름 변경
