@@ -15,16 +15,16 @@ public class OptionMgr : MgrBase
 
     #region Get
 
-    /// <summary> ID¿¡ ´ëÀÀÇÏ´Â Value¸¦ ÀúÀåÇÔ </summary>
+    /// <summary> IDì— ëŒ€ì‘í•˜ëŠ” Valueë¥¼ ì €ì¥í•¨ </summary>
     /// <param name="id"></param>
-    /// <param name="isSave"> ÇÁ·¦½º ÀúÀå ¿©ºÎ </param>
-    /// <param name="value"> ¹İÈ¯ </param>
+    /// <param name="isSave"> í”„ë©ìŠ¤ ì €ì¥ ì—¬ë¶€ </param>
+    /// <param name="value"> ë°˜í™˜ </param>
     private static bool OptionValue(string id, bool isSave, out string value)
     {
-        //°ª ÃÊ±âÈ­
+        //ê°’ ì´ˆê¸°í™”
         value = string.Empty;
 
-        //ÇÁ·¦½º °Ë»ö
+        //í”„ë©ìŠ¤ ê²€ìƒ‰
         if (isSave)
         {
             if (PlayerPrefs.HasKey(id))
@@ -34,12 +34,12 @@ public class OptionMgr : MgrBase
             }
         }
 
-        //Å×ÀÌºí °Ë»ö
+        //í…Œì´ë¸” ê²€ìƒ‰
         if (TableMgr.Get(id, out OptionTableData tData))
         {
             value = tData.OptionValue;
 
-            //ÇÁ·¦½º ÀúÀå Å¸ÀÔÀÇ ¿É¼ÇÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀå
+            //í”„ë©ìŠ¤ ì €ì¥ íƒ€ì…ì˜ ì˜µì…˜ì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥
             if (isSave)
             {
                 PlayerPrefs.SetString(id, value);
@@ -51,99 +51,99 @@ public class OptionMgr : MgrBase
         return false;
     }
 
-    /// <summary> IDÀÇ °ªÀ» bool Å¸ÀÔÀ¸·Î °¡Á®¿È </summary>
-    /// <param name="id">OptionTableDataÀÇ ID</param>
-    /// <param name="isSave"> trueÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀåÇÑ°Å È®ÀÎ, true°¡ µğÆúÆ®</param>
-    /// <returns> ¹Ş¾Æ¿Â Å×ÀÌºí µ¥ÀÌÅÍ¿¡ ¹®Á¦°¡ ÀÖÀ» °æ¿ì false ¹İÈ¯ </returns>
+    /// <summary> IDì˜ ê°’ì„ bool íƒ€ì…ìœ¼ë¡œ ê°€ì ¸ì˜´ </summary>
+    /// <param name="id">OptionTableDataì˜ ID</param>
+    /// <param name="isSave"> trueì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥í•œê±° í™•ì¸, trueê°€ ë””í´íŠ¸</param>
+    /// <returns> ë°›ì•„ì˜¨ í…Œì´ë¸” ë°ì´í„°ì— ë¬¸ì œê°€ ìˆì„ ê²½ìš° false ë°˜í™˜ </returns>
     public static bool GetBoolOption(string id, bool isSave = true)
     {
         if(!OptionValue(id,isSave,out string value))
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return false;
         }
 
-        //bool·Î ÄÁ¹öÆ®
+        //boolë¡œ ì»¨ë²„íŠ¸
         if (!bool.TryParse(value, out bool result))
         {
-            Debug.LogError($"{id}´Â bool Å¸ÀÔ ¿É¼ÇÀÌ ¾Æ´Ï°Å³ª °ª[{value}]ÀÌ Àß¸ø ÀÔ·ÂµÇ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError($"{id}ëŠ” bool íƒ€ì… ì˜µì…˜ì´ ì•„ë‹ˆê±°ë‚˜ ê°’[{value}]ì´ ì˜ëª» ì…ë ¥ë˜ì–´ ìˆìŠµë‹ˆë‹¤.");
         }
 
         return result;
     }
 
-    /// <summary> IDÀÇ °ªÀ» long Å¸ÀÔÀ¸·Î °¡Á®¿È </summary>
-    /// <param name="id">OptionTableDataÀÇ ID</param>
-    /// <param name="isSave"> trueÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀåÇÑ°Å È®ÀÎ, true°¡ µğÆúÆ®</param>
-    /// <returns> ¹Ş¾Æ¿Â Å×ÀÌºí µ¥ÀÌÅÍ¿¡ ¹®Á¦°¡ ÀÖÀ» °æ¿ì 0 ¹İÈ¯ </returns>
+    /// <summary> IDì˜ ê°’ì„ long íƒ€ì…ìœ¼ë¡œ ê°€ì ¸ì˜´ </summary>
+    /// <param name="id">OptionTableDataì˜ ID</param>
+    /// <param name="isSave"> trueì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥í•œê±° í™•ì¸, trueê°€ ë””í´íŠ¸</param>
+    /// <returns> ë°›ì•„ì˜¨ í…Œì´ë¸” ë°ì´í„°ì— ë¬¸ì œê°€ ìˆì„ ê²½ìš° 0 ë°˜í™˜ </returns>
     public static long GetLongOption(string id, bool isSave = true)
     {
         if (!OptionValue(id, isSave, out string value))
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return 0;
         }
 
-        //bool·Î ÄÁ¹öÆ®
+        //boolë¡œ ì»¨ë²„íŠ¸
         if (!long.TryParse(value, out long result))
         {
-            Debug.LogError($"{id}´Â bool Å¸ÀÔ ¿É¼ÇÀÌ ¾Æ´Ï°Å³ª °ª[{value}]ÀÌ Àß¸ø ÀÔ·ÂµÇ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError($"{id}ëŠ” bool íƒ€ì… ì˜µì…˜ì´ ì•„ë‹ˆê±°ë‚˜ ê°’[{value}]ì´ ì˜ëª» ì…ë ¥ë˜ì–´ ìˆìŠµë‹ˆë‹¤.");
         }
 
         return result;
     }
 
-    /// <summary> IDÀÇ °ªÀ» int Å¸ÀÔÀ¸·Î °¡Á®¿È </summary>
-    /// <param name="id">OptionTableDataÀÇ ID</param>
-    /// <param name="isSave"> trueÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀåÇÑ°Å È®ÀÎ, true°¡ µğÆúÆ®</param>
-    /// <returns> ¹Ş¾Æ¿Â Å×ÀÌºí µ¥ÀÌÅÍ¿¡ ¹®Á¦°¡ ÀÖÀ» °æ¿ì 0 ¹İÈ¯ </returns>
+    /// <summary> IDì˜ ê°’ì„ int íƒ€ì…ìœ¼ë¡œ ê°€ì ¸ì˜´ </summary>
+    /// <param name="id">OptionTableDataì˜ ID</param>
+    /// <param name="isSave"> trueì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥í•œê±° í™•ì¸, trueê°€ ë””í´íŠ¸</param>
+    /// <returns> ë°›ì•„ì˜¨ í…Œì´ë¸” ë°ì´í„°ì— ë¬¸ì œê°€ ìˆì„ ê²½ìš° 0 ë°˜í™˜ </returns>
     public static int GetIntOption(string id, bool isSave = true)
     {
         if (!OptionValue(id, isSave, out string value))
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return 0;
         }
 
-        //bool·Î ÄÁ¹öÆ®
+        //boolë¡œ ì»¨ë²„íŠ¸
         if (!int.TryParse(value, out int result))
         {
-            Debug.LogError($"{id}´Â bool Å¸ÀÔ ¿É¼ÇÀÌ ¾Æ´Ï°Å³ª °ª[{value}]ÀÌ Àß¸ø ÀÔ·ÂµÇ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError($"{id}ëŠ” bool íƒ€ì… ì˜µì…˜ì´ ì•„ë‹ˆê±°ë‚˜ ê°’[{value}]ì´ ì˜ëª» ì…ë ¥ë˜ì–´ ìˆìŠµë‹ˆë‹¤.");
         }
 
         return result;
     }
 
-    /// <summary> IDÀÇ °ªÀ» float Å¸ÀÔÀ¸·Î °¡Á®¿È </summary>
-    /// <param name="id">OptionTableDataÀÇ ID</param>
-    /// <param name="isSave"> trueÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀåÇÑ°Å È®ÀÎ, true°¡ µğÆúÆ®</param>
-    /// <returns> ¹Ş¾Æ¿Â Å×ÀÌºí µ¥ÀÌÅÍ¿¡ ¹®Á¦°¡ ÀÖÀ» °æ¿ì 0 ¹İÈ¯ </returns>
+    /// <summary> IDì˜ ê°’ì„ float íƒ€ì…ìœ¼ë¡œ ê°€ì ¸ì˜´ </summary>
+    /// <param name="id">OptionTableDataì˜ ID</param>
+    /// <param name="isSave"> trueì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥í•œê±° í™•ì¸, trueê°€ ë””í´íŠ¸</param>
+    /// <returns> ë°›ì•„ì˜¨ í…Œì´ë¸” ë°ì´í„°ì— ë¬¸ì œê°€ ìˆì„ ê²½ìš° 0 ë°˜í™˜ </returns>
     public static float GetfloatOption(string id, bool isSave = true)
     {
         if (!OptionValue(id, isSave, out string value))
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return 0;
         }
 
-        //bool·Î ÄÁ¹öÆ®
+        //boolë¡œ ì»¨ë²„íŠ¸
         if (!float.TryParse(value, out float result))
         {
-            Debug.LogError($"{id}´Â bool Å¸ÀÔ ¿É¼ÇÀÌ ¾Æ´Ï°Å³ª °ª[{value}]ÀÌ Àß¸ø ÀÔ·ÂµÇ¾î ÀÖ½À´Ï´Ù.");
+            Debug.LogError($"{id}ëŠ” bool íƒ€ì… ì˜µì…˜ì´ ì•„ë‹ˆê±°ë‚˜ ê°’[{value}]ì´ ì˜ëª» ì…ë ¥ë˜ì–´ ìˆìŠµë‹ˆë‹¤.");
         }
 
         return result;
     }
 
-    /// <summary> IDÀÇ °ªÀ» string Å¸ÀÔÀ¸·Î °¡Á®¿È </summary>
-    /// <param name="id">OptionTableDataÀÇ ID</param>
-    /// <param name="isSave"> trueÀÏ °æ¿ì ÇÁ·¦½º¿¡ ÀúÀåÇÑ°Å È®ÀÎ, true°¡ µğÆúÆ®</param>
-    /// <returns> ¹Ş¾Æ¿Â Å×ÀÌºí µ¥ÀÌÅÍ¿¡ ¹®Á¦°¡ ÀÖÀ» °æ¿ì string.Empty ¹İÈ¯ </returns>
+    /// <summary> IDì˜ ê°’ì„ string íƒ€ì…ìœ¼ë¡œ ê°€ì ¸ì˜´ </summary>
+    /// <param name="id">OptionTableDataì˜ ID</param>
+    /// <param name="isSave"> trueì¼ ê²½ìš° í”„ë©ìŠ¤ì— ì €ì¥í•œê±° í™•ì¸, trueê°€ ë””í´íŠ¸</param>
+    /// <returns> ë°›ì•„ì˜¨ í…Œì´ë¸” ë°ì´í„°ì— ë¬¸ì œê°€ ìˆì„ ê²½ìš° string.Empty ë°˜í™˜ </returns>
     public static string GetStringOption(string id, bool isSave = true)
     {
         if (!OptionValue(id, isSave, out string value))
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         return value;

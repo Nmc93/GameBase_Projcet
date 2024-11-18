@@ -9,65 +9,65 @@ public class SoundMgr : MgrBase
 {
     public static SoundMgr instance;
 
-    /// <summary> Å¬¸³ ¸ğÀ½ <br/> [Key : ID(SoundTable)] <br/> [Value : AudioClip] </summary>
+    /// <summary> í´ë¦½ ëª¨ìŒ <br/> [Key : ID(SoundTable)] <br/> [Value : AudioClip] </summary>
     public static Dictionary<int, List<SoundCell>> dicSoundClip = new Dictionary<int, List<SoundCell>>();
 
-    /// <summary> ¹è°æ À½¾Ç ¼Ò½º ÀúÀå¼Ò </summary>
+    /// <summary> ë°°ê²½ ìŒì•… ì†ŒìŠ¤ ì €ì¥ì†Œ </summary>
     public static SoundCell curBGMCell;
 
-    /// <summary> »ç¿îµå ÆÄÀÏ °æ·Î </summary>
+    /// <summary> ì‚¬ìš´ë“œ íŒŒì¼ ê²½ë¡œ </summary>
     private const string path = "Sound\\";
 
-    #region »ç¿îµå ¿É¼Ç
+    #region ì‚¬ìš´ë“œ ì˜µì…˜
 
-    /// <summary> BGM »ç¿îµå À½¼Ò°Å </summary>
+    /// <summary> BGM ì‚¬ìš´ë“œ ìŒì†Œê±° </summary>
     private bool isBGMMute;
-    /// <summary> BGM »ç¿îµå º¼·ı </summary>
+    /// <summary> BGM ì‚¬ìš´ë“œ ë³¼ë¥¨ </summary>
     private float bGMVol;
 
-    /// <summary> ½Ã½ºÅÛ »ç¿îµå À½¼Ò°Å </summary>
+    /// <summary> ì‹œìŠ¤í…œ ì‚¬ìš´ë“œ ìŒì†Œê±° </summary>
     private bool isSystemMute;
-    /// <summary> ½Ã½ºÅÛ »ç¿îµå º¼·ı </summary>
+    /// <summary> ì‹œìŠ¤í…œ ì‚¬ìš´ë“œ ë³¼ë¥¨ </summary>
     private float systemVol;
 
-    /// <summary> °ÔÀÓ ³» »ç¿îµå À½¼Ò°Å </summary>
+    /// <summary> ê²Œì„ ë‚´ ì‚¬ìš´ë“œ ìŒì†Œê±° </summary>
     private bool isEffectMute;
-    /// <summary> °ÔÀÓ ³» »ç¿îµå º¼·ı </summary>
+    /// <summary> ê²Œì„ ë‚´ ì‚¬ìš´ë“œ ë³¼ë¥¨ </summary>
     private float effectVol;
 
-    #endregion »ç¿îµå ¿É¼Ç
+    #endregion ì‚¬ìš´ë“œ ì˜µì…˜
 
-    #region »ı¼º ¹× ¼¼ÆÃ
+    #region ìƒì„± ë° ì„¸íŒ…
 
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //»ç¿îµå Å¬¸³ ¼¼ÆÃ
+        //ì‚¬ìš´ë“œ í´ë¦½ ì„¸íŒ…
         SetSound();
     }
 
-    /// <summary> ½ÃÀÛ ÈÄ ¹«Á¶°Ç ·ÎµåµÇ´Â »ç¿îµå ¹Ì¸® ·Îµå </summary>
+    /// <summary> ì‹œì‘ í›„ ë¬´ì¡°ê±´ ë¡œë“œë˜ëŠ” ì‚¬ìš´ë“œ ë¯¸ë¦¬ ë¡œë“œ </summary>
     public void SetSound()
     {
-        //ºê±İ ¼¼ÆÃ
+        //ë¸Œê¸ˆ ì„¸íŒ…
         isBGMMute = OptionMgr.GetBoolOption("Sound_Mute_BGM");
         bGMVol = OptionMgr.GetfloatOption("Sound_Vol_BGM");
 
-        //½Ã½ºÅÛ »ç¿îµå ¼¼ÆÃ
+        //ì‹œìŠ¤í…œ ì‚¬ìš´ë“œ ì„¸íŒ…
         isSystemMute = OptionMgr.GetBoolOption("Sound_Mute_System");
         systemVol = OptionMgr.GetfloatOption("Sound_Vol_System");
 
-        //ÀÌÆåÆ® »ç¿îµå ¼¼ÆÃ
+        //ì´í™íŠ¸ ì‚¬ìš´ë“œ ì„¸íŒ…
         isEffectMute = OptionMgr.GetBoolOption("Sound_Mute_Effect");
         effectVol = OptionMgr.GetfloatOption("Sound_Vol_Effect");
     }
 
-    /// <summary> ÇØ´ç IDÀÇ »ç¿îµå¸¦ ·Îµå ÈÄ ¹İÈ¯ </summary>
-    /// <param name="id"> »ç¿îµåÀÇ ID <br/> [SoundTable ÂüÁ¶] </param>
-    /// <param name="tbl"> ¹İÈ¯ÇÒ »ç¿îµå Å×ÀÌºí µ¥ÀÌÅÍ </param>
-    /// <returns> ID¸¦ Ã£À» ¼ö ¾øÀ» °æ¿ì¿£ null ¹İÈ¯ </returns>
+    /// <summary> í•´ë‹¹ IDì˜ ì‚¬ìš´ë“œë¥¼ ë¡œë“œ í›„ ë°˜í™˜ </summary>
+    /// <param name="id"> ì‚¬ìš´ë“œì˜ ID <br/> [SoundTable ì°¸ì¡°] </param>
+    /// <param name="tbl"> ë°˜í™˜í•  ì‚¬ìš´ë“œ í…Œì´ë¸” ë°ì´í„° </param>
+    /// <returns> IDë¥¼ ì°¾ì„ ìˆ˜ ì—†ì„ ê²½ìš°ì—” null ë°˜í™˜ </returns>
     public static AudioSource CreateAudioSource(int id, out SoundTableData tbl)
     {
         AudioSource source = new GameObject().AddComponent<AudioSource>();
@@ -78,35 +78,35 @@ public class SoundMgr : MgrBase
 
             if (clip != null)
             {
-                //»ç¿îµåÅ¬¸³ ¹× ¿ÀºêÁ§Æ® À§Ä¡ ¼¼ÆÃ
+                //ì‚¬ìš´ë“œí´ë¦½ ë° ì˜¤ë¸Œì íŠ¸ ìœ„ì¹˜ ì„¸íŒ…
                 source.clip = clip;
                 source.transform.SetParent(instance.transform);
                 source.transform.localPosition = Vector3.zero;
                 source.transform.localRotation = Quaternion.identity;
 
-                //ÇØ´ç »ç¿îµåÀÇ Å¸ÀÔ
+                //í•´ë‹¹ ì‚¬ìš´ë“œì˜ íƒ€ì…
                 eSoundType sType = ConvertIntToSoundType(tbl.SoundType);
 
-                #region »ç¿îµå ¿ÀºêÁ§Æ® ÀÌ¸§ ¼³Á¤ - ¿¡µğÅÍ Àü¿ë
+                #region ì‚¬ìš´ë“œ ì˜¤ë¸Œì íŠ¸ ì´ë¦„ ì„¤ì • - ì—ë””í„° ì „ìš©
 #if UNITY_EDITOR
-                //¿¡µğÅÍ¿¡¼­¸¸ ±¸ºĞ¿ëÀ¸·Î ÀÌ¸§ º¯°æ
+                //ì—ë””í„°ì—ì„œë§Œ êµ¬ë¶„ìš©ìœ¼ë¡œ ì´ë¦„ ë³€ê²½
                 source.transform.name = $"{id}_{sType}Sound";
 #endif
-                #endregion »ç¿îµå ¿ÀºêÁ§Æ® ÀÌ¸§ ¼³Á¤ - ¿¡µğÅÍ Àü¿ë
+                #endregion ì‚¬ìš´ë“œ ì˜¤ë¸Œì íŠ¸ ì´ë¦„ ì„¤ì • - ì—ë””í„° ì „ìš©
                 switch (sType)
                 {
-                    case eSoundType.BGM:    //ºê±İ
+                    case eSoundType.BGM:    //ë¸Œê¸ˆ
                         source.loop = tbl.IsLoop;
                         break;
-                    case eSoundType.System: //½Ã½ºÅÛ »ç¿îµå
+                    case eSoundType.System: //ì‹œìŠ¤í…œ ì‚¬ìš´ë“œ
                         source.loop = tbl.IsLoop;
                         //source.volume
                         break;
-                    case eSoundType.Effect: //°ÔÀÓ ³» »ç¿îµå
+                    case eSoundType.Effect: //ê²Œì„ ë‚´ ì‚¬ìš´ë“œ
                         source.loop = tbl.IsLoop;
                         break;
-                    case eSoundType.None:   //¿¡·¯
-                        Debug.LogError($"{id}ÀÇ »ç¿îµå Å¸ÀÔÀÌ ºñÁ¤»óÀûÀÔ´Ï´Ù. SoundTable È®ÀÎÀÌ ÇÊ¿äÇÕ´Ï´Ù.");
+                    case eSoundType.None:   //ì—ëŸ¬
+                        Debug.LogError($"{id}ì˜ ì‚¬ìš´ë“œ íƒ€ì…ì´ ë¹„ì •ìƒì ì…ë‹ˆë‹¤. SoundTable í™•ì¸ì´ í•„ìš”í•©ë‹ˆë‹¤.");
                         break;
                 }
 
@@ -114,33 +114,33 @@ public class SoundMgr : MgrBase
             }
             else
             {
-                Debug.LogError($"{path}{tbl.Path}ÀÇ °æ·Î¿¡¼­ ÇØ´ç ClipÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogError($"{path}{tbl.Path}ì˜ ê²½ë¡œì—ì„œ í•´ë‹¹ Clipì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return null;
             }
         }
         else
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø Å×ÀÌºí°ªÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ í…Œì´ë¸”ê°’ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
     }
 
-    #endregion »ı¼º ¹× ¼¼ÆÃ
+    #endregion ìƒì„± ë° ì„¸íŒ…
 
-    #region ½ÇÇà
+    #region ì‹¤í–‰
 
-    /// <summary> »ç¿îµå ½ÇÇà </summary>
-    /// <param name="soundID"> ½ÇÇàÇÒ »ç¿îµåÀÇ ID </param>
-    /// <param name="tf"> »ç¿îµå À§Ä¡ ÁöÁ¤ </param>
+    /// <summary> ì‚¬ìš´ë“œ ì‹¤í–‰ </summary>
+    /// <param name="soundID"> ì‹¤í–‰í•  ì‚¬ìš´ë“œì˜ ID </param>
+    /// <param name="tf"> ì‚¬ìš´ë“œ ìœ„ì¹˜ ì§€ì • </param>
     public static void Play(int soundID, Transform tf = null)
     {
         SoundCell playCell = null;
 
-        //1. ID¸¦ °¡Áø »ç¿îµå °Ë»ö
-        //¾È¿¡ ÇØ´ç ID¸¦ °¡Áø »ç¿îµå¼¿ ¸ñ·ÏÀÌ ÀÖÀ» °æ¿ì
+        //1. IDë¥¼ ê°€ì§„ ì‚¬ìš´ë“œ ê²€ìƒ‰
+        //ì•ˆì— í•´ë‹¹ IDë¥¼ ê°€ì§„ ì‚¬ìš´ë“œì…€ ëª©ë¡ì´ ìˆì„ ê²½ìš°
         if(dicSoundClip.TryGetValue(soundID,out List<SoundCell> list))
         {
-            //ÀÏÇÏÁö ¾Ê´Â ¼¿À» Ã£À½
+            //ì¼í•˜ì§€ ì•ŠëŠ” ì…€ì„ ì°¾ìŒ
             for (int i = 0; i < list.Count; ++i)
             {
                 if(!list[i].IsPlaying)
@@ -150,33 +150,33 @@ public class SoundMgr : MgrBase
                 }
             }
 
-            //¸ğµç ¼¿ÀÌ ÀÏÇÏ°í ÀÖÀ» °æ¿ì
+            //ëª¨ë“  ì…€ì´ ì¼í•˜ê³  ìˆì„ ê²½ìš°
             if(playCell == null)
             {
                 playCell = new SoundCell(list[0], list.Count);
                 list.Add(playCell);
             }
         }
-        //ÇØ´ç ID¸¦ °¡Áø »ç¿îµå ¼¿ÀÌ ¾øÀ» °æ¿ì
+        //í•´ë‹¹ IDë¥¼ ê°€ì§„ ì‚¬ìš´ë“œ ì…€ì´ ì—†ì„ ê²½ìš°
         else
         {
-            //»ç¿îµå Ãß°¡
+            //ì‚¬ìš´ë“œ ì¶”ê°€
             playCell = new SoundCell(soundID, 0);
             dicSoundClip.Add(soundID, new List<SoundCell>() { playCell });
         }
 
-        //ÀÌ·¨´Âµ¥µµ ¹®Á¦°¡ ÀÖ¾î ¼¿ÀÌ ¾øÀ» °æ¿ì Á¾·á
+        //ì´ë¬ëŠ”ë°ë„ ë¬¸ì œê°€ ìˆì–´ ì…€ì´ ì—†ì„ ê²½ìš° ì¢…ë£Œ
         if (playCell == null)
         {
-            Debug.LogError($"[ID : {soundID}] »ç¿îµå Ãâ·Â¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogError($"[ID : {soundID}] ì‚¬ìš´ë“œ ì¶œë ¥ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
             return;
         }
 
-        //2. Ã£Àº »ç¿îµå¸¦ ÅëÇØ 
-        //ºê±İ Å¸ÀÔÀÏ °æ¿ì ÀÌÀü¿¡ ÀÖ´Â ºê±İÀ» Á¾·áÇÏ°í Àç»ıÇÔ
+        //2. ì°¾ì€ ì‚¬ìš´ë“œë¥¼ í†µí•´ 
+        //ë¸Œê¸ˆ íƒ€ì…ì¼ ê²½ìš° ì´ì „ì— ìˆëŠ” ë¸Œê¸ˆì„ ì¢…ë£Œí•˜ê³  ì¬ìƒí•¨
         if (playCell.SoundType == eSoundType.BGM)
         {
-            //ÀÌÀü ½ÇÇàÁßÀÎ ºê±İÀÌ ÀÖÀ» °æ¿ì ºê±İÀ» Á¾·áÇÏ°í ¼¿À» ºê±İÀ¸·Î µî·Ï
+            //ì´ì „ ì‹¤í–‰ì¤‘ì¸ ë¸Œê¸ˆì´ ìˆì„ ê²½ìš° ë¸Œê¸ˆì„ ì¢…ë£Œí•˜ê³  ì…€ì„ ë¸Œê¸ˆìœ¼ë¡œ ë“±ë¡
             if (curBGMCell != null)
             {
                 Stop(curBGMCell);
@@ -184,47 +184,47 @@ public class SoundMgr : MgrBase
             }
         }
 
-        // À§Ä¡°¡ ÁöÁ¤µÇ¾î ÀÖÀ» °æ¿ì À§Ä¡¿¡ ´ëÇÑ °ü¸®°¡ ÇÊ¿ä
+        // ìœ„ì¹˜ê°€ ì§€ì •ë˜ì–´ ìˆì„ ê²½ìš° ìœ„ì¹˜ì— ëŒ€í•œ ê´€ë¦¬ê°€ í•„ìš”
         if(tf != null)
         {
-            // °ü¸® ÄÚ·çÆ¾ ½ÇÇà
+            // ê´€ë¦¬ ì½”ë£¨í‹´ ì‹¤í–‰
             instance.StartCoroutine(instance.PlayCoroutine(playCell,tf));
         }
-        // ÁöÁ¤µÇ¾î ÀÖÁö ¾Ê¾Æ °ü¸®°¡ ÇÊ¿ä¾øÀ½
+        // ì§€ì •ë˜ì–´ ìˆì§€ ì•Šì•„ ê´€ë¦¬ê°€ í•„ìš”ì—†ìŒ
         else
         {
-            // ±×³É Àç»ı
+            // ê·¸ëƒ¥ ì¬ìƒ
             playCell.Play();
         }
     }
 
-    /// <summary> À§Ä¡ ÁöÁ¤ÀÌ »ç¿ëµÇ´Â »ç¿îµå °ü¸® ÄÚ·çÆ¾ </summary>
-    /// <param name="cell"> »ç¿ëµÇ´Â »ç¿îµå </param>
-    /// <param name="tf"> »ç¿îµåÀÇ À§Ä¡ tf </param>
+    /// <summary> ìœ„ì¹˜ ì§€ì •ì´ ì‚¬ìš©ë˜ëŠ” ì‚¬ìš´ë“œ ê´€ë¦¬ ì½”ë£¨í‹´ </summary>
+    /// <param name="cell"> ì‚¬ìš©ë˜ëŠ” ì‚¬ìš´ë“œ </param>
+    /// <param name="tf"> ì‚¬ìš´ë“œì˜ ìœ„ì¹˜ tf </param>
     IEnumerator PlayCoroutine(SoundCell cell, Transform tf)
     {
-        //¼¿ÀÇ À§Ä¡ ÁöÁ¤
+        //ì…€ì˜ ìœ„ì¹˜ ì§€ì •
         cell.SetPos(tf);
         cell.Play();
 
         yield return GUtility.GetWaitForSeconds(cell.Time);
 
-        //¼¿ À§Ä¡ ÃÊ±âÈ­
+        //ì…€ ìœ„ì¹˜ ì´ˆê¸°í™”
         cell.Stop();
         cell.SetPos(transform);
     }
 
-    #endregion ½ÇÇà
+    #endregion ì‹¤í–‰
 
-    #region Á¾·á
+    #region ì¢…ë£Œ
 
-    /// <summary> »ç¿îµå Á¾·á </summary>
-    /// <param name="cell"> Á¾·áÇÒ »ç¿îµåÀÇ cell </param>
+    /// <summary> ì‚¬ìš´ë“œ ì¢…ë£Œ </summary>
+    /// <param name="cell"> ì¢…ë£Œí•  ì‚¬ìš´ë“œì˜ cell </param>
     public static void Stop(SoundCell cell)
     {
         cell.Stop();
 
-        //ÇØ´ç »ç¿îµå°¡ ÇöÀç »ç¿ëÁßÀÎ BGMÀÎÁö Ã¼Å©
+        //í•´ë‹¹ ì‚¬ìš´ë“œê°€ í˜„ì¬ ì‚¬ìš©ì¤‘ì¸ BGMì¸ì§€ ì²´í¬
         if (cell.ID == curBGMCell.ID &&
             cell.idx == curBGMCell.idx)
         {
@@ -232,46 +232,46 @@ public class SoundMgr : MgrBase
         }
     }
 
-    /// <summary> »ç¿îµå Á¾·á </summary>
-    /// <param name="id"> »ç¿îµåÀÇ ID </param>
-    /// <param name="idx"> ÇØ´ç »ç¿îµå ¸ñ·ÏÀÇ ÀÎµ¦½º </param>
+    /// <summary> ì‚¬ìš´ë“œ ì¢…ë£Œ </summary>
+    /// <param name="id"> ì‚¬ìš´ë“œì˜ ID </param>
+    /// <param name="idx"> í•´ë‹¹ ì‚¬ìš´ë“œ ëª©ë¡ì˜ ì¸ë±ìŠ¤ </param>
     public static void Stop(int id, int idx)
     {
-        //»ç¿îµå °Ë»ö
+        //ì‚¬ìš´ë“œ ê²€ìƒ‰
         if(dicSoundClip.TryGetValue(id,out List<SoundCell> cells))
         {
-            //idx À¯È¿ °Ë»ç
+            //idx ìœ íš¨ ê²€ì‚¬
             if(cells.Count < idx)
             {
-                //Á¤Áö
+                //ì •ì§€
                 Stop(cells[idx]);
             }
             else
             {
-                Debug.LogError($"{id}IDÀÇ »ç¿îµå ¸ñ·Ï¿¡¼­ {idx}¹øÂ° »ç¿îµå¼Ò½º¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogError($"{id}IDì˜ ì‚¬ìš´ë“œ ëª©ë¡ì—ì„œ {idx}ë²ˆì§¸ ì‚¬ìš´ë“œì†ŒìŠ¤ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             }
         }
         else
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø »ç¿îµå¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ì‚¬ìš´ë“œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-    /// <summary> ÇØ´ç ID°¡ °É¸° »ç¿îµå ÀüºÎ Á¤Áö </summary>
-    /// <param name="id"> Á¤ÁöÇÒ »ç¿îµåÀÇ ID </param>
+    /// <summary> í•´ë‹¹ IDê°€ ê±¸ë¦° ì‚¬ìš´ë“œ ì „ë¶€ ì •ì§€ </summary>
+    /// <param name="id"> ì •ì§€í•  ì‚¬ìš´ë“œì˜ ID </param>
     public static void IDStop(int id)
     {
-        //°Ë»ö
+        //ê²€ìƒ‰
         if(dicSoundClip.TryGetValue(id, out List<SoundCell> list))
         {
-            //ÇÃ·¹ÀÌÁßÀÎ ¸ğµç »ç¿îµå Á¾·á
+            //í”Œë ˆì´ì¤‘ì¸ ëª¨ë“  ì‚¬ìš´ë“œ ì¢…ë£Œ
             foreach (var cell in list)
             {
                 if (cell.IsPlaying)
                 {
                     cell.Stop();
 
-                    //ÇöÀç »ç¿ëÁßÀÎ bgmÀÎ °æ¿ì curBGMCell Á¤¸®
+                    //í˜„ì¬ ì‚¬ìš©ì¤‘ì¸ bgmì¸ ê²½ìš° curBGMCell ì •ë¦¬
                     if (cell.SoundType == eSoundType.BGM &&
                         cell.ID == curBGMCell.ID && cell.idx == curBGMCell.idx)
                     {
@@ -282,18 +282,18 @@ public class SoundMgr : MgrBase
         }
         else
         {
-            Debug.LogError($"{id}ÀÇ ID¸¦ °¡Áø »ç¿îµå ±×·ìÀÌ ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{id}ì˜ IDë¥¼ ê°€ì§„ ì‚¬ìš´ë“œ ê·¸ë£¹ì´ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-    /// <summary> ÁöÁ¤µÈ Å¸ÀÔÀÇ »ç¿îµå¸¦ ¸ğµÎ Á¾·á </summary>
-    /// <param name="type"> Á¾·áÇÒ Å¸ÀÔ, ÁöÁ¤ÇÏÁö ¾ÊÀ» °æ¿ì ¸ğµç »ç¿îµå°¡ Á¤ÁöµÊ </param>
+    /// <summary> ì§€ì •ëœ íƒ€ì…ì˜ ì‚¬ìš´ë“œë¥¼ ëª¨ë‘ ì¢…ë£Œ </summary>
+    /// <param name="type"> ì¢…ë£Œí•  íƒ€ì…, ì§€ì •í•˜ì§€ ì•Šì„ ê²½ìš° ëª¨ë“  ì‚¬ìš´ë“œê°€ ì •ì§€ë¨ </param>
     public static void TypeAllStop(eSoundType type = eSoundType.None)
     {
-        //ÇÃ·¹ÀÌÁßÀÎ ¸ğµç »ç¿îµå Á¾·á
+        //í”Œë ˆì´ì¤‘ì¸ ëª¨ë“  ì‚¬ìš´ë“œ ì¢…ë£Œ
         foreach (var group in dicSoundClip)
         {
-            //NoneÀÌ°Å³ª Å¸ÀÔÀÌ ÁöÁ¤µÈ °æ¿ì Å¸ÀÔ°ú »ç¿îµå Å¸ÀÔÀÌ °°Àº °æ¿ì
+            //Noneì´ê±°ë‚˜ íƒ€ì…ì´ ì§€ì •ëœ ê²½ìš° íƒ€ì…ê³¼ ì‚¬ìš´ë“œ íƒ€ì…ì´ ê°™ì€ ê²½ìš°
             if (type == eSoundType.None || type == group.Value[0].SoundType)
             {
                 foreach (var cell in group.Value)
@@ -302,7 +302,7 @@ public class SoundMgr : MgrBase
                     {
                         cell.Stop();
 
-                        //ÇöÀç »ç¿ëÁßÀÎ bgmÀÎ °æ¿ì curBGMCell Á¤¸®
+                        //í˜„ì¬ ì‚¬ìš©ì¤‘ì¸ bgmì¸ ê²½ìš° curBGMCell ì •ë¦¬
                         if (cell.SoundType == eSoundType.BGM &&
                             cell.ID == curBGMCell.ID && cell.idx == curBGMCell.idx)
                         {
@@ -314,13 +314,13 @@ public class SoundMgr : MgrBase
         }
     }
 
-    #endregion Á¾·á
+    #endregion ì¢…ë£Œ
 
-    #region ÄÁ¹öÆ®
+    #region ì»¨ë²„íŠ¸
 
-    /// <summary> Å¸ÀÔ¹øÈ£¸¦ »ç¿îµåÅ¸ÀÔÀ¸·Î º¯È¯ </summary>
-    /// <param name="typeNum"> GEnum.eSoundType ÂüÁ¶ </param>
-    /// <returns> 0 or ÁöÁ¤µÇÁö ¾ÊÀº ¹øÈ£ ¼±ÅÃ ½Ã eSoundType.None ¹İÈ¯ </returns>
+    /// <summary> íƒ€ì…ë²ˆí˜¸ë¥¼ ì‚¬ìš´ë“œíƒ€ì…ìœ¼ë¡œ ë³€í™˜ </summary>
+    /// <param name="typeNum"> GEnum.eSoundType ì°¸ì¡° </param>
+    /// <returns> 0 or ì§€ì •ë˜ì§€ ì•Šì€ ë²ˆí˜¸ ì„ íƒ ì‹œ eSoundType.None ë°˜í™˜ </returns>
     public static eSoundType ConvertIntToSoundType(int typeNum)
     {
         return typeNum switch
@@ -332,42 +332,42 @@ public class SoundMgr : MgrBase
         };
     }
 
-#endregion ÄÁ¹öÆ®
+#endregion ì»¨ë²„íŠ¸
 
-    #region µ¥ÀÌÅÍ Å¬·¡½º
+    #region ë°ì´í„° í´ë˜ìŠ¤
 
-    /// <summary> ¿Àµğ¿À ¼Ò½º </summary>
+    /// <summary> ì˜¤ë””ì˜¤ ì†ŒìŠ¤ </summary>
     [Serializable]
     public class SoundCell
     {
-        /// <summary> »ç¿îµåÀÇ ID</summary>
+        /// <summary> ì‚¬ìš´ë“œì˜ ID</summary>
         public int ID { get => tbl.ID; }
-        /// <summary> »ç¿îµåÀÇ Å¸ÀÔ </summary>
+        /// <summary> ì‚¬ìš´ë“œì˜ íƒ€ì… </summary>
         public eSoundType SoundType { get => (eSoundType)tbl.SoundType; }
-        /// <summary> »ç¿îµåÀÇ Àç»ı ¿©ºÎ </summary>
+        /// <summary> ì‚¬ìš´ë“œì˜ ì¬ìƒ ì—¬ë¶€ </summary>
         public bool IsPlaying { get => source.isPlaying; }
-        /// <summary> »ç¿îµåÀÇ Àç»ı ½Ã°£ </summary>
+        /// <summary> ì‚¬ìš´ë“œì˜ ì¬ìƒ ì‹œê°„ </summary>
         public float Time { get => source.clip.length; }
 
-        /// <summary> ÇöÀç ¼¿ÀÇ ÀÎµ¦½º </summary>
+        /// <summary> í˜„ì¬ ì…€ì˜ ì¸ë±ìŠ¤ </summary>
         public int idx;
 
-        /// <summary> ÇØ´ç »ç¿îµåÀÇ Å×ÀÌºí µ¥ÀÌÅÍ </summary>
+        /// <summary> í•´ë‹¹ ì‚¬ìš´ë“œì˜ í…Œì´ë¸” ë°ì´í„° </summary>
         private SoundTableData tbl;
-        /// <summary> ¿Àµğ¿À ¼Ò½º </summary>
+        /// <summary> ì˜¤ë””ì˜¤ ì†ŒìŠ¤ </summary>
         private AudioSource source;
 
-        /// <summary> ID¿Í Å¸ÀÔÀ» ¼¼ÆÃÇÏ°í ±×¿¡ ¸Â´Â »ç¿îµå ¼Ò½º »ı¼º </summary>
-        /// <param name="id"> »ç¿îµåÀÇ ID <br/> [SoundTable ÂüÁ¶] </param>
-        /// <param name="idx"> »ç¿îµå ¼¿ÀÇ ÀÎµ¦½º <br/> SoundMgr.dicSoundClip[i]ÀÇ idx </param>
+        /// <summary> IDì™€ íƒ€ì…ì„ ì„¸íŒ…í•˜ê³  ê·¸ì— ë§ëŠ” ì‚¬ìš´ë“œ ì†ŒìŠ¤ ìƒì„± </summary>
+        /// <param name="id"> ì‚¬ìš´ë“œì˜ ID <br/> [SoundTable ì°¸ì¡°] </param>
+        /// <param name="idx"> ì‚¬ìš´ë“œ ì…€ì˜ ì¸ë±ìŠ¤ <br/> SoundMgr.dicSoundClip[i]ì˜ idx </param>
         public SoundCell(int id, int idx)
         {
             source = CreateAudioSource(id, out tbl);
             this.idx = idx;
         }
 
-        /// <summary> ¸Å°³º¯¼ö·Î ¹ŞÀº ¼¿°ú °°Àº ¼³Á¤°ú Å¸ÀÔÀÇ ¼¿ »ı¼º </summary>
-        /// <param name="cell"> º¹»ç ´ë»ó <br/> [SoundTable ÂüÁ¶] </param>
+        /// <summary> ë§¤ê°œë³€ìˆ˜ë¡œ ë°›ì€ ì…€ê³¼ ê°™ì€ ì„¤ì •ê³¼ íƒ€ì…ì˜ ì…€ ìƒì„± </summary>
+        /// <param name="cell"> ë³µì‚¬ ëŒ€ìƒ <br/> [SoundTable ì°¸ì¡°] </param>
         public SoundCell(SoundCell cell, int idx)
         {
             tbl = cell.tbl;
@@ -377,14 +377,14 @@ public class SoundMgr : MgrBase
             this.idx = idx;
         }
 
-        /// <summary> À§Ä¡ ÁöÁ¤ </summary>
+        /// <summary> ìœ„ì¹˜ ì§€ì • </summary>
         public void SetPos(Transform tf)
         {
             source.transform.SetParent(tf);
             source.transform.position = Vector3.zero;
         }
 
-        /// <summary> ½ÇÇà </summary>
+        /// <summary> ì‹¤í–‰ </summary>
         public void Play()
         {
             if (!source.isPlaying)
@@ -393,7 +393,7 @@ public class SoundMgr : MgrBase
             }
         }
 
-        /// <summary> Á¤Áö </summary>
+        /// <summary> ì •ì§€ </summary>
         public void Stop()
         {
             if (source.isPlaying)
@@ -403,5 +403,5 @@ public class SoundMgr : MgrBase
         }
     }
 
-    #endregion µ¥ÀÌÅÍ Å¬·¡½º
+    #endregion ë°ì´í„° í´ë˜ìŠ¤
 }

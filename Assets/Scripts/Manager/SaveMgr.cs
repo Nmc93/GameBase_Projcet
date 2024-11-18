@@ -6,7 +6,7 @@ public class SaveMgr : MgrBase
 {
     public static SaveMgr instance;
 
-    //[Header("ÃÖ´ë ÀúÀå¼Ò ¼ıÀÚ")]
+    //[Header("ìµœëŒ€ ì €ì¥ì†Œ ìˆ«ì")]
     //[SerializeField] private int saveMaxCount = 3;
 
     private void Awake()

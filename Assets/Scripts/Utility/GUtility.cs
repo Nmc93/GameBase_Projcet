@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GUtility
 {
-    #region ÄÚ·çÆ¾
-    /// <summary> ½Ã°£À» Å°·Î WaitForSeconds¸¦ ÀúÀåÇÏ´Â µñ¼Å³Ê¸® </summary>
+    #region ì½”ë£¨í‹´
+    /// <summary> ì‹œê°„ì„ í‚¤ë¡œ WaitForSecondsë¥¼ ì €ì¥í•˜ëŠ” ë”•ì…”ë„ˆë¦¬ </summary>
     private static Dictionary<float, WaitForSeconds> dicWaitForSeconds = new Dictionary<float, WaitForSeconds>();
     
-    /// <summary> ½Ã°£¿¡ ¸Â´Â WaitForSeconds¸¦ ¹İÈ¯, ¾øÀ¸¸é ¸¸µé¾î¼­ ÁÜ </summary>
-    /// <param name="time"> ¸ØÃçÀÖ´Â ½Ã°£ </param>
+    /// <summary> ì‹œê°„ì— ë§ëŠ” WaitForSecondsë¥¼ ë°˜í™˜, ì—†ìœ¼ë©´ ë§Œë“¤ì–´ì„œ ì¤Œ </summary>
+    /// <param name="time"> ë©ˆì¶°ìˆëŠ” ì‹œê°„ </param>
     public static WaitForSeconds GetWaitForSeconds(float time)
     {
         if(!dicWaitForSeconds.TryGetValue(time,out WaitForSeconds waitForSeconds))
@@ -20,6 +20,6 @@ public class GUtility
 
         return waitForSeconds;
     }
-    #endregion ÄÚ·çÆ¾
+    #endregion ì½”ë£¨í‹´
 
 }

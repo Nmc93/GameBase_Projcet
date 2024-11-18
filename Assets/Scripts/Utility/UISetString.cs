@@ -4,29 +4,29 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// ¿ÀºêÁ§Æ® È°¼ºÈ­ ½Ã ÇØ´ç ÅØ½ºÆ®
+// ì˜¤ë¸Œì íŠ¸ í™œì„±í™” ì‹œ í•´ë‹¹ í…ìŠ¤íŠ¸
 
 public class UISetString : MonoBehaviour
 {
-    [Header("[ÅØ½ºÆ® ÄÄÆ÷³ÍÆ®]"), Tooltip("ÅØ½ºÆ® ÄÄÆ÷³ÍÆ®")]
+    [Header("[í…ìŠ¤íŠ¸ ì»´í¬ë„ŒíŠ¸]"), Tooltip("í…ìŠ¤íŠ¸ ì»´í¬ë„ŒíŠ¸")]
     [SerializeField] TextMeshProUGUI text;
 
-    [Header("[ÇØ´ç ÅØ½ºÆ®¿¡ »ç¿ëÇÒ Å°°ª]"), Tooltip("ÇØ´ç ÅØ½ºÆ®¿¡ »ç¿ëÇÒ Å°°ª")]
+    [Header("[í•´ë‹¹ í…ìŠ¤íŠ¸ì— ì‚¬ìš©í•  í‚¤ê°’]"), Tooltip("í•´ë‹¹ í…ìŠ¤íŠ¸ì— ì‚¬ìš©í•  í‚¤ê°’")]
     [SerializeField] string key;
 
-    /// <summary> Ãâ·ÂÇÒ ¹®ÀÚ¿­ </summary>
+    /// <summary> ì¶œë ¥í•  ë¬¸ìì—´ </summary>
     private string textString;
 
     private void OnEnable()
     {
-        //ÅØ½ºÆ®¿¡ »ç¿ëÇÒ ¹®ÀÚ¿­ÀÌ ÁØºñµÇ¾îÀÖÁö ¾ÊÀ» °æ¿ì
+        //í…ìŠ¤íŠ¸ì— ì‚¬ìš©í•  ë¬¸ìì—´ì´ ì¤€ë¹„ë˜ì–´ìˆì§€ ì•Šì„ ê²½ìš°
         if (string.IsNullOrEmpty(textString))
         {
-            //Å×ÀÌºí¿¡¼­ ¹Ş¾Æ¿È
+            //í…Œì´ë¸”ì—ì„œ ë°›ì•„ì˜´
             textString = TableMgr.Get(key, out StringTableData data) ? data.Text : string.Empty;
         }
 
-        //ÅØ½ºÆ® º¯°æ
+        //í…ìŠ¤íŠ¸ ë³€ê²½
         text.text = textString;
     }
 }

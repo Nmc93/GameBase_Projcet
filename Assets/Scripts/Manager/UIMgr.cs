@@ -11,19 +11,19 @@ public class UIMgr : MgrBase
 {
     public static UIMgr instance;
 
-    /// <summary> ¾À UI Äµ¹ö½º </summary>
+    /// <summary> ì”¬ UI ìº”ë²„ìŠ¤ </summary>
     private static CanvasData scene;
-    /// <summary> ÆäÀÌÁö UI Äµ¹ö½º </summary>
+    /// <summary> í˜ì´ì§€ UI ìº”ë²„ìŠ¤ </summary>
     private static CanvasData page;
-    /// <summary> ÆË¾÷ UI Äµ¹ö½º </summary>
+    /// <summary> íŒì—… UI ìº”ë²„ìŠ¤ </summary>
     private static CanvasData popup;
 
-    /// <summary> ºñÈ°¼ºÈ­µÈ UI¸¦ ÀúÀåÇÏ´Â Ç® </summary>
+    /// <summary> ë¹„í™œì„±í™”ëœ UIë¥¼ ì €ì¥í•˜ëŠ” í’€ </summary>
     private static RectTransform uiPool;
 
-    /// <summary> UI ÀúÀå¼Ò </summary>
+    /// <summary> UI ì €ì¥ì†Œ </summary>
     private static Dictionary<eUI, UIData> dicUI = new Dictionary<eUI, UIData>();
-    /// <summary> ÇöÀç ¿­·ÁÀÖ´Â UI ¸®½ºÆ® </summary>
+    /// <summary> í˜„ì¬ ì—´ë ¤ìˆëŠ” UI ë¦¬ìŠ¤íŠ¸ </summary>
     private static List<eUI> openList = new List<eUI>();
 
     private void Awake()
@@ -31,82 +31,82 @@ public class UIMgr : MgrBase
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //Äµ¹ö½º ¼¼ÆÃ
+        //ìº”ë²„ìŠ¤ ì„¸íŒ…
         CanvasSetting();
 
-        //UI Ç®, µ¥ÀÌÅÍ ¼¼ÆÃ
+        //UI í’€, ë°ì´í„° ì„¸íŒ…
         UIDataSetting();
     }
 
     #region Setting
 
-    /// <summary> Äµ¹ö½º¸¦ »ı¼ºÇÏ°í ¼¼ÆÃ </summary>
+    /// <summary> ìº”ë²„ìŠ¤ë¥¼ ìƒì„±í•˜ê³  ì„¸íŒ… </summary>
     private void CanvasSetting()
     {
-        //ÀÌº¥Æ® ½Ã½ºÅÛ ¼¼ÆÃ
+        //ì´ë²¤íŠ¸ ì‹œìŠ¤í…œ ì„¸íŒ…
         gameObject.AddComponent<EventSystem>();
         gameObject.AddComponent<StandaloneInputModule>();
 
-        //Äµ¹ö½º ¼¼ÆÃ
+        //ìº”ë²„ìŠ¤ ì„¸íŒ…
         GameObject canvasParent = new GameObject();
         canvasParent.transform.SetParent(transform);
         canvasParent.name = "UICanvas";
 
-        #region ¾À Äµ¹ö½º
-        //¾À Äµ¹ö½º ¼¼ÆÃ
+        #region ì”¬ ìº”ë²„ìŠ¤
+        //ì”¬ ìº”ë²„ìŠ¤ ì„¸íŒ…
         Canvas sceneCanvas = new GameObject().AddComponent<Canvas>();
         sceneCanvas.transform.SetParent(canvasParent.transform);
         sceneCanvas.name = "sceneCanvas";
         sceneCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         sceneCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 |
             AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
-        //¾À Äµ¹ö½º ½ºÄÉÀÏ·¯ ¼¼ÆÃ
+        //ì”¬ ìº”ë²„ìŠ¤ ìŠ¤ì¼€ì¼ëŸ¬ ì„¸íŒ…
         CanvasScaler sceneScale = sceneCanvas.gameObject.AddComponent<CanvasScaler>();
         sceneScale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         sceneScale.referenceResolution = new Vector2(Screen.width, Screen.height);
         sceneScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-        //Äµ¹ö½º µ¥ÀÌÅÍ ¼¼ÆÃ
+        //ìº”ë²„ìŠ¤ ë°ì´í„° ì„¸íŒ…
         scene = new CanvasData(sceneCanvas, sceneScale, sceneCanvas.gameObject.AddComponent<GraphicRaycaster>());
 
-        #endregion ¾À Äµ¹ö½º
+        #endregion ì”¬ ìº”ë²„ìŠ¤
 
-        #region ÆäÀÌÁö Äµ¹ö½º
-        //ÆäÀÌÁö Äµ¹ö½º ¼¼ÆÃ
+        #region í˜ì´ì§€ ìº”ë²„ìŠ¤
+        //í˜ì´ì§€ ìº”ë²„ìŠ¤ ì„¸íŒ…
         Canvas pageCanvas = new GameObject().AddComponent<Canvas>();
         pageCanvas.transform.SetParent(canvasParent.transform);
         pageCanvas.name = "PageCanvas";
         pageCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         pageCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | 
             AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
-        //ÆäÀÌÁö Äµ¹ö½º ½ºÄÉÀÏ·¯ ¼¼ÆÃ
+        //í˜ì´ì§€ ìº”ë²„ìŠ¤ ìŠ¤ì¼€ì¼ëŸ¬ ì„¸íŒ…
         CanvasScaler pageScale = pageCanvas.gameObject.AddComponent<CanvasScaler>();
         pageScale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         pageScale.referenceResolution = new Vector2(Screen.width,Screen.height);
         pageScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-        //Äµ¹ö½º µ¥ÀÌÅÍ ¼¼ÆÃ
+        //ìº”ë²„ìŠ¤ ë°ì´í„° ì„¸íŒ…
         page = new CanvasData(pageCanvas, pageScale, pageCanvas.gameObject.AddComponent<GraphicRaycaster>());
-        #endregion ÆäÀÌÁö Äµ¹ö½º
+        #endregion í˜ì´ì§€ ìº”ë²„ìŠ¤
 
-        #region ÆË¾÷ Äµ¹ö½º
-        //ÆË¾÷ Äµ¹ö½º ¼¼ÆÃ
+        #region íŒì—… ìº”ë²„ìŠ¤
+        //íŒì—… ìº”ë²„ìŠ¤ ì„¸íŒ…
         Canvas popupCanvas = new GameObject().AddComponent<Canvas>();
         popupCanvas.transform.SetParent(canvasParent.transform);
         popupCanvas.name = "PopupCanvas";
         popupCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
         popupCanvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | 
             AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
-        //ÆË¾÷ Äµ¹ö½º ½ºÄÉÀÏ·¯ ¼¼ÆÃ
+        //íŒì—… ìº”ë²„ìŠ¤ ìŠ¤ì¼€ì¼ëŸ¬ ì„¸íŒ…
         CanvasScaler popupScale = popupCanvas.gameObject.AddComponent<CanvasScaler>();
         popupScale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         popupScale.referenceResolution = new Vector2(Screen.width, Screen.height);
         popupScale.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
-        //ÆË¾÷ Äµ¹ö½º ·¹ÀÌÄ³½ºÅÍ ¼¼ÆÃ
+        //íŒì—… ìº”ë²„ìŠ¤ ë ˆì´ìºìŠ¤í„° ì„¸íŒ…
         popup = new CanvasData(popupCanvas, popupScale, popupCanvas.gameObject.AddComponent<GraphicRaycaster>());
-        #endregion ÆË¾÷ Äµ¹ö½º
+        #endregion íŒì—… ìº”ë²„ìŠ¤
 
-        #region Ç® ¿ÀºêÁ§Æ®
+        #region í’€ ì˜¤ë¸Œì íŠ¸
 
-        // Ç® ¿ÀºêÁ§Æ® »ı¼º
+        // í’€ ì˜¤ë¸Œì íŠ¸ ìƒì„±
         RectTransform uiPool = new GameObject().AddComponent<RectTransform>();
         uiPool.transform.SetParent(canvasParent.transform);
         uiPool.sizeDelta = new Vector2(Screen.width, Screen.height);
@@ -115,17 +115,17 @@ public class UIMgr : MgrBase
         uiPool.name = "UIPool";
         UIMgr.uiPool = uiPool;
 
-        #endregion Ç® ¿ÀºêÁ§Æ®
+        #endregion í’€ ì˜¤ë¸Œì íŠ¸
 
     }
 
-    /// <summary> UIÀÇ ¿ÀºêÁ§Æ® Ç®°ú UI µ¥ÀÌÅÍ¸¦ ¼¼ÆÃ </summary>
+    /// <summary> UIì˜ ì˜¤ë¸Œì íŠ¸ í’€ê³¼ UI ë°ì´í„°ë¥¼ ì„¸íŒ… </summary>
     private void UIDataSetting()
     {
-        //·Îµù È­¸é UI
+        //ë¡œë”© í™”ë©´ UI
         dicUI.Add(eUI.UILoading, new UIData("UI/UILoading"));
 
-        //·Îºñ ¾À ¸ŞÀÎ È­¸é UI
+        //ë¡œë¹„ ì”¬ ë©”ì¸ í™”ë©´ UI
         dicUI.Add(eUI.UILobby, new UIData("UI/UILobby"));
     }
 
@@ -133,59 +133,59 @@ public class UIMgr : MgrBase
 
     #region Open
 
-    /// <summary> UI ¿ÀÇÂ </summary>
-    /// <typeparam name="T">UIBase¸¦ »ó¼Ó¹ŞÀº UIÀÇ ¸ŞÀÎ ÄÄÆ÷³ÍÆ® Å¸ÀÔ</typeparam>
-    /// <returns> UI ¿ÀÇÂ¿¡ ¼º°øÇÏ¸é true </returns>
+    /// <summary> UI ì˜¤í”ˆ </summary>
+    /// <typeparam name="T">UIBaseë¥¼ ìƒì†ë°›ì€ UIì˜ ë©”ì¸ ì»´í¬ë„ŒíŠ¸ íƒ€ì…</typeparam>
+    /// <returns> UI ì˜¤í”ˆì— ì„±ê³µí•˜ë©´ true </returns>
     public static bool OpenUI<T>() where T : UIBase
     {
-        //eUI¿Í UIÀÇ ´ëÇ¥ ÄÄÆ÷³ÍÆ®ÀÇ ÀÌ¸§Àº µ¿ÀÏÇØ¾ßÇÔ
+        //eUIì™€ UIì˜ ëŒ€í‘œ ì»´í¬ë„ŒíŠ¸ì˜ ì´ë¦„ì€ ë™ì¼í•´ì•¼í•¨
         return OpenUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
     }
 
-    /// <summary> UI ¿ÀÇÂ </summary>
-    /// <param name="ui"> UI¿¡ ÁöÁ¤µÈ enum </param>
-    /// <returns> UI ¿ÀÇÂ¿¡ ¼º°øÇÏ¸é true </returns>
+    /// <summary> UI ì˜¤í”ˆ </summary>
+    /// <param name="ui"> UIì— ì§€ì •ëœ enum </param>
+    /// <returns> UI ì˜¤í”ˆì— ì„±ê³µí•˜ë©´ true </returns>
     public static bool OpenUI(eUI ui)
     {
-        // 0. ÀÌ¹Ì ¿­·ÁÀÖ´Â °æ¿ì Á¾·áÇÔ
+        // 0. ì´ë¯¸ ì—´ë ¤ìˆëŠ” ê²½ìš° ì¢…ë£Œí•¨
         if(openList.Contains(ui))
         {
-            Debug.LogError($"{ui}´Â ÀÌ¹Ì ¿­·ÁÀÖ´Â UI ÀÔ´Ï´Ù.");
+            Debug.LogError($"{ui}ëŠ” ì´ë¯¸ ì—´ë ¤ìˆëŠ” UI ì…ë‹ˆë‹¤.");
             return false;
         }
 
-        //ÇØ´ç UIÀÇ µ¥ÀÌÅÍ¸¦ È®ÀÎ
+        //í•´ë‹¹ UIì˜ ë°ì´í„°ë¥¼ í™•ì¸
         if(dicUI.TryGetValue(ui, out UIData data))
         {
             UIBase uiBase = data.uiClass;
             
-            //1. ÇÑ¹øµµ »ç¿ëÇÏÁö ¾ÊÀº UIÀÇ °æ¿ì ·ÎµåÇØ¼­ ÀúÀåÇÑ µÚ ¿ÀÇÂÀ» ½ÃÀÛÇÔ
+            //1. í•œë²ˆë„ ì‚¬ìš©í•˜ì§€ ì•Šì€ UIì˜ ê²½ìš° ë¡œë“œí•´ì„œ ì €ì¥í•œ ë’¤ ì˜¤í”ˆì„ ì‹œì‘í•¨
             if (uiBase == null)
             {
-                // 1-1-1. UI ·Îµå¿¡ ¼º°øÇßÀ» °æ¿ì µ¥ÀÌÅÍ ÀúÀå
+                // 1-1-1. UI ë¡œë“œì— ì„±ê³µí–ˆì„ ê²½ìš° ë°ì´í„° ì €ì¥
                 if(AssetsMgr.LoadResourcesUIPrefab(data.path,out GameObject obj))
                 {
                     data.uiClass = Instantiate(obj, uiPool).GetComponent<UIBase>();
                     uiBase = data.uiClass;
                 }
-                // 1-1-2. UI¸¦ Ã£À» ¼ö ¾øÀ» °æ¿ì ÁøÇà Á¾·á
+                // 1-1-2. UIë¥¼ ì°¾ì„ ìˆ˜ ì—†ì„ ê²½ìš° ì§„í–‰ ì¢…ë£Œ
                 else
                 {
-                    Debug.LogError($"UIOpenFailed : [{ui}]´Â µî·ÏµÇÁö ¾ÊÀº UIÀÔ´Ï´Ù.");
+                    Debug.LogError($"UIOpenFailed : [{ui}]ëŠ” ë“±ë¡ë˜ì§€ ì•Šì€ UIì…ë‹ˆë‹¤.");
                     return false;
                 }
             }
 
-            //2. Page Å¸ÀÔÀÇ UI¸¦ ¿ÀÇÂÇÒ °æ¿ì Scene Äµ¹ö½º¸¦ ºñÈ°¼ºÈ­ ÇÏ°í ´Ù¸¥ Page¿Í PopupÅ¸ÀÔÀÇ UI¸¦ Á¾·áÇÔ
+            //2. Page íƒ€ì…ì˜ UIë¥¼ ì˜¤í”ˆí•  ê²½ìš° Scene ìº”ë²„ìŠ¤ë¥¼ ë¹„í™œì„±í™” í•˜ê³  ë‹¤ë¥¸ Pageì™€ Popupíƒ€ì…ì˜ UIë¥¼ ì¢…ë£Œí•¨
             if (uiBase.canvasType == eCanvas.Page)
             {
-                //2-1. ¾À Äµ¹ö½º ºñÈ°¼ºÈ­
+                //2-1. ì”¬ ìº”ë²„ìŠ¤ ë¹„í™œì„±í™”
                 scene.SetActivate(false);
 
-                //2-2. ÇöÀç ¿­·ÁÀÖ´Â UI¸¦ Ã¼Å©
+                //2-2. í˜„ì¬ ì—´ë ¤ìˆëŠ” UIë¥¼ ì²´í¬
                 for (int i = openList.Count - 1; i >= 0; -- i)
                 {
-                    //2-3. °°Àº UI°¡ ¾Æ´Ñ Scene Å¸ÀÔ UI¸¦ »©°í ÀüºÎ Á¾·á
+                    //2-3. ê°™ì€ UIê°€ ì•„ë‹Œ Scene íƒ€ì… UIë¥¼ ë¹¼ê³  ì „ë¶€ ì¢…ë£Œ
                     UIBase temp = dicUI[openList[i]].uiClass;
                     if (temp.uiType != data.uiClass.uiType && temp.canvasType != eCanvas.Scene)
                     {
@@ -194,7 +194,7 @@ public class UIMgr : MgrBase
                 }
             }
 
-            //3. UI¸¦ Äµ¹ö½º¿¡ ¿Ã¸®°í UI¸¦ È°¼ºÈ­
+            //3. UIë¥¼ ìº”ë²„ìŠ¤ì— ì˜¬ë¦¬ê³  UIë¥¼ í™œì„±í™”
             uiBase.transform.SetParent(GetCanvas(uiBase.canvasType).transform);
             openList.Add(ui);
             uiBase.Open();
@@ -203,8 +203,8 @@ public class UIMgr : MgrBase
             return true;
         }
 
-        //½ÇÇà ½ÇÆĞ
-        Debug.LogError($"UIOpenFailed : [{ui}]´Â µî·ÏµÇÁö ¾ÊÀº UIÀÔ´Ï´Ù.");
+        //ì‹¤í–‰ ì‹¤íŒ¨
+        Debug.LogError($"UIOpenFailed : [{ui}]ëŠ” ë“±ë¡ë˜ì§€ ì•Šì€ UIì…ë‹ˆë‹¤.");
         return false;
     }
 
@@ -212,64 +212,64 @@ public class UIMgr : MgrBase
 
     #region Close
 
-    /// <summary> ¾À º¯°æÀ¸·Î ÀÎÇØ ÇöÀç ¿­·ÁÀÖ´Â ¸ğµç UI Á¾·á </summary>
+    /// <summary> ì”¬ ë³€ê²½ìœ¼ë¡œ ì¸í•´ í˜„ì¬ ì—´ë ¤ìˆëŠ” ëª¨ë“  UI ì¢…ë£Œ </summary>
     public static void SceneChangeAllUIClose()
     {
-        // 1. ÇöÀç ¿­·ÁÀÖ´Â ¸ğµç UI¸¦ Ã¼Å©
+        // 1. í˜„ì¬ ì—´ë ¤ìˆëŠ” ëª¨ë“  UIë¥¼ ì²´í¬
         for (int i = openList.Count - 1; i >= 0; --i)
         {
-            // 2. Á¾·á ´ë»ó µ¥ÀÌÅÍ È¹µæ
+            // 2. ì¢…ë£Œ ëŒ€ìƒ ë°ì´í„° íšë“
             eUI type = openList[i];
             UIBase uIBase = dicUI[type].uiClass;
 
-            // 3. ¾À º¯°æ½Ã Á¾·áÇÏ±â·Î ÇÑ UIÀÎÁö Ã¼Å©
+            // 3. ì”¬ ë³€ê²½ì‹œ ì¢…ë£Œí•˜ê¸°ë¡œ í•œ UIì¸ì§€ ì²´í¬
             if (uIBase.IsSceneChangeClose)
             {
-                // 4. UI Á¾·á
+                // 4. UI ì¢…ë£Œ
                 uIBase.DataClear();
                 openList.Remove(type);
             }
         }
     }
 
-    /// <summary> UI Á¾·á </summary>
-    /// <typeparam name="T"> UIBase¸¦ »ó¼Ó¹ŞÀº UIÀÇ ¸ŞÀÎ ÄÄÆ÷³ÍÆ® Å¸ÀÔ </typeparam>
-    /// <returns> Á¾·á¿¡ ¼º°øÇÏ¸é true </returns>
+    /// <summary> UI ì¢…ë£Œ </summary>
+    /// <typeparam name="T"> UIBaseë¥¼ ìƒì†ë°›ì€ UIì˜ ë©”ì¸ ì»´í¬ë„ŒíŠ¸ íƒ€ì… </typeparam>
+    /// <returns> ì¢…ë£Œì— ì„±ê³µí•˜ë©´ true </returns>
     public bool CloseUI<T>()
     {
-        //eUI¿Í UIÀÇ ´ëÇ¥ ÄÄÆ÷³ÍÆ®ÀÇ ÀÌ¸§Àº µ¿ÀÏÇØ¾ßÇÔ
+        //eUIì™€ UIì˜ ëŒ€í‘œ ì»´í¬ë„ŒíŠ¸ì˜ ì´ë¦„ì€ ë™ì¼í•´ì•¼í•¨
         return CloseUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name));
     }
 
-    /// <summary> UI Á¾·á </summary>
-    /// <param name="ui"> Á¾·áÇÒ UI </param>
-    /// <param name="isChainClose"> UI°¡ Á¾·áµÉ¶§ Å¸ÀÔ¿¡ µû¶ó Ãß°¡·Î ´Ù¸¥ UI¸¦ Á¾·áÇÏ´Â ÀÌº¥Æ®¸¦ ½ÇÇàÇÒÁö ¿©ºÎ </param>
-    /// <returns> Á¾·á¿¡ ¼º°øÇÏ¸é true </returns>
+    /// <summary> UI ì¢…ë£Œ </summary>
+    /// <param name="ui"> ì¢…ë£Œí•  UI </param>
+    /// <param name="isChainClose"> UIê°€ ì¢…ë£Œë ë•Œ íƒ€ì…ì— ë”°ë¼ ì¶”ê°€ë¡œ ë‹¤ë¥¸ UIë¥¼ ì¢…ë£Œí•˜ëŠ” ì´ë²¤íŠ¸ë¥¼ ì‹¤í–‰í• ì§€ ì—¬ë¶€ </param>
+    /// <returns> ì¢…ë£Œì— ì„±ê³µí•˜ë©´ true </returns>
     public bool CloseUI(eUI ui, bool isChainClose = true)
     {
-        // 1. ¿ÀÇÂ ¸®½ºÆ® Ã¼Å©
+        // 1. ì˜¤í”ˆ ë¦¬ìŠ¤íŠ¸ ì²´í¬
         if(!openList.Contains(ui))
         {
             return false;
         }
 
-        // 2. Á¾·á ´ë»ó UI Á¤º¸ È¹µæ
+        // 2. ì¢…ë£Œ ëŒ€ìƒ UI ì •ë³´ íšë“
         if(!dicUI.TryGetValue(ui,out UIData uiData))
         {
-            Debug.LogError($"UICloseFailed : [{ui}]´Â ÁöÁ¤µÇÁö ¾ÊÀº Å¸ÀÔÀÇ UIÀÔ´Ï´Ù.");
+            Debug.LogError($"UICloseFailed : [{ui}]ëŠ” ì§€ì •ë˜ì§€ ì•Šì€ íƒ€ì…ì˜ UIì…ë‹ˆë‹¤.");
             return false;
         }
 
-        // 3. Ãß°¡Àû Á¾·á¸¦ ÇÏ°í ÇØ´ç UI°¡ ÆäÀÌÁö Å¸ÀÔÀÏ °æ¿ì
+        // 3. ì¶”ê°€ì  ì¢…ë£Œë¥¼ í•˜ê³  í•´ë‹¹ UIê°€ í˜ì´ì§€ íƒ€ì…ì¼ ê²½ìš°
         if (isChainClose && uiData.uiClass.canvasType == eCanvas.Page)
         {
-            // 3-1.¾À Äµ¹ö½º¸¦ È°¼ºÈ­
+            // 3-1.ì”¬ ìº”ë²„ìŠ¤ë¥¼ í™œì„±í™”
             scene.SetActivate(true);
 
-            // 3-2. ÇöÀç ¿­·ÁÀÖ´Â UI¸¦ Ã¼Å©
+            // 3-2. í˜„ì¬ ì—´ë ¤ìˆëŠ” UIë¥¼ ì²´í¬
             for (int i = openList.Count - 1; i >= 0; --i)
             {
-                // 3-3. °°Àº UI°¡ ¾Æ´Ï°í ÆäÀÌÁöÀÏ °æ¿ì Á¾·á
+                // 3-3. ê°™ì€ UIê°€ ì•„ë‹ˆê³  í˜ì´ì§€ì¼ ê²½ìš° ì¢…ë£Œ
                 UIBase temp = dicUI[openList[i]].uiClass;
                 if (temp.uiType != uiData.uiClass.uiType && temp.canvasType != eCanvas.Scene)
                 {
@@ -278,16 +278,16 @@ public class UIMgr : MgrBase
             }
         }
 
-        //´ë»ó UI Á¾·á ÇÁ·Î¼¼½º ½ÃÀÛ
+        //ëŒ€ìƒ UI ì¢…ë£Œ í”„ë¡œì„¸ìŠ¤ ì‹œì‘
         uiData.uiClass.DataClear();
         openList.Remove(ui);
         return true;
     }
 
-    //Á¾·á ÈÄ Pool·Î µ¹¾Æ°¨
+    //ì¢…ë£Œ í›„ Poolë¡œ ëŒì•„ê°
     public void ReturnToUIPool(UIBase uiBase)
     {
-        //UI Ç®·Î ÀÌµ¿
+        //UI í’€ë¡œ ì´ë™
         Debug.Log($"UIClose : [{uiBase.uiType}], CanvasType : [{uiBase.canvasType}]");
         uiBase.transform.SetParent(uiPool);
     }
@@ -296,72 +296,72 @@ public class UIMgr : MgrBase
 
     #region Get
 
-    #region UIÀÇ ¸ŞÀÎ ÄÄÆ÷³ÍÆ® ¹İÈ¯ (GetUI)
+    #region UIì˜ ë©”ì¸ ì»´í¬ë„ŒíŠ¸ ë°˜í™˜ (GetUI)
 
-    /// <summary> UI Å¬·¡½º¸¦ ¹Ş´Â ÇÔ¼ö </summary>
-    /// <typeparam name="T"> ´ë»ó UI¿¡ ÀÖ´Â UIBase¸¦ »ó¼Ó¹ŞÀº ¸ŞÀÎ Å¬·¡½º </typeparam>
-    /// <returns> °Ë»ö ½ÇÆĞ½Ã null ¹İÈ¯ </returns>
+    /// <summary> UI í´ë˜ìŠ¤ë¥¼ ë°›ëŠ” í•¨ìˆ˜ </summary>
+    /// <typeparam name="T"> ëŒ€ìƒ UIì— ìˆëŠ” UIBaseë¥¼ ìƒì†ë°›ì€ ë©”ì¸ í´ë˜ìŠ¤ </typeparam>
+    /// <returns> ê²€ìƒ‰ ì‹¤íŒ¨ì‹œ null ë°˜í™˜ </returns>
     public T GetUI<T>() where T : UIBase
     {
         return GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name)) as T;
     }
 
-    /// <summary> UI Å¬·¡½º¸¦ ¹Ş´Â ÇÔ¼ö </summary>
-    /// <param name="ui"> ´ë»ó UI¿¡ ÇÒ´çµÈ eUI </param>
-    /// <returns> °Ë»ö ½ÇÆĞ½Ã null ¹İÈ¯ </returns>
+    /// <summary> UI í´ë˜ìŠ¤ë¥¼ ë°›ëŠ” í•¨ìˆ˜ </summary>
+    /// <param name="ui"> ëŒ€ìƒ UIì— í• ë‹¹ëœ eUI </param>
+    /// <returns> ê²€ìƒ‰ ì‹¤íŒ¨ì‹œ null ë°˜í™˜ </returns>
     public UIBase GetUI(eUI ui)
     {
-        //UI°¡ µî·ÏµÇ¾î ÀÖÀ» °æ¿ì
+        //UIê°€ ë“±ë¡ë˜ì–´ ìˆì„ ê²½ìš°
         if (dicUI.TryGetValue(ui, out UIData data))
         {
-            //UIÀÇ ·ÎµåÇßÀ» °æ¿ì
+            //UIì˜ ë¡œë“œí–ˆì„ ê²½ìš°
             if (data.uiClass != null)
             {
                 return data.uiClass;
             }
-            //UI°¡ ´Ü ÇÑ¹øµµ È°¼ºÈ­ µÈÀûÀÌ ¾øÀ» °æ¿ì
+            //UIê°€ ë‹¨ í•œë²ˆë„ í™œì„±í™” ëœì ì´ ì—†ì„ ê²½ìš°
             else
             {
-                Debug.LogError($"[{ui}]Å¸ÀÔÀÇ UIÀÇ ¸ŞÀÎ ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogError($"[{ui}]íƒ€ì…ì˜ UIì˜ ë©”ì¸ ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             }
         }
-        //UI°¡ µî·Ï ´©¶ôÀÌ µÇ¾î ÀÖÀ» °æ¿ì
+        //UIê°€ ë“±ë¡ ëˆ„ë½ì´ ë˜ì–´ ìˆì„ ê²½ìš°
         else
         {
-            Debug.LogError($"[{ui}]Å¸ÀÔÀÇ UIÀÇ µî·ÏÀÌ ´©¶ôµÇ¾î ÀÖ½À´Ï´Ù. UIMgr.UIDataSetting() ¸¦ ÂüÁ¶ÇÏ½Ê½Ã¿À");
+            Debug.LogError($"[{ui}]íƒ€ì…ì˜ UIì˜ ë“±ë¡ì´ ëˆ„ë½ë˜ì–´ ìˆìŠµë‹ˆë‹¤. UIMgr.UIDataSetting() ë¥¼ ì°¸ì¡°í•˜ì‹­ì‹œì˜¤");
         }
 
         return null;
     }
 
-    /// <summary> UI Å¬·¡½º¸¦ ¹Ş´Â ÇÔ¼ö </summary>
-    /// <typeparam name="T">UIBase ¸¦ »ó¼Ó¹ŞÀº UI Å¬·¡½º</typeparam>
-    /// <param name="uiBase"> °Ë»ö °á°ú ¹İÈ¯ </param>
-    /// <returns> °Ë»ö ¼º°ø½Ã true </returns>
+    /// <summary> UI í´ë˜ìŠ¤ë¥¼ ë°›ëŠ” í•¨ìˆ˜ </summary>
+    /// <typeparam name="T">UIBase ë¥¼ ìƒì†ë°›ì€ UI í´ë˜ìŠ¤</typeparam>
+    /// <param name="uiBase"> ê²€ìƒ‰ ê²°ê³¼ ë°˜í™˜ </param>
+    /// <returns> ê²€ìƒ‰ ì„±ê³µì‹œ true </returns>
     public bool GetUI<T>(out T uiBase) where T : UIBase
     {
         uiBase = GetUI((eUI)Enum.Parse(typeof(eUI), typeof(T).Name)) as T;
         return uiBase != null;
     }
 
-    /// <summary> UI Å¬·¡½º¸¦ ¹Ş´Â ÇÔ¼ö </summary>
-    /// <param name="ui"> ´ë»ó UI¿¡ ÇÒ´çµÈ eUI </param>
-    /// <param name="uiBase"> °Ë»ö °á°ú ¹İÈ¯ </param>
-    /// <returns> °Ë»ö ¼º°ø½Ã true </returns>
+    /// <summary> UI í´ë˜ìŠ¤ë¥¼ ë°›ëŠ” í•¨ìˆ˜ </summary>
+    /// <param name="ui"> ëŒ€ìƒ UIì— í• ë‹¹ëœ eUI </param>
+    /// <param name="uiBase"> ê²€ìƒ‰ ê²°ê³¼ ë°˜í™˜ </param>
+    /// <returns> ê²€ìƒ‰ ì„±ê³µì‹œ true </returns>
     public bool GetUI(eUI ui, out UIBase uiBase)
     {
         if (!dicUI.TryGetValue(ui, out UIData data))
         {
-            Debug.LogError($"[{ui}]Å¸ÀÔÀÇ UI¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"[{ui}]íƒ€ì…ì˜ UIë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         uiBase = data.uiClass;
         return uiBase != null;
     }
 
-    #endregion UIÀÇ ¸ŞÀÎ ÄÄÆ÷³ÍÆ® ¹İÈ¯ (GetUI)
+    #endregion UIì˜ ë©”ì¸ ì»´í¬ë„ŒíŠ¸ ë°˜í™˜ (GetUI)
 
-    /// <summary> Å¸ÀÔ¿¡ ¸Â´Â Äµ¹ö½ºÀÇ TransformÀ» ¹İÈ¯ </summary>
+    /// <summary> íƒ€ì…ì— ë§ëŠ” ìº”ë²„ìŠ¤ì˜ Transformì„ ë°˜í™˜ </summary>
     public static Canvas GetCanvas(eCanvas uIType)
     {
         switch (uIType)
@@ -380,8 +380,8 @@ public class UIMgr : MgrBase
     #endregion Get
 }
 
-#region Äµ¹ö½º Á¤º¸
-/// <summary> Äµ¹ö½º µ¥ÀÌÅÍ </summary>
+#region ìº”ë²„ìŠ¤ ì •ë³´
+/// <summary> ìº”ë²„ìŠ¤ ë°ì´í„° </summary>
 public class CanvasData
 {
     public CanvasData(Canvas canvas, CanvasScaler scale, GraphicRaycaster rayCast)
@@ -391,14 +391,14 @@ public class CanvasData
         this.rayCast = rayCast;
     }
 
-    /// <summary> Äµ¹ö½º </summary>
+    /// <summary> ìº”ë²„ìŠ¤ </summary>
     public Canvas canvas;
-    /// <summary> ½ºÄÉÀÏ·¯ </summary>
+    /// <summary> ìŠ¤ì¼€ì¼ëŸ¬ </summary>
     public CanvasScaler scale;
-    /// <summary> ±×·¡ÇÈ ·¹ÀÌÄ³½ºÆ® </summary>
+    /// <summary> ê·¸ë˜í”½ ë ˆì´ìºìŠ¤íŠ¸ </summary>
     public GraphicRaycaster rayCast;
 
-    /// <summary> Äµ¹ö½º ÄÄÆ÷³ÍÆ® È°¼ºÈ­ º¯°æ </summary>
+    /// <summary> ìº”ë²„ìŠ¤ ì»´í¬ë„ŒíŠ¸ í™œì„±í™” ë³€ê²½ </summary>
     public bool SetActivate(bool isActive)
     {
         canvas.enabled = isActive;
@@ -407,10 +407,10 @@ public class CanvasData
         return isActive;
     }
 }
-#endregion Äµ¹ö½º Á¤º¸
+#endregion ìº”ë²„ìŠ¤ ì •ë³´
 
-#region UI Á¤º¸
-/// <summary> UIÀÇ Á¤º¸ </summary>
+#region UI ì •ë³´
+/// <summary> UIì˜ ì •ë³´ </summary>
 public class UIData
 {
     public UIData(string path)
@@ -418,9 +418,9 @@ public class UIData
         this.path = path;
     }
 
-    /// <summary> ÇÁ¸®ÆÕ ÆĞ½º </summary>
+    /// <summary> í”„ë¦¬íŒ¹ íŒ¨ìŠ¤ </summary>
     public string path;
-    /// <summary> UIÅ¬·¡½º </summary>
+    /// <summary> UIí´ë˜ìŠ¤ </summary>
     public UIBase uiClass;
 }
-#endregion UI Á¤º¸
+#endregion UI ì •ë³´

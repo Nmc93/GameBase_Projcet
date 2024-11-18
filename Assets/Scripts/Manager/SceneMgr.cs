@@ -9,22 +9,22 @@ public class SceneMgr : MgrBase
 {
     public static SceneMgr instance;
 
-    #region ÀÌº¥Æ®
-    /// <summary> ¾À º¯°æ ÁøÇàµµ °»½Å ÀÌº¥Æ® </summary>
+    #region ì´ë²¤íŠ¸
+    /// <summary> ì”¬ ë³€ê²½ ì§„í–‰ë„ ê°±ì‹  ì´ë²¤íŠ¸ </summary>
     public Action<float> onGetchanProgress;
-    /// <summary> ¾À º¯°æ »óÅÂ ÀÌº¥Æ® </summary>
+    /// <summary> ì”¬ ë³€ê²½ ìƒíƒœ ì´ë²¤íŠ¸ </summary>
     public Action<eLoadingState> onGetChanState;
-    #endregion ÀÌº¥Æ®
+    #endregion ì´ë²¤íŠ¸
 
-    #region ÇÁ·ÎÆÛÆ¼
+    #region í”„ë¡œí¼í‹°
 
-    /// <summary> ÇöÀç ¾À </summary>
+    /// <summary> í˜„ì¬ ì”¬ </summary>
     public eScene CurScene 
     { 
         get => curScene;
     }
 
-    /// <summary> ÇöÀç ¾À º¯°æ »óÅÂ </summary>
+    /// <summary> í˜„ì¬ ì”¬ ë³€ê²½ ìƒíƒœ </summary>
     public eLoadingState CurState
     {
         get => curState;
@@ -39,20 +39,20 @@ public class SceneMgr : MgrBase
         }
     }
 
-    #endregion ÇÁ·ÎÆÛÆ¼
+    #endregion í”„ë¡œí¼í‹°
 
     #region private
-    /// <summary> ÇöÀç ¾À </summary>
+    /// <summary> í˜„ì¬ ì”¬ </summary>
     private eScene curScene = eScene.LobbyScene;
-    /// <summary> ÇöÀç ¾À º¯°æ »óÅÂ </summary>
+    /// <summary> í˜„ì¬ ì”¬ ë³€ê²½ ìƒíƒœ </summary>
     private eLoadingState curState = eLoadingState.None; 
 
-    /// <summary> ºñµ¿±â ¾À º¯°æ ÄÚ·çÆ¾ </summary>
+    /// <summary> ë¹„ë™ê¸° ì”¬ ë³€ê²½ ì½”ë£¨í‹´ </summary>
     private Coroutine changeCoroutine;
-    /// <summary> ºñµ¿±â ¾À º¯°æ ¿ÀÆÛ·¹ÀÌ¼Ç </summary>
+    /// <summary> ë¹„ë™ê¸° ì”¬ ë³€ê²½ ì˜¤í¼ë ˆì´ì…˜ </summary>
     private AsyncOperation operation;
 
-    /// <summary> ¾À º¯°æ ÁØºñ ¿Ï·á½Ã ¹Ù·Î º¯°æÇÏÁö ¾Ê°í ´ë±âÇÏ´ÂÁö ¿©ºÎ </summary>
+    /// <summary> ì”¬ ë³€ê²½ ì¤€ë¹„ ì™„ë£Œì‹œ ë°”ë¡œ ë³€ê²½í•˜ì§€ ì•Šê³  ëŒ€ê¸°í•˜ëŠ”ì§€ ì—¬ë¶€ </summary>
     private bool isWaitForNextScene;
     #endregion private
 
@@ -61,71 +61,71 @@ public class SceneMgr : MgrBase
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //ÃßÈÄ Å×ÀÌºíÀ» ÀĞÀº µÚ¿¡ Å×ÀÌºí¿¡ µû¶ó¼­ º¯°æ(ÇÁ·¦½º ÀúÀåÀº ÇÏÁö ¾ÊÀ½)
+        //ì¶”í›„ í…Œì´ë¸”ì„ ì½ì€ ë’¤ì— í…Œì´ë¸”ì— ë”°ë¼ì„œ ë³€ê²½(í”„ë©ìŠ¤ ì €ì¥ì€ í•˜ì§€ ì•ŠìŒ)
         isWaitForNextScene = OptionMgr.GetBoolOption("IsWaitNextScene", false);
     }
 
-    /// <summary> ÁöÁ¤µÈ ¾ÀÀ¸·Î º¯°æ </summary>
-    /// <param name="scene"> º¯°æµÉ ¾À </param>
+    /// <summary> ì§€ì •ëœ ì”¬ìœ¼ë¡œ ë³€ê²½ </summary>
+    /// <param name="scene"> ë³€ê²½ë  ì”¬ </param>
     public void ChangeScene(eScene scene)
     {
-        //ÇöÀç¾À¿¡¼­ ÇöÀç¾ÀÀ¸·Î ÀÌµ¿ÇÏ´Â°Ç ºÒ°¡´É
+        //í˜„ì¬ì”¬ì—ì„œ í˜„ì¬ì”¬ìœ¼ë¡œ ì´ë™í•˜ëŠ”ê±´ ë¶ˆê°€ëŠ¥
         if (CurScene == scene)
         {
-            Debug.LogError("ÇöÀç ¾À°ú °°Àº ¾ÀÀ¸·Î´Â ÀÌµ¿ÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError("í˜„ì¬ ì”¬ê³¼ ê°™ì€ ì”¬ìœ¼ë¡œëŠ” ì´ë™í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             return;
         }
 
-        //¾À º¯°æ ÄÚ·çÆ¾ÀÌ µ¹°í ÀÖÁö ¾ÊÀ» °æ¿ì¿¡¸¸
+        //ì”¬ ë³€ê²½ ì½”ë£¨í‹´ì´ ëŒê³  ìˆì§€ ì•Šì„ ê²½ìš°ì—ë§Œ
         if (changeCoroutine == null)
         {
-            //---------------------------- ¾À º¯°æ UI ¿ÀÇÂ ------------------------------
+            //---------------------------- ì”¬ ë³€ê²½ UI ì˜¤í”ˆ ------------------------------
             if(!UIMgr.OpenUI(eUI.UILoading))
             {
-                //UIÈ°¼ºÈ­¿¡ ½ÇÆĞÇß´Âµ¥ ´ë±âÇÒ °æ¿ì ´ÙÀ½¾À ÀÌµ¿ÀÌ ºÒ°¡´ÉÇÏ´Ï °­Á¦ ÀÌµ¿
+                //UIí™œì„±í™”ì— ì‹¤íŒ¨í–ˆëŠ”ë° ëŒ€ê¸°í•  ê²½ìš° ë‹¤ìŒì”¬ ì´ë™ì´ ë¶ˆê°€ëŠ¥í•˜ë‹ˆ ê°•ì œ ì´ë™
                 isWaitForNextScene = false;
             }
 
-            //----------------------------- ÇöÀç ¾À Á¾·á --------------------------------
+            //----------------------------- í˜„ì¬ ì”¬ ì¢…ë£Œ --------------------------------
             CurState = eLoadingState.CloseCurScene;
-            // ¸ğµç PageUI Á¾·á
+            // ëª¨ë“  PageUI ì¢…ë£Œ
             UIMgr.SceneChangeAllUIClose();
 
-            //----------------------------- ´ÙÀ½ ¾À ÁØºñ --------------------------------
-            //·Îµù UIÀÇ »óÅÂ¸¦ ¾À º¯°æÁßÀ¸·Î º¯°æ
+            //----------------------------- ë‹¤ìŒ ì”¬ ì¤€ë¹„ --------------------------------
+            //ë¡œë”© UIì˜ ìƒíƒœë¥¼ ì”¬ ë³€ê²½ì¤‘ìœ¼ë¡œ ë³€ê²½
             CurState = eLoadingState.SceneChange;
-            //ºñµ¿±â ¾À ÀüÈ¯ ½ÇÇà
+            //ë¹„ë™ê¸° ì”¬ ì „í™˜ ì‹¤í–‰
             changeCoroutine = StartCoroutine(OpenScene(scene));
         }
         else
         {
-            Debug.LogError($"¾À º¯°æÁß¿¡ ¾ÀÀ» º¯°æÇÒ ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"ì”¬ ë³€ê²½ì¤‘ì— ì”¬ì„ ë³€ê²½í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-    #region ¾À ¿ÀÇÂ
+    #region ì”¬ ì˜¤í”ˆ
 
-    /// <summary> ¾À º¯°æ  </summary>
+    /// <summary> ì”¬ ë³€ê²½  </summary>
     private IEnumerator OpenScene(eScene sceneType)
     {
-        //º¯°æµÈ ¾ÀÀ» ´ë±â½ÃÅ´
+        //ë³€ê²½ëœ ì”¬ì„ ëŒ€ê¸°ì‹œí‚´
         operation = SceneManager.LoadSceneAsync(sceneType.ToString());
         operation.allowSceneActivation = false;
 
-        //----------------------------- ¾À ·Îµù ½ÃÀÛ --------------------------------
+        //----------------------------- ì”¬ ë¡œë”© ì‹œì‘ --------------------------------
         while (true)
         {
             yield return new WaitForSeconds(0.1f);
 
-            //·ÎµùÀÌ 90% ÁøÇàµÈ´Ù¸é ¼³Á¤¿¡ µû¶ó ¾ÀÀ» º¯°æÇÏ°Å³ª ´ë±â
+            //ë¡œë”©ì´ 90% ì§„í–‰ëœë‹¤ë©´ ì„¤ì •ì— ë”°ë¼ ì”¬ì„ ë³€ê²½í•˜ê±°ë‚˜ ëŒ€ê¸°
             if (operation.progress >= 0.90f)
             {
-                //¹Ù·Î º¯°æÇÏÁö ¾Ê°í ´ë±âÇÑ´Ù¸é
+                //ë°”ë¡œ ë³€ê²½í•˜ì§€ ì•Šê³  ëŒ€ê¸°í•œë‹¤ë©´
                 if (isWaitForNextScene)
                 {
                     CurState = eLoadingState.WaitChangeScene;
                 }
-                //ÁØºñµÈ´ë·Î ¹Ù·Î ¾ÀÀ» º¯°æÇÒ °æ¿ì
+                //ì¤€ë¹„ëœëŒ€ë¡œ ë°”ë¡œ ì”¬ì„ ë³€ê²½í•  ê²½ìš°
                 else
                 {
                     operation.allowSceneActivation = true;
@@ -133,47 +133,47 @@ public class SceneMgr : MgrBase
                 break;
             }
 
-            // ÇöÀç ¾À º¯°æ ÁøÇàµµ ÆÛ¼¾Æ® °»½Å
+            // í˜„ì¬ ì”¬ ë³€ê²½ ì§„í–‰ë„ í¼ì„¼íŠ¸ ê°±ì‹ 
             if (onGetchanProgress != null)
             {
                 onGetchanProgress(operation.progress);
             }
         }
 
-        //¾À ÁØºñ ÆÛ¼¾Æ®¸¦ 100%·Î º¯°æ
+        //ì”¬ ì¤€ë¹„ í¼ì„¼íŠ¸ë¥¼ 100%ë¡œ ë³€ê²½
         if (onGetchanProgress != null)
         {
             onGetchanProgress(1f);
         }
 
-        //----------------------------- ¾À º¯°æ ´ë±â --------------------------------
+        //----------------------------- ì”¬ ë³€ê²½ ëŒ€ê¸° --------------------------------
         while (!operation.allowSceneActivation)
         {
             yield return new WaitForSeconds(0.5f);
         }
 
-        //------------------------------ ¾À º¯°æ ------------------------------------
-        //ÇöÀç ¾À º¯°æ, ¿ÀÇÂµÈ ¾À ´ëÀÀ
+        //------------------------------ ì”¬ ë³€ê²½ ------------------------------------
+        //í˜„ì¬ ì”¬ ë³€ê²½, ì˜¤í”ˆëœ ì”¬ ëŒ€ì‘
         curScene = sceneType;
         OpenCurScene();
     }
 
-    /// <summary> ¾À ¿ÀÇÂ </summary>
+    /// <summary> ì”¬ ì˜¤í”ˆ </summary>
     public void OpenCurScene()
     {
-        //¾À º¯°æ ÄÚ·çÆ¾ÀÌ ½ÇÇàÁßÀÌ¶ó¸é Á¾·á
+        //ì”¬ ë³€ê²½ ì½”ë£¨í‹´ì´ ì‹¤í–‰ì¤‘ì´ë¼ë©´ ì¢…ë£Œ
         if (changeCoroutine != null)
         {
             StopCoroutine(changeCoroutine);
             changeCoroutine = null;
         }
 
-        //¿Ï·áÇÏ°í ¾ÀÀÌ º¯ÇßÀ½, ¾À¿¡ ¸Â°Ô ¼¼ÆÃ
+        //ì™„ë£Œí•˜ê³  ì”¬ì´ ë³€í–ˆìŒ, ì”¬ì— ë§ê²Œ ì„¸íŒ…
         switch (CurScene)
         {
             case eScene.LobbyScene:
                 {
-                    //·Îºñ ¾À ¿ÀÇÂ
+                    //ë¡œë¹„ ì”¬ ì˜¤í”ˆ
                     UIMgr.OpenUI(eUI.UILobby);
                 }
                 break;
@@ -184,19 +184,19 @@ public class SceneMgr : MgrBase
                 break;
         }
 
-        //¾À º¯°æ Á¾·á
+        //ì”¬ ë³€ê²½ ì¢…ë£Œ
         CurState = eLoadingState.None;
     }
 
-    #endregion ¾À ¿ÀÇÂ
+    #endregion ì”¬ ì˜¤í”ˆ
 
-    /// <summary> ¾À º¯°æ Çã°¡ </summary>
+    /// <summary> ì”¬ ë³€ê²½ í—ˆê°€ </summary>
     public void MoveNextScene()
     {
-        //ÁøÇàÁßÀÌ°í ÁøÇàµµ°¡ ÀÏÁ¤ ÀÌ»ó ³ô¾ÆÁ³À» °æ¿ì
+        //ì§„í–‰ì¤‘ì´ê³  ì§„í–‰ë„ê°€ ì¼ì • ì´ìƒ ë†’ì•„ì¡Œì„ ê²½ìš°
         if(operation != null && operation.progress >= 0.9f)
         {
-            //¾À º¯°æ Çã°¡
+            //ì”¬ ë³€ê²½ í—ˆê°€
             operation.allowSceneActivation = true;
         }
     }

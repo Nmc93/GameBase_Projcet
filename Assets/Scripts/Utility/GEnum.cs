@@ -2,9 +2,9 @@ using System;
 
 namespace GEnum
 {
-    #region °ÔÀÓ ¸Å´ÏÀú
-    /// <summary> ¸Å´ÏÀú¿¡ ÁöÁ¤µÈ enum <br/> 
-    /// [¸Å´ÏÀú Å¬·¡½º¿Í ÀÌ¸§ÀÌ µ¿ÀÏÇÔ] </summary>
+    #region ê²Œì„ ë§¤ë‹ˆì €
+    /// <summary> ë§¤ë‹ˆì €ì— ì§€ì •ëœ enum <br/> 
+    /// [ë§¤ë‹ˆì € í´ë˜ìŠ¤ì™€ ì´ë¦„ì´ ë™ì¼í•¨] </summary>
     public enum eMgr
     {
         SceneMgr = 0,
@@ -15,17 +15,17 @@ namespace GEnum
         InputMgr,
         SoundMgr,
     }
-    #endregion °ÔÀÓ ¸Å´ÏÀú
+    #endregion ê²Œì„ ë§¤ë‹ˆì €
 
-    #region UI °ü·Ã
-    /// <summary> ¾À Å¸ÀÔ, ¾À ÀÌ¸§°ú µ¿ÀÏ </summary>
+    #region UI ê´€ë ¨
+    /// <summary> ì”¬ íƒ€ì…, ì”¬ ì´ë¦„ê³¼ ë™ì¼ </summary>
     public enum eScene
     {
         LobbyScene = 0,
         GameScene,
     }
 
-    /// <summary> Äµ¹ö½º Å¸ÀÔ </summary>
+    /// <summary> ìº”ë²„ìŠ¤ íƒ€ì… </summary>
     public enum eCanvas : byte
     {
         Scene = 0,
@@ -33,8 +33,8 @@ namespace GEnum
         Popup
     }
 
-    /// <summary> UI¸¦ ½±°Ô Ã£±â À§ÇØ ÁöÁ¤µÈ enum <br/> 
-    /// [UI ÇÁ¸®ÆÕÀÇ ´ëÇ¥ ÄÄÆ÷³ÍÆ®¿Í ÀÌ¸§ÀÌ µ¿ÀÏÇÔ] </summary>
+    /// <summary> UIë¥¼ ì‰½ê²Œ ì°¾ê¸° ìœ„í•´ ì§€ì •ëœ enum <br/> 
+    /// [UI í”„ë¦¬íŒ¹ì˜ ëŒ€í‘œ ì»´í¬ë„ŒíŠ¸ì™€ ì´ë¦„ì´ ë™ì¼í•¨] </summary>
     public enum eUI : short
     {
         UILoading = 0,
@@ -45,46 +45,46 @@ namespace GEnum
     {
         
     }
-    #endregion UI °ü·Ã
+    #endregion UI ê´€ë ¨
 
-    #region ·Îµù
-    /// <summary> ·Îµù »óÅÂ </summary>
+    #region ë¡œë”©
+    /// <summary> ë¡œë”© ìƒíƒœ </summary>
     public enum eLoadingState
     {
-        /// <summary> ¾À º¯°æ ÁøÇàÁßÀÌ ¾Æ´Ô </summary>
+        /// <summary> ì”¬ ë³€ê²½ ì§„í–‰ì¤‘ì´ ì•„ë‹˜ </summary>
         None,
-        /// <summary> UI Á¾·á ½ÃÀÛ </summary>
+        /// <summary> UI ì¢…ë£Œ ì‹œì‘ </summary>
         CloseCurScene,
-        /// <summary> ¾À º¯°æ ½ÃÀÛ </summary>
+        /// <summary> ì”¬ ë³€ê²½ ì‹œì‘ </summary>
         SceneChange,
-        /// <summary> ¾À º¯°æ ´ë±â </summary>
+        /// <summary> ì”¬ ë³€ê²½ ëŒ€ê¸° </summary>
         WaitChangeScene
     }
-    #endregion ·Îµù
+    #endregion ë¡œë”©
 
-    #region ÀÔ·Â Å¸ÀÔ
+    #region ì…ë ¥ íƒ€ì…
 
     public enum eInputType
     {
-        /// <summary> ´ÙÀ½ ¾À ÀÌµ¿ </summary>
+        /// <summary> ë‹¤ìŒ ì”¬ ì´ë™ </summary>
         MoveNextScene = 0,
-        /// <summary> Å°ÀÇ ¸¶Áö¸·, »ç¿ëÇÏÁö ¾ÊÀ½ </summary>
+        /// <summary> í‚¤ì˜ ë§ˆì§€ë§‰, ì‚¬ìš©í•˜ì§€ ì•ŠìŒ </summary>
         Count
     }
 
-    #endregion ÀÔ·Â Å¸ÀÔ
+    #endregion ì…ë ¥ íƒ€ì…
 
-    #region »ç¿îµå
+    #region ì‚¬ìš´ë“œ
     public enum eSoundType
     {
-        /// <summary> Å¸ÀÔ¾øÀ½, Àç»ıºÒ°¡ </summary>
+        /// <summary> íƒ€ì…ì—†ìŒ, ì¬ìƒë¶ˆê°€ </summary>
         None = 0,
-        /// <summary> ¹è°æÀ½(ÀüÃ¼) </summary>
+        /// <summary> ë°°ê²½ìŒ(ì „ì²´) </summary>
         BGM,
-        /// <summary> °ÔÀÓ ½Ã½ºÅÛ °ü·Ã »ç¿îµå(ÀüÃ¼) </summary>
+        /// <summary> ê²Œì„ ì‹œìŠ¤í…œ ê´€ë ¨ ì‚¬ìš´ë“œ(ì „ì²´) </summary>
         System,
-        /// <summary> °ÔÀÓ °ü·Ã ÀÌÆåÆ® »ç¿îµå(À§Ä¡ ÁöÁ¤, 3D) </summary>
+        /// <summary> ê²Œì„ ê´€ë ¨ ì´í™íŠ¸ ì‚¬ìš´ë“œ(ìœ„ì¹˜ ì§€ì •, 3D) </summary>
         Effect,
     }
-    #endregion »ç¿îµå
+    #endregion ì‚¬ìš´ë“œ
 }

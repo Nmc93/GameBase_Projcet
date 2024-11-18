@@ -9,12 +9,12 @@ public class TableMgr : MgrBase
 {
     public static TableMgr instance;
 
-    /// <summary> csvÆÄÀÏÀÇ ÀúÀå Æú´õ </summary>
+    /// <summary> csvíŒŒì¼ì˜ ì €ì¥ í´ë” </summary>
     private const string csvPath = "Assets\\Resources\\TableCSV\\{0}.csv";
-    /// <summary> ¹ÙÀÌ³Ê¸® ÆÄÀÏÀÇ ÀúÀå Æú´õ </summary>
+    /// <summary> ë°”ì´ë„ˆë¦¬ íŒŒì¼ì˜ ì €ì¥ í´ë” </summary>
     private const string binaryPath = "TableBytes\\{0}";
 
-    /// <summary> Å×ÀÌºí µ¥ÀÌÅÍ </summary>
+    /// <summary> í…Œì´ë¸” ë°ì´í„° </summary>
     private Dictionary<string, TableData> dicTable = new Dictionary<string, TableData>();
 
     private void Awake()
@@ -22,45 +22,45 @@ public class TableMgr : MgrBase
         instance = this;
         DontDestroyOnLoad(this);
 
-        //Å×ÀÌºí ¼¼ÆÃ
+        //í…Œì´ë¸” ì„¸íŒ…
         SetTableDatas();
     }
 
-    #region Å×ÀÌºí ·Îµå
-    /// <summary> Å×ÀÌºí ¼¼ÆÃ </summary>
+    #region í…Œì´ë¸” ë¡œë“œ
+    /// <summary> í…Œì´ë¸” ì„¸íŒ… </summary>
     private void SetTableDatas()
     {
         //Assets\\Resources\\TableBytes\\StringTableData.bytes
-        //Å×ÀÌºí µ¥ÀÌÅÍ¸¦ ¼¼ÆÃ
+        //í…Œì´ë¸” ë°ì´í„°ë¥¼ ì„¸íŒ…
 
-        //StringTableData ¼¼ÆÃ
+        //StringTableData ì„¸íŒ…
         dicTable.Add("StringTableData", LoadTable<StringTableData>());
         
-        //OptionTableData ¼¼ÆÃ
+        //OptionTableData ì„¸íŒ…
         dicTable.Add("OptionTableData", LoadTable<OptionTableData>());
 
-        //OptionTableData ¼¼ÆÃ
+        //OptionTableData ì„¸íŒ…
         dicTable.Add("SoundTableData", LoadTable<SoundTableData>());
 
-        //InputKeyTableData ¼¼ÆÃ
+        //InputKeyTableData ì„¸íŒ…
         dicTable.Add("InputKeyTableData", LoadTable<InputKeyTableData>());
     }
 
-    /// <summary> ÁöÁ¤µÈ Å×ÀÌºíÀ» ·Îµå </summary>
-    /// <typeparam name="T"> Å×ÀÌºí Å¬·¡½º¸¸ °¡´É </typeparam>
+    /// <summary> ì§€ì •ëœ í…Œì´ë¸”ì„ ë¡œë“œ </summary>
+    /// <typeparam name="T"> í…Œì´ë¸” í´ë˜ìŠ¤ë§Œ ê°€ëŠ¥ </typeparam>
     private TableData LoadTable<T>() where T : TableBase
     {
-        //ÇØ´ç Å¸ÀÔÀÇ Å×ÀÌºí µ¥ÀÌÅÍ
+        //í•´ë‹¹ íƒ€ì…ì˜ í…Œì´ë¸” ë°ì´í„°
         TableData tableData = null;
-        //°æ·Î ¼¼ÆÃ
+        //ê²½ë¡œ ì„¸íŒ…
         string path = string.Format(binaryPath, typeof(T).ToString());
 
-        //°æ·Î¿¡ ÀÖ´Â µ¥ÀÌÅÍ ·Îµå
+        //ê²½ë¡œì— ìˆëŠ” ë°ì´í„° ë¡œë“œ
         TextAsset textAsset = Resources.Load<TextAsset>(path);
 
         if (textAsset != null)
         {
-            //Á÷·ÄÈ­µÈ Å¬·¡½º¸¦ ¿ªÁ÷·ÄÈ­
+            //ì§ë ¬í™”ëœ í´ë˜ìŠ¤ë¥¼ ì—­ì§ë ¬í™”
             using (MemoryStream stream = new MemoryStream(textAsset.bytes))
             {
                 BinaryFormatter bf = new BinaryFormatter();
@@ -68,50 +68,50 @@ public class TableMgr : MgrBase
             }
         }
 
-        //Å×ÀÌºíÀ» Ã£À» ¼ö ¾øÀ» °æ¿ì
+        //í…Œì´ë¸”ì„ ì°¾ì„ ìˆ˜ ì—†ì„ ê²½ìš°
         if (tableData == null)
         {
-            Debug.LogError(textAsset == null ? $"{typeof(T)}ÀÇ Á÷·ÄÈ­µÈ µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù." : $"{typeof(T)}ÀÇ ¿ªÁ÷·ÄÈ­¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+            Debug.LogError(textAsset == null ? $"{typeof(T)}ì˜ ì§ë ¬í™”ëœ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤." : $"{typeof(T)}ì˜ ì—­ì§ë ¬í™”ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
         }
 
         return tableData;
     }
 
-    #endregion Å×ÀÌºí ·Îµå
+    #endregion í…Œì´ë¸” ë¡œë“œ
 
-    #region public À¯Æ¿
-    /// <summary> ÁöÁ¤µÈ Å×ÀÌºíÀÇ °ªÀ» ¹İÈ¯ </summary>
-    /// <typeparam name="T">¼±ÅÃÇÒ Å×ÀÌºí</typeparam>
-    /// <param name="key"> ¿øÇÏ´Â Å×ÀÌºí µ¥ÀÌÅÍÀÇ ID </param>
-    /// <returns> Ã£Áö ¸øÇß´Ù¸é null ¹İÈ¯ </returns>
+    #region public ìœ í‹¸
+    /// <summary> ì§€ì •ëœ í…Œì´ë¸”ì˜ ê°’ì„ ë°˜í™˜ </summary>
+    /// <typeparam name="T">ì„ íƒí•  í…Œì´ë¸”</typeparam>
+    /// <param name="key"> ì›í•˜ëŠ” í…Œì´ë¸” ë°ì´í„°ì˜ ID </param>
+    /// <returns> ì°¾ì§€ ëª»í–ˆë‹¤ë©´ null ë°˜í™˜ </returns>
     public static T Get<T>(object key) where T : TableBase
     {
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            Debug.LogError($"{type}ÀÇ Å×ÀÌºí Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}ì˜ í…Œì´ë¸” ì •ë³´ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         TableBase tb = tbleData[key];
         if(tb == null)
         {
-            Debug.LogError($"{type}Å×ÀÌºí¿¡¼­ {key}ÀÇ ID¸¦ °¡Áø Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}í…Œì´ë¸”ì—ì„œ {key}ì˜ IDë¥¼ ê°€ì§„ ì •ë³´ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         return tb as T;
     }
 
-    /// <summary> ÁöÁ¤µÈ Å×ÀÌºíÀÇ °ªÀ» ÀúÀåÇÏ°í ¼º°ø ¿©ºÎ¸¦ ¹İÈ¯ </summary>
-    /// <typeparam name="T">¼±ÅÃÇÒ Å×ÀÌºí</typeparam>
-    /// <param name="key">¿øÇÏ´Â Å×ÀÌºí µ¥ÀÌÅÍÀÇ ID</param>
-    /// <param name="table">Å×ÀÌºí µ¥ÀÌÅÍ¸¦ ÀúÀåÇÒ ÀúÀå¼Ò</param>
-    /// <returns>Ã£Áö ¸øÇß´Ù¸é false ¹İÈ¯</returns>
+    /// <summary> ì§€ì •ëœ í…Œì´ë¸”ì˜ ê°’ì„ ì €ì¥í•˜ê³  ì„±ê³µ ì—¬ë¶€ë¥¼ ë°˜í™˜ </summary>
+    /// <typeparam name="T">ì„ íƒí•  í…Œì´ë¸”</typeparam>
+    /// <param name="key">ì›í•˜ëŠ” í…Œì´ë¸” ë°ì´í„°ì˜ ID</param>
+    /// <param name="table">í…Œì´ë¸” ë°ì´í„°ë¥¼ ì €ì¥í•  ì €ì¥ì†Œ</param>
+    /// <returns>ì°¾ì§€ ëª»í–ˆë‹¤ë©´ false ë°˜í™˜</returns>
     public static bool Get<T>(object key, out T table) where T : TableBase
     {
         Type type = typeof(T);
         if (!instance.dicTable.TryGetValue(type.ToString(), out TableData tbleData))
         {
-            Debug.LogError($"{type}ÀÇ Å×ÀÌºí Á¤º¸¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}ì˜ í…Œì´ë¸” ì •ë³´ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
             table = null;
             return false;
         }
@@ -119,13 +119,13 @@ public class TableMgr : MgrBase
         table = tbleData[key] as T;
         return table != null;
     }
-    #endregion public À¯Æ¿ 
+    #endregion public ìœ í‹¸ 
 
-    #region private À¯Æ¿
-    /// <summary> ÁöÁ¤µÈ Å¸ÀÔÀ¸·Î °ªÀ» Çüº¯È¯ÇØ¼­ ¹İÈ¯ </summary>
-    /// <param name="type"> °ªÀÇ Å¸ÀÔ </param>
-    /// <param name="value"> Å×ÀÌºí°ª </param>
-    /// <returns> °ªÀÌ Á¦´ë·Î ÁöÁ¤µÇÁö ¾ÊÀ¸¸é stringÀ¸·Î º¯È¯ </returns>
+    #region private ìœ í‹¸
+    /// <summary> ì§€ì •ëœ íƒ€ì…ìœ¼ë¡œ ê°’ì„ í˜•ë³€í™˜í•´ì„œ ë°˜í™˜ </summary>
+    /// <param name="type"> ê°’ì˜ íƒ€ì… </param>
+    /// <param name="value"> í…Œì´ë¸”ê°’ </param>
+    /// <returns> ê°’ì´ ì œëŒ€ë¡œ ì§€ì •ë˜ì§€ ì•Šìœ¼ë©´ stringìœ¼ë¡œ ë³€í™˜ </returns>
     private object GetValue(string type,string value)
     {
         switch(type)
@@ -142,11 +142,11 @@ public class TableMgr : MgrBase
                 return value;
         }
     }
-    #endregion private À¯Æ¿
+    #endregion private ìœ í‹¸
 }
 
-#region Å×ÀÌºí µ¥ÀÌÅÍ
-/// <summary> Å×ÀÌºí µ¥ÀÌÅÍ </summary>
+#region í…Œì´ë¸” ë°ì´í„°
+/// <summary> í…Œì´ë¸” ë°ì´í„° </summary>
 [Serializable]
 public class TableData
 {
@@ -161,14 +161,14 @@ public class TableData
         {
             if(!dicTable.TryGetValue(key,out TableBase table))
             {
-                UnityEngine.Debug.LogError($"{key}ÀÇ °ªÀ» °¡Áø µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù.");
+                UnityEngine.Debug.LogError($"{key}ì˜ ê°’ì„ ê°€ì§„ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤.");
             }
 
             return table;
         }
     }
 
-    /// <summary> Å×ÀÌºí µñ¼Å³Ê¸® </summary>
+    /// <summary> í…Œì´ë¸” ë”•ì…”ë„ˆë¦¬ </summary>
     public Dictionary<object, TableBase> dicTable = new Dictionary<object, TableBase>();
 }
-#endregion Å×ÀÌºí µ¥ÀÌÅÍ
+#endregion í…Œì´ë¸” ë°ì´í„°

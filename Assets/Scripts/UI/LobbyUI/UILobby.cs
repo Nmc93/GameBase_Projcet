@@ -11,7 +11,7 @@ public class UILobby : UIBase
     public override eUI uiType => eUI.UILobby;
 
 
-    /// <summary> °ÔÀÓ ½ÃÀÛ ¹öÆ° </summary>
+    /// <summary> ê²Œì„ ì‹œì‘ ë²„íŠ¼ </summary>
     public void OnClickStartGame()
     {
         SceneMgr.instance.ChangeScene(eScene.GameScene);

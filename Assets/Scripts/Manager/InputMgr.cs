@@ -17,83 +17,83 @@ public class InputMgr : MgrBase
             this.key = key;
         }
 
-        /// <summary> Å°¸¦ ´©¸£°í ÀÖ´ÂÁö ¿©ºÎ </summary>
+        /// <summary> í‚¤ë¥¼ ëˆ„ë¥´ê³  ìˆëŠ”ì§€ ì—¬ë¶€ </summary>
         public bool isClickKey;
-        /// <summary> ÅÍÄ¡Å° </summary>
+        /// <summary> í„°ì¹˜í‚¤ </summary>
         public KeyCode key;
-        /// <summary> ÅÍÄ¡ ÀÌº¥Æ® µî·Ï </summary>
+        /// <summary> í„°ì¹˜ ì´ë²¤íŠ¸ ë“±ë¡ </summary>
         public HashSet<Action> Actions = new HashSet<Action>();
     }
 
-    /// <summary> »ç¿ëÇÏ´Â Å° ¸ñ·Ï [»óÈ²¿¡ µû¶ó µ¥ÀÌÅÍ°¡ »èÁ¦µÇ°í Ãß°¡µÊ]</summary>
+    /// <summary> ì‚¬ìš©í•˜ëŠ” í‚¤ ëª©ë¡ [ìƒí™©ì— ë”°ë¼ ë°ì´í„°ê°€ ì‚­ì œë˜ê³  ì¶”ê°€ë¨]</summary>
     private static List<ClickData> keyList = new List<ClickData>();
-    /// <summary> ±â´É¿¡ ÇÒ´çµÈ Å° È®ÀÎ [µ¥ÀÌÅÍ°¡ »èÁ¦µÇ´ÂÀÏÀº ¾ø¾î¾ßÇÔ] </summary>
+    /// <summary> ê¸°ëŠ¥ì— í• ë‹¹ëœ í‚¤ í™•ì¸ [ë°ì´í„°ê°€ ì‚­ì œë˜ëŠ”ì¼ì€ ì—†ì–´ì•¼í•¨] </summary>
     private static Dictionary<eInputType, KeyCode?> dicInUseData = new Dictionary<eInputType, KeyCode?>();
 
-    #region ÃÖÃÊ ¼¼ÆÃ
+    #region ìµœì´ˆ ì„¸íŒ…
     private void Awake()
     {
         instance = this;
         DontDestroyOnLoad(this);
 
-        //ÃÖÃÊ Å° ¼¼ÆÃ
+        //ìµœì´ˆ í‚¤ ì„¸íŒ…
         KeySetting();
     }
 
-    /// <summary> ÀúÀåµÇ¾î ÀÖ´Â »óÅÂ·Î Å° ¼¼ÆÃ </summary>
+    /// <summary> ì €ì¥ë˜ì–´ ìˆëŠ” ìƒíƒœë¡œ í‚¤ ì„¸íŒ… </summary>
     private void KeySetting()
     {
-        //Å° ÀúÀå½Ã ÇÊ¿äÇÑ°Í
-        // eInputType       - .Tostring()Àº Å×ÀÌºí°ú ÇÁ·¦½ºÀÇ Å°°ª°ú µ¿ÀÏ
-        // InputKeyTable    - µğÆúÆ® Å° ¼¼ÆÃ Á¤º¸
-        // PlayerPrefs      - º¯°æÇÑ Å° µ¥ÀÌÅÍ ÀúÀå, µ¥ÀÌÅÍ°¡ ¾ø´Ù¸é Å×ÀÌºí°ªÀ¸·Î ÀúÀå¹× »ç¿ë
-        // InputKeyTable°ú PlayerPrefs¿¡ ÀúÀåµÈ °ªÀº KeyCode.*.ToString()°ú °°À½
-        // ÁöÁ¤µÇÁö ¾Ê¾Æ »ç¿ëÇÏÁö ¾Ê´Â ±â´ÉÀº °ªÀ» Null·Î ÀúÀå
+        //í‚¤ ì €ì¥ì‹œ í•„ìš”í•œê²ƒ
+        // eInputType       - .Tostring()ì€ í…Œì´ë¸”ê³¼ í”„ë©ìŠ¤ì˜ í‚¤ê°’ê³¼ ë™ì¼
+        // InputKeyTable    - ë””í´íŠ¸ í‚¤ ì„¸íŒ… ì •ë³´
+        // PlayerPrefs      - ë³€ê²½í•œ í‚¤ ë°ì´í„° ì €ì¥, ë°ì´í„°ê°€ ì—†ë‹¤ë©´ í…Œì´ë¸”ê°’ìœ¼ë¡œ ì €ì¥ë° ì‚¬ìš©
+        // InputKeyTableê³¼ PlayerPrefsì— ì €ì¥ëœ ê°’ì€ KeyCode.*.ToString()ê³¼ ê°™ìŒ
+        // ì§€ì •ë˜ì§€ ì•Šì•„ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê¸°ëŠ¥ì€ ê°’ì„ Nullë¡œ ì €ì¥
 
-        //Å° ¼¼ÆÃ
+        //í‚¤ ì„¸íŒ…
         int count = (int)eInputType.Count;
         for (int i = 0; i < count; ++i)
         {
             eInputType type = (eInputType)i;
             string typeName = type.ToString();
 
-            //Å°°¡ ¾øÀ» °æ¿ì µğÆúÆ®°ªÀÇ Å° »ı¼º ¹× ÀúÀå
+            //í‚¤ê°€ ì—†ì„ ê²½ìš° ë””í´íŠ¸ê°’ì˜ í‚¤ ìƒì„± ë° ì €ì¥
             if (!PlayerPrefs.HasKey(typeName))
             {
                 PlayerPrefs.SetString(typeName, TableMgr.Get<InputKeyTableData>(typeName).KeyString);
                 PlayerPrefs.Save();
             }
 
-            //ÇØ´ç Å° ¼¼ÆÃ
+            //í•´ë‹¹ í‚¤ ì„¸íŒ…
             KeyCode? code = ConvertStringToKeyCode(PlayerPrefs.GetString(typeName));
             dicInUseData.Add(type, code);
         }
     }
-    #endregion ÃÖÃÊ ¼¼ÆÃ
+    #endregion ìµœì´ˆ ì„¸íŒ…
 
-    #region ÀÌº¥Æ® °Ë»ç
+    #region ì´ë²¤íŠ¸ ê²€ì‚¬
 
     private void Update()
     {
-        // ÀÔ·ÂÀÌ ¾ø´Ù¸é Á¾·á
+        // ì…ë ¥ì´ ì—†ë‹¤ë©´ ì¢…ë£Œ
         if (!Input.anyKey)
         {
             return;
         }
 
-        //Å° °Ë»ç
+        //í‚¤ ê²€ì‚¬
         foreach(var data in keyList)
         {
-            // 1. Ã¹¹øÂ° ¹öÆ° ´Ù¿îÀÏ °æ¿ì
+            // 1. ì²«ë²ˆì§¸ ë²„íŠ¼ ë‹¤ìš´ì¼ ê²½ìš°
             if (!data.isClickKey)
             {
-                // 1-1. ´­¸°Å°°¡ ÁöÁ¤µÈ Å°ÀÏ °æ¿ì°Å³ª NoneÅ¸ÀÔÀÏ °æ¿ì(NoneÀº AnyKey·Î »ç¿ëÇÔ)
+                // 1-1. ëˆŒë¦°í‚¤ê°€ ì§€ì •ëœ í‚¤ì¼ ê²½ìš°ê±°ë‚˜ Noneíƒ€ì…ì¼ ê²½ìš°(Noneì€ AnyKeyë¡œ ì‚¬ìš©í•¨)
                 if (Input.GetKeyDown(data.key) || data.key == KeyCode.None)
                 {
-                    //Å¬¸¯ Ã¼Å©
+                    //í´ë¦­ ì²´í¬
                     data.isClickKey = true;
 
-                    //½ÇÇàÇÒ ¼ö ÀÖ´Â ÅÍÄ¡ ÀÌº¥Æ®°¡ ÀÖÀ» °æ¿ì ½ÇÇà
+                    //ì‹¤í–‰í•  ìˆ˜ ìˆëŠ” í„°ì¹˜ ì´ë²¤íŠ¸ê°€ ìˆì„ ê²½ìš° ì‹¤í–‰
                     if (data.Actions.Count > 0)
                     {
                         foreach (var action in data.Actions)
@@ -103,30 +103,30 @@ public class InputMgr : MgrBase
                     }
                 }
             }
-            // 2. ¹öÆ° ´Ù¿îÀ» Áö¼ÓÁßÀÏ °æ¿ì
+            // 2. ë²„íŠ¼ ë‹¤ìš´ì„ ì§€ì†ì¤‘ì¼ ê²½ìš°
             else
             {
-                // 2-1. ¹öÆ° ¾÷ ÀÌº¥Æ®ÀÏ °æ¿ì
+                // 2-1. ë²„íŠ¼ ì—… ì´ë²¤íŠ¸ì¼ ê²½ìš°
                 if (Input.GetKeyUp(data.key))
                 {
-                    //Å¬¸¯ ÇØÁ¦
+                    //í´ë¦­ í•´ì œ
                     data.isClickKey = true;
                 }
             }
         }
     }
     
-    #endregion ÀÌº¥Æ® °Ë»ç
+    #endregion ì´ë²¤íŠ¸ ê²€ì‚¬
 
-    #region Å° ÀÌº¥Æ® ¼¼ÆÃ
+    #region í‚¤ ì´ë²¤íŠ¸ ì„¸íŒ…
 
-    /// <summary> Å° Å¬¸¯ ÀÌº¥Æ® µî·Ï </summary>
+    /// <summary> í‚¤ í´ë¦­ ì´ë²¤íŠ¸ ë“±ë¡ </summary>
     public static void AddKeyEvent(eInputType type, Action callback)
     {
-        //Å¸ÀÔ¿¡ ÁöÁ¤µÈ Å° °Ë»ö
+        //íƒ€ì…ì— ì§€ì •ëœ í‚¤ ê²€ìƒ‰
         if(dicInUseData.TryGetValue(type, out KeyCode? code) && code != null)
         {
-            //¸ñ·Ï¿¡ µ¥ÀÌÅÍ°¡ ¾øÀ» °æ¿ì µ¥ÀÌÅÍ ¼¼ÆÃ
+            //ëª©ë¡ì— ë°ì´í„°ê°€ ì—†ì„ ê²½ìš° ë°ì´í„° ì„¸íŒ…
             ClickData data = keyList.Find(item => item.key == code.Value);
             if (data == null)
             {
@@ -134,65 +134,65 @@ public class InputMgr : MgrBase
                 keyList.Add(data);
             }
 
-            //ÀÌº¥Æ® µî·Ï
+            //ì´ë²¤íŠ¸ ë“±ë¡
             if (!data.Actions.Add(callback))
             {
-                Debug.LogError($"{type} ÀÌº¥Æ®°¡ Áßº¹ ÀúÀåµÇ°í ÀÖ½À´Ï´Ù.");
+                Debug.LogError($"{type} ì´ë²¤íŠ¸ê°€ ì¤‘ë³µ ì €ì¥ë˜ê³  ìˆìŠµë‹ˆë‹¤.");
             }
         }
         else
         {
-            Debug.LogError($"{type}Å¸ÀÔÀÇ µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}íƒ€ì…ì˜ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-    /// <summary> Å° Å¬¸¯ ÀÌº¥Æ® ÇØÁ¦ </summary>
+    /// <summary> í‚¤ í´ë¦­ ì´ë²¤íŠ¸ í•´ì œ </summary>
     public static void RemoveKeyEvent(eInputType type, Action callback)
     { 
-        // Å¸ÀÔ¿¡ ÁöÁ¤µÈ Å° °Ë»ö
+        // íƒ€ì…ì— ì§€ì •ëœ í‚¤ ê²€ìƒ‰
         if (dicInUseData.TryGetValue(type, out KeyCode? code) && code != null)
         {
-            // ÁöÁ¤µÈ Å°°¡ ÀÖÀ» °æ¿ì ÀÌº¥Æ® Á¦°Å
+            // ì§€ì •ëœ í‚¤ê°€ ìˆì„ ê²½ìš° ì´ë²¤íŠ¸ ì œê±°
             ClickData data = keyList.Find(item => item.key == code.Value);
             if (data != null)
             {
-                // µî·ÏµÈ ÀÌº¥Æ®ÀÏ °æ¿ì
+                // ë“±ë¡ëœ ì´ë²¤íŠ¸ì¼ ê²½ìš°
                 if (data.Actions.Contains(callback))
                 {
-                    //ÀÌº¥Æ® ÇØÁ¦
+                    //ì´ë²¤íŠ¸ í•´ì œ
                     data.Actions.Remove(callback);
 
-                    //¸ğµç ÀÌº¥Æ®°¡ ÇØÁ¦µÆÀ» °æ¿ì ÇØ´ç Å¬¸¯ ÀÌº¥Æ® Á¦°Å
+                    //ëª¨ë“  ì´ë²¤íŠ¸ê°€ í•´ì œëì„ ê²½ìš° í•´ë‹¹ í´ë¦­ ì´ë²¤íŠ¸ ì œê±°
                     if(data.Actions.Count <= 0)
                     {
                         keyList.Remove(data);
                     }
                 }
-                // µî·ÏµÇÁö ¾ÊÀº ÀÌº¥Æ®ÀÏ °æ¿ì
+                // ë“±ë¡ë˜ì§€ ì•Šì€ ì´ë²¤íŠ¸ì¼ ê²½ìš°
                 else
                 {
-                    Debug.LogError($"»èÁ¦ÇÒ {type}Å¸ÀÔÀÇ µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                    Debug.LogError($"ì‚­ì œí•  {type}íƒ€ì…ì˜ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 }
             }
-            //ÁöÁ¤µÈ Å°°¡ ¾øÀ» °æ¿ì
+            //ì§€ì •ëœ í‚¤ê°€ ì—†ì„ ê²½ìš°
             else
             {
-                Debug.LogError($"{type}¿¡ ÁöÁ¤µÈ Å°°¡ ¾ø½À´Ï´Ù.");
+                Debug.LogError($"{type}ì— ì§€ì •ëœ í‚¤ê°€ ì—†ìŠµë‹ˆë‹¤.");
             }
         }
-        //ÇØ´ç Å¸ÀÔ¿¡ °ü·ÃµÈ µ¥ÀÌÅÍ°¡ ¾øÀ» °æ¿ì
+        //í•´ë‹¹ íƒ€ì…ì— ê´€ë ¨ëœ ë°ì´í„°ê°€ ì—†ì„ ê²½ìš°
         else
         {
-            Debug.LogError($"{type}Å¸ÀÔÀÇ µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}íƒ€ì…ì˜ ë°ì´í„°ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-    #endregion Å° ÀÌº¥Æ® ¼¼ÆÃ
+    #endregion í‚¤ ì´ë²¤íŠ¸ ì„¸íŒ…
 
-    #region º¯È¯
-    /// <summary> stringÀ» KeyCode·Î º¯È¯ </summary>
-    /// <param name="key"> KeyCodeÀÇ Ç×¸ñ°ú ÀÌ¸§ÀÌ µ¿ÀÏÇØ¾ßÇÔ</param>
-    /// <returns> Ã£À» ¼ö ¾ø´Ù¸é null ¹İÈ¯ </returns>
+    #region ë³€í™˜
+    /// <summary> stringì„ KeyCodeë¡œ ë³€í™˜ </summary>
+    /// <param name="key"> KeyCodeì˜ í•­ëª©ê³¼ ì´ë¦„ì´ ë™ì¼í•´ì•¼í•¨</param>
+    /// <returns> ì°¾ì„ ìˆ˜ ì—†ë‹¤ë©´ null ë°˜í™˜ </returns>
     private KeyCode? ConvertStringToKeyCode(string key)
     {
         if(key == "Null")
@@ -207,10 +207,10 @@ public class InputMgr : MgrBase
         }
         catch (Exception ex)
         {
-            Debug.LogError($"KeyCode º¯È¯ ¿¡·¯ : [{ex.Message}], Key : [{key}]");
+            Debug.LogError($"KeyCode ë³€í™˜ ì—ëŸ¬ : [{ex.Message}], Key : [{key}]");
             return null;
         }
     }
-    #endregion º¯È¯
+    #endregion ë³€í™˜
 
 }

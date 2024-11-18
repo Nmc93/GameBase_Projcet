@@ -12,13 +12,13 @@ public class AssetsMgr : MgrBase
         instance = this;
     }
 
-    /// <summary> ÇÁ¸®ÆÕ ±âº» °æ·Î </summary>
+    /// <summary> í”„ë¦¬íŒ¹ ê¸°ë³¸ ê²½ë¡œ </summary>
     private const string UIPrefabPath = "Prefab/";
 
-    #region UI ÇÁ¸®ÆÕ ·Îµå
+    #region UI í”„ë¦¬íŒ¹ ë¡œë“œ
 
-    /// <summary> °æ·Î¸¦ ¹Ş¾Æ¼­ UI ÇÁ¸®ÆÕÀ» ·ÎµåÇØ¼­ ¹İÈ¯ </summary>
-    /// <param name="path"> ¿ÀºêÁ§Æ® °æ·Î </param>
+    /// <summary> ê²½ë¡œë¥¼ ë°›ì•„ì„œ UI í”„ë¦¬íŒ¹ì„ ë¡œë“œí•´ì„œ ë°˜í™˜ </summary>
+    /// <param name="path"> ì˜¤ë¸Œì íŠ¸ ê²½ë¡œ </param>
     public static GameObject LoadResourcesUIPrefab(string path)
     {
         path = $"{UIPrefabPath}{path}";
@@ -26,14 +26,14 @@ public class AssetsMgr : MgrBase
 
         if (obj == null)
         {
-            Debug.LogError($"Àß¸øµÈ °æ·ÎÀÔ´Ï´Ù. [{path}]");
+            Debug.LogError($"ì˜ëª»ëœ ê²½ë¡œì…ë‹ˆë‹¤. [{path}]");
         }
 
         return obj;
     }
 
-    /// <summary> °æ·Î¸¦ ¹Ş¾Æ¼­ UI ÇÁ¸®ÆÕÀ» ·ÎµåÇØ¼­ ¹İÈ¯ </summary>
-    /// <param name="path"> ¿ÀºêÁ§Æ® °æ·Î </param>
+    /// <summary> ê²½ë¡œë¥¼ ë°›ì•„ì„œ UI í”„ë¦¬íŒ¹ì„ ë¡œë“œí•´ì„œ ë°˜í™˜ </summary>
+    /// <param name="path"> ì˜¤ë¸Œì íŠ¸ ê²½ë¡œ </param>
     public static bool LoadResourcesUIPrefab(string path, out GameObject obj)
     {
         path = $"{UIPrefabPath}{path}";
@@ -43,11 +43,11 @@ public class AssetsMgr : MgrBase
 
         if (obj == null)
         {
-            Debug.LogError($"Àß¸øµÈ °æ·ÎÀÔ´Ï´Ù. [{path}]");
+            Debug.LogError($"ì˜ëª»ëœ ê²½ë¡œì…ë‹ˆë‹¤. [{path}]");
         }
 
         return obj != null;
     }
 
-    #endregion UI ÇÁ¸®ÆÕ ·Îµå
+    #endregion UI í”„ë¦¬íŒ¹ ë¡œë“œ
 }

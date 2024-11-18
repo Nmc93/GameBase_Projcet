@@ -4,71 +4,71 @@ using System.Collections.Generic;
 using UnityEngine;
 using GEnum;
 
-// 1. Awake´Ü¿¡¼­ ¸Å´ÏÀú¸¦ »ı¼ºÇÏ°í µî·ÏÇÔ
-// 2. ÁöÁ¤µÈ ¼ø¼­´ë·Î ¸Å´ÏÀú¸¦ ÃÊ±âÈ­ ½ÃÅ´(¼ø¼­¿¡ ÀÇÇÑ ¹®Á¦ ¹æÁö)
+// 1. Awakeì—ì„œ ë§¤ë‹ˆì €ë¥¼ ìƒì„±í•˜ê³  ë“±ë¡í•¨
+// 2. ì§€ì •ëœ ìˆœì„œëŒ€ë¡œ ë§¤ë‹ˆì €ë¥¼ ì´ˆê¸°í™” ì‹œí‚´(ìˆœì„œì— ì˜í•œ ë¬¸ì œ ë°©ì§€)
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    /// <summary> ¸Å´ÏÀú Å¬·¡½º ÀúÀå </summary>
+    /// <summary> ë§¤ë‹ˆì € í´ë˜ìŠ¤ ì €ì¥ </summary>
     public static Dictionary<eMgr, MgrBase> mgrDic = new Dictionary<eMgr, MgrBase>();
 
-    /// <summary> ½ÃÀÛ½Ã ÃÖÃÊ ¸Å´ÏÀú ¼¼ÆÃ </summary>
+    /// <summary> ì‹œì‘ì‹œ ìµœì´ˆ ë§¤ë‹ˆì € ì„¸íŒ… </summary>
     private void Awake()
     {
-        //ÀÌ¹Ì ÀÖ´Ù¸é ÇöÀç ¿ÀºêÁ§Æ® ÆÄ±«
+        //ì´ë¯¸ ìˆë‹¤ë©´ í˜„ì¬ ì˜¤ë¸Œì íŠ¸ íŒŒê´´
         if(instance != null)
             Destroy(this);
 
-        //ÆÄ±«ºÒ°¡ ¿ÀºêÁ§Æ® ÁöÁ¤
+        //íŒŒê´´ë¶ˆê°€ ì˜¤ë¸Œì íŠ¸ ì§€ì •
         DontDestroyOnLoad(gameObject);
         instance = this;
 
-        //Å×ÀÌºí ¸Å´ÏÀú ¼¼ÆÃ
+        //í…Œì´ë¸” ë§¤ë‹ˆì € ì„¸íŒ…
         GameObject tableMgr = new GameObject();
         tableMgr.name = "TableMgr";
         mgrDic.Add(eMgr.TableMgr, tableMgr.AddComponent<TableMgr>());
         
-        //¿É¼Ç ¸Å´ÏÀú
+        //ì˜µì…˜ ë§¤ë‹ˆì €
         GameObject optionMgrObj = new GameObject();
         optionMgrObj.name = "OptionMgr";
         mgrDic.Add(eMgr.OptionMgr, optionMgrObj.AddComponent<OptionMgr>());
 
-        //»ç¿îµå ¸Å´ÏÀú
+        //ì‚¬ìš´ë“œ ë§¤ë‹ˆì €
         GameObject soundMgr = new GameObject();
         soundMgr.name = "SoundMgr";
         mgrDic.Add(eMgr.SoundMgr, soundMgr.AddComponent<SoundMgr>());
 
-        //Å° ÀÔ·Â ¸Å´ÏÀú
+        //í‚¤ ì…ë ¥ ë§¤ë‹ˆì €
         GameObject inputMgr = new GameObject();
         inputMgr.name = "InputMgr";
         mgrDic.Add(eMgr.InputMgr, inputMgr.AddComponent<InputMgr>());
 
-        //UI ¸Å´ÏÀú ¼¼ÆÃ
+        //UI ë§¤ë‹ˆì € ì„¸íŒ…
         GameObject uiMgrObj = new GameObject();
         uiMgrObj.name = "UIMgr";
         mgrDic.Add(eMgr.UIMgr, uiMgrObj.AddComponent<UIMgr>());
 
-        //¾À ¸Å´ÏÀú
+        //ì”¬ ë§¤ë‹ˆì €
         GameObject sceneMgrObj = new GameObject();
         sceneMgrObj.name = "SceneMgr";
         mgrDic.Add(eMgr.SceneMgr, sceneMgrObj.AddComponent<SceneMgr>());
 
-        #region ÃßÈÄ Ãß°¡
+        #region ì¶”í›„ ì¶”ê°€
 
-        ////¼¼ÀÌºê ¸Å´ÏÀú
+        ////ì„¸ì´ë¸Œ ë§¤ë‹ˆì €
         //GameObject saveMgrObj = new GameObject();
         //saveMgrObj.name = "SaveMgr";
         //mgrDic.Add(eMgr.SaveMgr, saveMgrObj.AddComponent<SaveMgr>());
 
-        #endregion ÃßÈÄ Ãß°¡
+        #endregion ì¶”í›„ ì¶”ê°€
 
-        //°ÔÀÓ ½ÃÀÛ
+        //ê²Œì„ ì‹œì‘
         GameStart();
     }
 
-    /// <summary> °ÔÀÓ ½ÃÀÛ </summary>
+    /// <summary> ê²Œì„ ì‹œì‘ </summary>
     public void GameStart()
     {
         SceneMgr.instance.OpenCurScene();
@@ -76,13 +76,13 @@ public class GameManager : MonoBehaviour
 
     #region Get
 
-    /// <summary> ¸Å´ÏÀú Å¬·¡½º¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö </summary>
-    /// <param name="type"> ¸Å´ÏÀúÀÇ enum Å¸ÀÔ </param>
+    /// <summary> ë§¤ë‹ˆì € í´ë˜ìŠ¤ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ </summary>
+    /// <param name="type"> ë§¤ë‹ˆì €ì˜ enum íƒ€ì… </param>
     public static MgrBase GetMgr(eMgr type)
     {
         if (!mgrDic.TryGetValue(type, out MgrBase mgr))
         {
-            Debug.LogError($"{type}¿¡ ÇØ´çÇÏ´Â ¸Å´ÏÀú°¡ ¾ø½À´Ï´Ù.");
+            Debug.LogError($"{type}ì— í•´ë‹¹í•˜ëŠ” ë§¤ë‹ˆì €ê°€ ì—†ìŠµë‹ˆë‹¤.");
             return null;
         }
 
