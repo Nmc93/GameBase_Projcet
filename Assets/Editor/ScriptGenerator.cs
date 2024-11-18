@@ -9,40 +9,40 @@ namespace ExcelEdit
     {
         #region Const Template
 
-        /// <summary> Å¬·¡½º ÀÌ¸§ ÅÛÇÃ¸´<br/> $CSName$ : Å×ÀÌºíÀÌ¸§</summary>
+        /// <summary> í´ë˜ìŠ¤ ì´ë¦„ í…œí”Œë¦¿<br/> $CSName$ : í…Œì´ë¸”ì´ë¦„</summary>
         const string csNameTemplate = "$CSName$Data";
-        /// <summary> Å¬·¡½º ¸öÅë ÅÛÇÃ¸´ <br/> $CSName$ : ÀÌ¸§ <br/> $TblName$ : Å×ÀÌºíÀÌ¸§<br/> $GetKey$ : Å°°ª <br/> $Const$ : »ı¼ºÀÚ <br/> $Values$ : º¯¼ö¿Í ÇÁ·ÎÆÛÆ¼</summary>
+        /// <summary> í´ë˜ìŠ¤ ëª¸í†µ í…œí”Œë¦¿ <br/> $CSName$ : ì´ë¦„ <br/> $TblName$ : í…Œì´ë¸”ì´ë¦„<br/> $GetKey$ : í‚¤ê°’ <br/> $Const$ : ìƒì„±ì <br/> $Values$ : ë³€ìˆ˜ì™€ í”„ë¡œí¼í‹°</summary>
         const string csBodyTemplate = "using System;\nusing UnityEngine;\n \n[Serializable]\npublic class $CSName$ : TableBase\n{\n\t$TblName$\n\t$GetKey$\n\n$Const$\n$Values$\n}";
 
-        /// <summary>Å×ÀÌºí ÀÌ¸§ ÇÁ·ÎÆÛÆ¼ <br/> $Name$ : ÀÌ¸§ </summary>
+        /// <summary>í…Œì´ë¸” ì´ë¦„ í”„ë¡œí¼í‹° <br/> $Name$ : ì´ë¦„ </summary>
         const string csTblNameTemplate = "public override string TableName { get => \"$Name$\"; }";
-        /// <summary> Å°°ª <br/> $Key$ : Å°°ª </summary>
+        /// <summary> í‚¤ê°’ <br/> $Key$ : í‚¤ê°’ </summary>
         const string csGetKeyTemplat = "public override object GetKey { get => $Key$; }";
 
-        /// <summary> º¯¼ö¿Í ÇÁ·ÎÆÛÆ¼ <br/> $Type$ : Å¸ÀÔ<br/> $LowName$ : ¼Ò¹®ÀÚ º¯¼öÀÌ¸§<br/> $Name$ : º¯¼ö ÀÌ¸§) </summary>
+        /// <summary> ë³€ìˆ˜ì™€ í”„ë¡œí¼í‹° <br/> $Type$ : íƒ€ì…<br/> $LowName$ : ì†Œë¬¸ì ë³€ìˆ˜ì´ë¦„<br/> $Name$ : ë³€ìˆ˜ ì´ë¦„) </summary>
         const string csParamTemplate = "\n\t[SerializeField]\n\tprivate $Type$ $LowName$;\n\tpublic $Type$ $Name$ { get => $LowName$; }";
 
-        /// <summary> »ı¼ºÀÚ <br/> $CSName$ : Å¬·¡½º ÀÌ¸§<br/> $Params$ : ¸Å°³º¯¼ö<br/> $Value$ : »ı¼ºÀÚ </summary>
+        /// <summary> ìƒì„±ì <br/> $CSName$ : í´ë˜ìŠ¤ ì´ë¦„<br/> $Params$ : ë§¤ê°œë³€ìˆ˜<br/> $Value$ : ìƒì„±ì </summary>
         const string csConstBody = "\tpublic $CSName$ ($Params$) \n\t{\n$Value$\n\t}";
-        /// <summary> »ı¼ºÀÚ ¸Å°³º¯¼ö<br/> $Type$ : º¯¼ö Å¸ÀÔ<br/> $LowName$ : º¯¼ö ÀÌ¸§ </summary>
+        /// <summary> ìƒì„±ì ë§¤ê°œë³€ìˆ˜<br/> $Type$ : ë³€ìˆ˜ íƒ€ì…<br/> $LowName$ : ë³€ìˆ˜ ì´ë¦„ </summary>
         const string csConstParam = "$Type$ $LowName$";
-        /// <summary> »ı¼ºÀÚ µ¥ÀÌÅÍ ¼¼ÆÃ<br/> $Name$ : name </summary>
+        /// <summary> ìƒì„±ì ë°ì´í„° ì„¸íŒ…<br/> $Name$ : name </summary>
         const string csConstvalue = "this.$LowName$ = $LowName$;";
 
         #endregion Const Template
 
-        #region Å×ÀÌºí »ı¼º º¯¼ö
-        /// <summary> Å×ÀÌºí ÀÌ¸§ </summary>
+        #region í…Œì´ë¸” ìƒì„± ë³€ìˆ˜
+        /// <summary> í…Œì´ë¸” ì´ë¦„ </summary>
         private string tableName;
-        /// <summary> Å×ÀÌºí ¿­ ÀÌ¸§ </summary>
+        /// <summary> í…Œì´ë¸” ì—´ ì´ë¦„ </summary>
         private List<string> columnNameList = new List<string>();
-        /// <summary> Å×ÀÌºí ¿­ Å¸ÀÔ </summary>
+        /// <summary> í…Œì´ë¸” ì—´ íƒ€ì… </summary>
         private List<eDataType> columnTypeList = new List<eDataType>();
-        #endregion  Å×ÀÌºí »ı¼º º¯¼ö
+        #endregion  í…Œì´ë¸” ìƒì„± ë³€ìˆ˜
 
-        #region ¿¢¼¿ÆÄÀÏÀ» CS·Î º¯È¯
+        #region ì—‘ì…€íŒŒì¼ì„ CSë¡œ ë³€í™˜
 
-        /// <summary> µ¥ÀÌÅÍ ¼¼ÆÃ </summary>
+        /// <summary> ë°ì´í„° ì„¸íŒ… </summary>
         public void SetExcelData(string tableName, List<string> columnNameList, List<eDataType> columnTypeList)
         {
             this.tableName = tableName;
@@ -50,15 +50,15 @@ namespace ExcelEdit
             this.columnTypeList = columnTypeList;
         }
 
-        /// <summary> ¿¢¼¿À» CS ÆÄÀÏ·Î º¯°æ </summary>
+        /// <summary> ì—‘ì…€ì„ CS íŒŒì¼ë¡œ ë³€ê²½ </summary>
         public string ConvertExcelToCSText()
         {
-            //1. Å¬·¡½º ÀÌ¸§
+            //1. í´ë˜ìŠ¤ ì´ë¦„
             string tableCSName = csNameTemplate.Replace("$CSName$", tableName);
 
-            //2. º¯¼ö¿Í ÇÁ·ÎÆÛÆ¼
+            //2. ë³€ìˆ˜ì™€ í”„ë¡œí¼í‹°
             string cValue = string.Empty;
-            #region º¯¼ö¿Í ÇÁ·ÎÆÛÆ¼ ¼¼ÆÃ
+            #region ë³€ìˆ˜ì™€ í”„ë¡œí¼í‹° ì„¸íŒ…
 
             for (int i = 0; i < columnNameList.Count; ++i)
             {
@@ -90,13 +90,13 @@ namespace ExcelEdit
                 }
             }
 
-            #endregion º¯¼ö¿Í ÇÁ·ÎÆÛÆ¼ ¼¼ÆÃ
+            #endregion ë³€ìˆ˜ì™€ í”„ë¡œí¼í‹° ì„¸íŒ…
 
-            //3. »ı¼ºÀÚ »ı¼º - »ı¼ºÀÚÀÇ ¸Å°³º¯¼ö¿Í µ¥ÀÌÅÍ ¼¼ÆÃ
+            //3. ìƒì„±ì ìƒì„± - ìƒì„±ìì˜ ë§¤ê°œë³€ìˆ˜ì™€ ë°ì´í„° ì„¸íŒ…
             string constString1 = string.Empty;
             string constString2 = string.Empty;
             string cConstBody = string.Empty;
-            #region »ı¼ºÀÚ ¼¼ÆÃ
+            #region ìƒì„±ì ì„¸íŒ…
             for (int i = 0; i < columnNameList.Count; ++i)
             {
                 if (string.IsNullOrEmpty(constString1))
@@ -128,20 +128,20 @@ namespace ExcelEdit
                 }
             }
 
-            //3-1 »ı¼ºÀÚ »ı¼º
+            //3-1 ìƒì„±ì ìƒì„±
             cConstBody = csConstBody
                 .Replace("$CSName$", tableCSName)
                 .Replace("$Params$", constString1)
                 .Replace("$Value$", constString2);
 
-            #endregion »ı¼ºÀÚ »ı¼º
+            #endregion ìƒì„±ì ìƒì„±
 
-            //Å×ÀÌºí ÀÌ¸§ ÇÁ·ÎÆÛÆ¼ »ı¼º
+            //í…Œì´ë¸” ì´ë¦„ í”„ë¡œí¼í‹° ìƒì„±
             string tblName = csTblNameTemplate.Replace("$Name$", tableName);
-            //Å°°ª ÇÁ·ÎÆÛÆ¼ »ı¼º
+            //í‚¤ê°’ í”„ë¡œí¼í‹° ìƒì„±
             string getKey = csGetKeyTemplat.Replace("$Key$", columnNameList[0].ToLower());
 
-            //4. Å¬·¡½º ¸öÅë »ı¼º
+            //4. í´ë˜ìŠ¤ ëª¸í†µ ìƒì„±
             string cBody = csBodyTemplate
                 .Replace("$CSName$", tableCSName)
                 .Replace("$TblName$", tblName)
@@ -151,6 +151,6 @@ namespace ExcelEdit
             
             return cBody;
         }
-        #endregion ¿¢¼¿ÆÄÀÏÀ» CS·Î º¯È¯¤Ñ
+        #endregion ì—‘ì…€íŒŒì¼ì„ CSë¡œ ë³€í™˜ã…¡
     }
 }

@@ -23,79 +23,79 @@ namespace ExcelEdit
 
     public class ExcelEdit : EditorWindow
     {
-        #region µ¥ÀÌÅÍ °æ·Î
-        /// <summary> ¿¢¼¿ Å×ÀÌºí Æú´õ °æ·Î </summary>
+        #region ë°ì´í„° ê²½ë¡œ
+        /// <summary> ì—‘ì…€ í…Œì´ë¸” í´ë” ê²½ë¡œ </summary>
         private string tablePath = "Table";
-        /// <summary> Å×ÀÌºíÀÇ ¹ÙÀÌ³Ê¸® Æúµå °æ·Î </summary>
+        /// <summary> í…Œì´ë¸”ì˜ ë°”ì´ë„ˆë¦¬ í´ë“œ ê²½ë¡œ </summary>
         private string tablebytesPath = "Assets\\Resources\\TableBytes";
-        /// <summary> Å×ÀÌºíÀÇ CSV Æú´õ °æ·Î </summary>
+        /// <summary> í…Œì´ë¸”ì˜ CSV í´ë” ê²½ë¡œ </summary>
         private string tableCSVPath = "TableCSV";
-        /// <summary> Å×ÀÌºíÀÇ CS Æú´õ °æ·Î </summary>
+        /// <summary> í…Œì´ë¸”ì˜ CS í´ë” ê²½ë¡œ </summary>
         private string tableCSPath = "Assets\\Scripts\\TableData";
-        #endregion µ¥ÀÌÅÍ °æ·Î 
+        #endregion ë°ì´í„° ê²½ë¡œ 
 
-        #region °Ë»ö º¯¼ö
-        /// <summary> °Ë»ö Å×ÀÌºí¿ë ÅØ½ºÆ® </summary>
+        #region ê²€ìƒ‰ ë³€ìˆ˜
+        /// <summary> ê²€ìƒ‰ í…Œì´ë¸”ìš© í…ìŠ¤íŠ¸ </summary>
         private string tableNameText = string.Empty;
-        /// <summary> °Ë»öµÈ Å×ÀÌºíÀ» ÀúÀåÇÒ ÀúÀå¼Ò </summary>
+        /// <summary> ê²€ìƒ‰ëœ í…Œì´ë¸”ì„ ì €ì¥í•  ì €ì¥ì†Œ </summary>
         private string[] tableArray;
-        /// <summary> °Ë»öµÈ Å×ÀÌºíÀÇ ½ºÅ©·Ñ Æ÷Áö¼Ç </summary>
+        /// <summary> ê²€ìƒ‰ëœ í…Œì´ë¸”ì˜ ìŠ¤í¬ë¡¤ í¬ì§€ì…˜ </summary>
         private Vector2 searchScrollPosition;
-        #endregion °Ë»ö º¯¼ö
+        #endregion ê²€ìƒ‰ ë³€ìˆ˜
 
-        #region ¼±ÅÃ½Ã »ç¿ëÇÒ º¯¼ö
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºí ÀÌ¸§ </summary>
+        #region ì„ íƒì‹œ ì‚¬ìš©í•  ë³€ìˆ˜
+        /// <summary> ì„ íƒëœ í…Œì´ë¸” ì´ë¦„ </summary>
         private string selectTableName = string.Empty;
-        /// <summary> ¼±ÅÃµÈ ¿¢¼¿ Å×ÀÌºí °æ·Î </summary>
+        /// <summary> ì„ íƒëœ ì—‘ì…€ í…Œì´ë¸” ê²½ë¡œ </summary>
         private string selectTablePath = string.Empty;
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºí ¹ÙÀÌ³Ê¸® °æ·Î </summary>
+        /// <summary> ì„ íƒëœ í…Œì´ë¸” ë°”ì´ë„ˆë¦¬ ê²½ë¡œ </summary>
         private string selectTableBytesPath = string.Empty;
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºí CSV °æ·Î </summary>
+        /// <summary> ì„ íƒëœ í…Œì´ë¸” CSV ê²½ë¡œ </summary>
         private string selectTableCSVPath = string.Empty;
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºí CS °æ·Î </summary>
+        /// <summary> ì„ íƒëœ í…Œì´ë¸” CS ê²½ë¡œ </summary>
         private string selectTableCSPath = string.Empty;
 
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºíÀÇ °¢ ¿­ÀÇ ÀÌ¸§µé </summary>
+        /// <summary> ì„ íƒëœ í…Œì´ë¸”ì˜ ê° ì—´ì˜ ì´ë¦„ë“¤ </summary>
         private List<string> selectColumnNameList = new List<string>();
-        /// <summary> ¼±ÅÃµÈ Å×ÀÌºíÀÇ °¢ ¿­ÀÇ Å¸ÀÔµé </summary>
+        /// <summary> ì„ íƒëœ í…Œì´ë¸”ì˜ ê° ì—´ì˜ íƒ€ì…ë“¤ </summary>
         private List<eDataType> selectColumnTypeList = new List<eDataType>();
-        /// <summary> °Ë»öµÈ Å×ÀÌºíÀÇ ½ºÅ©·Ñ Æ÷Áö¼Ç </summary>
+        /// <summary> ê²€ìƒ‰ëœ í…Œì´ë¸”ì˜ ìŠ¤í¬ë¡¤ í¬ì§€ì…˜ </summary>
         private Vector2 selectScrollPosition;
-        #endregion ¼±ÅÃ½Ã »ç¿ëÇÒ º¯¼ö
+        #endregion ì„ íƒì‹œ ì‚¬ìš©í•  ë³€ìˆ˜
 
-        /// <summary> CS»ı¼º±â </summary>
+        /// <summary> CSìƒì„±ê¸° </summary>
         private ScriptGenerator scGenerator = new ScriptGenerator();
 
         [MenuItem("GameTool/ExcelEditor")]
         public static void ExcelConverter()
         {
-            //¿¡µğÅÍ ´ë»ó Å¬·¡½º È¹µæ
+            //ì—ë””í„° ëŒ€ìƒ í´ë˜ìŠ¤ íšë“
             EditorWindow wnd = GetWindow<ExcelEdit>();
-            //¿¡µğÅÍ ÀÌ¸§ ÁöÁ¤
+            //ì—ë””í„° ì´ë¦„ ì§€ì •
             wnd.titleContent = new GUIContent("ExcelEdit");
         }
 
         private void OnGUI()
         {
-            #region Å×ÀÌºí °Ë»öÃ¢
+            #region í…Œì´ë¸” ê²€ìƒ‰ì°½
             GUILayout.BeginArea(new Rect(0, 0, position.width, 90), GUI.skin.window);
             GUILayout.BeginHorizontal();
 
-            //ÅØ½ºÆ® ÀÔ·ÂÃ¢(ÀÔ·ÂÃ¢ ÀÌ¸§, ½ÃÀÛ ÅØ½ºÆ®)
-            tableNameText = EditorGUILayout.TextField("Å×ÀÌºí ÀÌ¸§ : ", tableNameText);
+            //í…ìŠ¤íŠ¸ ì…ë ¥ì°½(ì…ë ¥ì°½ ì´ë¦„, ì‹œì‘ í…ìŠ¤íŠ¸)
+            tableNameText = EditorGUILayout.TextField("í…Œì´ë¸” ì´ë¦„ : ", tableNameText);
 
-            //¹öÆ°(¹öÆ° ÀÌ¸§)
-            if (GUILayout.Button("Å×ÀÌºí °Ë»ö", GUILayout.Width(100f)))
+            //ë²„íŠ¼(ë²„íŠ¼ ì´ë¦„)
+            if (GUILayout.Button("í…Œì´ë¸” ê²€ìƒ‰", GUILayout.Width(100f)))
             {
                 string[] tableNames;
                 List<string> tableList = new List<string>();
 
-                //Å×ÀÌºí ÀÌ¸§À» ÀÔ·ÂÇÏÁö ¾Ê¾ÒÀ» °æ¿ì
+                //í…Œì´ë¸” ì´ë¦„ì„ ì…ë ¥í•˜ì§€ ì•Šì•˜ì„ ê²½ìš°
                 if (string.IsNullOrEmpty(tableNameText))
                 {
                     tableNames = Directory.GetFiles(tablePath, "*.xlsx");
                 }
-                //Å×ÀÌºí ÀÌ¸§À» ÀÔ·ÂÇßÀ» °æ¿ì
+                //í…Œì´ë¸” ì´ë¦„ì„ ì…ë ¥í–ˆì„ ê²½ìš°
                 else
                 {
                     tableNames = Directory.GetFiles(tablePath, $"*{tableNameText}*");
@@ -111,7 +111,7 @@ namespace ExcelEdit
                     }
                 }
 
-                //°Ë»öµÈ Å×ÀÌºí ÀúÀå
+                //ê²€ìƒ‰ëœ í…Œì´ë¸” ì €ì¥
                 tableArray = tableList.ToArray();
             }
 
@@ -121,32 +121,32 @@ namespace ExcelEdit
 
             GUILayout.BeginHorizontal();
 
-            //¿¢¼¿ ½ºÅ©·Ñ Å¸ÀÌÆ²
-            GUILayout.Label($"¼±ÅÃÇÑ ¿¢¼¿ : {selectTableName}", EditorStyles.label);
+            //ì—‘ì…€ ìŠ¤í¬ë¡¤ íƒ€ì´í‹€
+            GUILayout.Label($"ì„ íƒí•œ ì—‘ì…€ : {selectTableName}", EditorStyles.label);
 
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
-            #endregion Å×ÀÌºí °Ë»öÃ¢
+            #endregion í…Œì´ë¸” ê²€ìƒ‰ì°½
 
-            #region °Ë»öµÈ ¿¢¼¿ ½ºÅ©·Ñ(¿ŞÂÊ ¹Ú½º)
-            //½ºÅ©·Ñ Å©±â ¼³Á¤
+            #region ê²€ìƒ‰ëœ ì—‘ì…€ ìŠ¤í¬ë¡¤(ì™¼ìª½ ë°•ìŠ¤)
+            // ìŠ¤í¬ë¡¤ í¬ê¸° ì„¤ì •
             Rect LeftscrollRect = new Rect(0, 90, position.width / 2, 200);
             GUILayout.BeginArea(LeftscrollRect, GUI.skin.window);
 
-            //°Ë»öµÈ Å×ÀÌºíÀÌ ÀÖÀ» °æ¿ì¿¡¸¸
+            // ê²€ìƒ‰ëœ í…Œì´ë¸”ì´ ìˆì„ ê²½ìš°ì—ë§Œ
             if (tableArray != null && tableArray.Length > 0)
             {
-                //½ºÅ©·Ñ
+                //ìŠ¤í¬ë¡¤
                 searchScrollPosition = EditorGUILayout.BeginScrollView(searchScrollPosition);
 
                 for (int i = 0; i < tableArray.Length; ++i)
                 {
                     if (GUILayout.Button(tableArray[i]))
                     {
-                        //Å×ÀÌºí µ¥ÀÌÅÍ ¼¼ÆÃ
+                        //í…Œì´ë¸” ë°ì´í„° ì„¸íŒ…
                         SetSelectTableDatas(tableArray[i]);
 
-                        //°»½Å
+                        //ê°±ì‹ 
                         Repaint();
                     }
                 }
@@ -155,110 +155,110 @@ namespace ExcelEdit
             }
 
             GUILayout.EndArea();
-            #endregion °Ë»öµÈ ¿¢¼¿ ½ºÅ©·Ñ(¿ŞÂÊ ¹Ú½º)
+            #endregion ê²€ìƒ‰ëœ ì—‘ì…€ ìŠ¤í¬ë¡¤(ì™¼ìª½ ë°•ìŠ¤)
 
-            #region °Ë»öÇÑ Å×ÀÌºí ÄÁ¹öÆ®(¿À¸¥ÂÊ ¹Ú½º)
+            #region ê²€ìƒ‰í•œ í…Œì´ë¸” ì»¨ë²„íŠ¸(ì˜¤ë¥¸ìª½ ë°•ìŠ¤)
             GUILayout.BeginArea(new Rect(position.width / 2, 90, position.width / 2, 200), GUI.skin.window);
 
-            #region Å×ÀÌºí csv »ı¼º ¹× °»½Å
-            if (GUILayout.Button($"{selectTableName}.bytes(.csv) »ı¼º/°»½Å"))
+            #region í…Œì´ë¸” csv ìƒì„± ë° ê°±ì‹ 
+            if (GUILayout.Button($"{selectTableName}.bytes(.csv) ìƒì„±/ê°±ì‹ "))
             {
                 ConvertExcelToBytes();
             }
-            #endregion Å×ÀÌºí csv »ı¼º ¹× °»½Å
+            #endregion í…Œì´ë¸” csv ìƒì„± ë° ê°±ì‹ 
 
-            #region Å×ÀÌºí cs »ı¼º ¹× °»½Å
-            if (GUILayout.Button($"{selectTableName}.cs »ı¼º/°»½Å"))
+            #region í…Œì´ë¸” cs ìƒì„± ë° ê°±ì‹ 
+            if (GUILayout.Button($"{selectTableName}.cs ìƒì„±/ê°±ì‹ "))
             {
                 ConvertExcelToCS();
             }
-            #endregion Å×ÀÌºí cs »ı¼º ¹× °»½Å
+            #endregion í…Œì´ë¸” cs ìƒì„± ë° ê°±ì‹ 
 
-            #region ¿¢¼¿ Å×ÀÌºí Æú´õ ¿­±â
-            if (GUILayout.Button("¿¢¼¿ Å×ÀÌºí Æú´õ ¿­±â"))
+            #region ì—‘ì…€ í…Œì´ë¸” í´ë” ì—´ê¸°
+            if (GUILayout.Button("ì—‘ì…€ í…Œì´ë¸” í´ë” ì—´ê¸°"))
             {
-                // ÁÖ¼Ò°¡ ¸Â´ÂÁö È®ÀÎ
+                // ì£¼ì†Œê°€ ë§ëŠ”ì§€ í™•ì¸
                 if (Directory.Exists(tablePath))
                 {
                     try
                     {
-                        //Æú´õ ¿ÀÇÂ
+                        //í´ë” ì˜¤í”ˆ
                         Process.Start(tablePath);
                     }
                     catch (Exception e)
                     {
-                        UnityEngine.Debug.LogError($"Æú´õ ¿­±â ½ÇÆĞ : {e.Message}");
+                        UnityEngine.Debug.LogError($"í´ë” ì—´ê¸° ì‹¤íŒ¨ : {e.Message}");
                     }
                 }
             }
-            #endregion ¿¢¼¿ Å×ÀÌºí Æú´õ ¿­±â
+            #endregion ì—‘ì…€ í…Œì´ë¸” í´ë” ì—´ê¸°
 
-            #region ¹ÙÀÌ³Ê¸® Æú´õ ¿­±â
-            if (GUILayout.Button("¹ÙÀÌ³Ê¸® Æú´õ ¿­±â"))
+            #region ë°”ì´ë„ˆë¦¬ í´ë” ì—´ê¸°
+            if (GUILayout.Button("ë°”ì´ë„ˆë¦¬ í´ë” ì—´ê¸°"))
             {
-                // ÁÖ¼Ò°¡ ¸Â´ÂÁö È®ÀÎ
+                // ì£¼ì†Œê°€ ë§ëŠ”ì§€ í™•ì¸
                 if (Directory.Exists(tablebytesPath))
                 {
                     try
                     {
-                        //Æú´õ ¿ÀÇÂ
+                        //í´ë” ì˜¤í”ˆ
                         Process.Start(tablebytesPath);
                     }
                     catch (Exception e)
                     {
-                        UnityEngine.Debug.LogError($"Æú´õ ¿­±â ½ÇÆĞ : {e.Message}");
+                        UnityEngine.Debug.LogError($"í´ë” ì—´ê¸° ì‹¤íŒ¨ : {e.Message}");
                     }
                 }
             }
-            #endregion ¹ÙÀÌ³Ê¸® Æú´õ ¿­±â
+            #endregion ë°”ì´ë„ˆë¦¬ í´ë” ì—´ê¸°
 
-            #region CSV Æú´õ ¿­±â
-            if (GUILayout.Button("CSV Æú´õ ¿­±â"))
+            #region CSV í´ë” ì—´ê¸°
+            if (GUILayout.Button("CSV í´ë” ì—´ê¸°"))
             {
-                // ÁÖ¼Ò°¡ ¸Â´ÂÁö È®ÀÎ
+                // ì£¼ì†Œê°€ ë§ëŠ”ì§€ í™•ì¸
                 if (Directory.Exists(tableCSVPath))
                 {
                     try
                     {
-                        //Æú´õ ¿ÀÇÂ
+                        //í´ë” ì˜¤í”ˆ
                         Process.Start(tableCSVPath);
                     }
                     catch (Exception e)
                     {
-                        UnityEngine.Debug.LogError($"Æú´õ ¿­±â ½ÇÆĞ : {e.Message}");
+                        UnityEngine.Debug.LogError($"í´ë” ì—´ê¸° ì‹¤íŒ¨ : {e.Message}");
                     }
                 }
             }
-            #endregion CSV Æú´õ ¿­±â
+            #endregion CSV í´ë” ì—´ê¸°
 
-            #region CS Æú´õ ¿­±â
-            if (GUILayout.Button("CS Æú´õ ¿­±â"))
+            #region CS í´ë” ì—´ê¸°
+            if (GUILayout.Button("CS í´ë” ì—´ê¸°"))
             {
-                // ÁÖ¼Ò°¡ ¸Â´ÂÁö È®ÀÎ
+                // ì£¼ì†Œê°€ ë§ëŠ”ì§€ í™•ì¸
                 if (Directory.Exists(tableCSPath))
                 {
                     try
                     {
-                        //Æú´õ ¿ÀÇÂ
+                        //í´ë” ì˜¤í”ˆ
                         Process.Start(tableCSPath);
                     }
                     catch (Exception e)
                     {
-                        UnityEngine.Debug.LogError($"Æú´õ ¿­±â ½ÇÆĞ : {e.Message}");
+                        UnityEngine.Debug.LogError($"í´ë” ì—´ê¸° ì‹¤íŒ¨ : {e.Message}");
                     }
                 }
             }
-            #endregion CS Æú´õ ¿­±â
+            #endregion CS í´ë” ì—´ê¸°
 
             GUILayout.EndArea();
-            #endregion °Ë»öÇÑ Å×ÀÌºí ÄÁ¹öÆ®(¿À¸¥ÂÊ ¹Ú½º)
+            #endregion ê²€ìƒ‰í•œ í…Œì´ë¸” ì»¨ë²„íŠ¸(ì˜¤ë¥¸ìª½ ë°•ìŠ¤)
 
-            #region Å×ÀÌºí Á¤º¸
-            //½ºÅ©·Ñ Å©±â ¼³Á¤
+            #region í…Œì´ë¸” ì •ë³´
+            //ìŠ¤í¬ë¡¤ í¬ê¸° ì„¤ì •
             Rect infocrollRect = new Rect(0, 290, position.width, position.height - 290);
             GUILayout.BeginArea(infocrollRect, GUI.skin.window);
 
-            //°Ë»öµÈ Å×ÀÌºíÀÌ ÀÖÀ» °æ¿ì¿¡¸¸
+            //ê²€ìƒ‰ëœ í…Œì´ë¸”ì´ ìˆì„ ê²½ìš°ì—ë§Œ
             if (!string.IsNullOrEmpty(selectTablePath))
             {
                 if (selectColumnNameList != null && selectColumnNameList.Count > 0)
@@ -271,7 +271,7 @@ namespace ExcelEdit
                         {
                             int size = 90 - selectColumnNameList[i].Length;
                             GUILayout.BeginHorizontal();
-                            GUILayout.Label($"ÀÌ¸§ : {selectColumnNameList[i].PadRight(size > 0 ? size : 0)} Å¸ÀÔ : {selectColumnTypeList[i]}");
+                            GUILayout.Label($"ì´ë¦„ : {selectColumnNameList[i].PadRight(size > 0 ? size : 0)} íƒ€ì… : {selectColumnTypeList[i]}");
                             GUILayout.EndHorizontal();
                             GUILayout.Space(2);
                         }
@@ -281,33 +281,33 @@ namespace ExcelEdit
             }
 
             GUILayout.EndArea();
-            #endregion Å×ÀÌºí Á¤º¸
+            #endregion í…Œì´ë¸” ì •ë³´
         }
 
-        #region ¼±ÅÃÇÑ Å×ÀÌºíÀÇ Á¤º¸¸¦ È¹µæ
-        /// <summary> ¼±ÅÃÇÑ Å×ÀÌºíÀÇ Á¤º¸¸¦ È¹µæ </summary>
+        #region ì„ íƒí•œ í…Œì´ë¸”ì˜ ì •ë³´ë¥¼ íšë“
+        /// <summary> ì„ íƒí•œ í…Œì´ë¸”ì˜ ì •ë³´ë¥¼ íšë“ </summary>
         public void SetSelectTableDatas(string excelPath)
         {
-            //Å×ÀÌºíÀÇ ÀÌ¸§ ¼¼ÆÃ
+            //í…Œì´ë¸”ì˜ ì´ë¦„ ì„¸íŒ…
             selectTableName = GetTableName(excelPath);
 
-            //¿¢¼¿ Å×ÀÌºíÀÇ °æ·Î ¼¼ÆÃ
+            //ì—‘ì…€ í…Œì´ë¸”ì˜ ê²½ë¡œ ì„¸íŒ…
             selectTablePath = excelPath;
-            //¹ÙÀÌ³Ê¸® °æ·Î  ¼¼ÆÃ
+            //ë°”ì´ë„ˆë¦¬ ê²½ë¡œ  ì„¸íŒ…
             selectTableBytesPath = string.Format("{0}\\{1}Data.bytes", tablebytesPath, selectTableName);
-            //CSV Å×ÀÌºíÀÇ °æ·Î ¼¼ÆÃ
+            //CSV í…Œì´ë¸”ì˜ ê²½ë¡œ ì„¸íŒ…
             selectTableCSVPath = string.Format("{0}\\{1}.csv", tableCSVPath, selectTableName);
-            //CS µ¥ÀÌÅÍ Å¬·¡½ºÀÇ °æ·Î ¼¼ÆÃ
+            //CS ë°ì´í„° í´ë˜ìŠ¤ì˜ ê²½ë¡œ ì„¸íŒ…
             selectTableCSPath = string.Format("{0}\\{1}Data.cs", tableCSPath, selectTableName);
 
-            //Å×ÀÌºíÀÇ ÀÌ¸§°ú Å¸ÀÔ ¼¼ÆÃ
+            //í…Œì´ë¸”ì˜ ì´ë¦„ê³¼ íƒ€ì… ì„¸íŒ…
             SetExcelData(selectTablePath);
         }
-        #endregion ¼±ÅÃÇÑ Å×ÀÌºíÀÇ Á¤º¸¸¦ È¹µæ 
+        #endregion ì„ íƒí•œ í…Œì´ë¸”ì˜ ì •ë³´ë¥¼ íšë“ 
 
-        #region ¼±ÅÃÇÑ °æ·Î¿¡ ÀÖ´Â ¿¢¼¿ÆÄÀÏ ÀÌ¸§À» ¹İÈ¯
+        #region ì„ íƒí•œ ê²½ë¡œì— ìˆëŠ” ì—‘ì…€íŒŒì¼ ì´ë¦„ì„ ë°˜í™˜
 
-        /// <summary> ¼±ÅÃÇÑ ¿¢¼¿ÀÇ ÀÌ¸§À» ¹İÈ¯ </summary>
+        /// <summary> ì„ íƒí•œ ì—‘ì…€ì˜ ì´ë¦„ì„ ë°˜í™˜ </summary>
         private string GetTableName(string path)
         {
             if (!string.IsNullOrEmpty(path))
@@ -326,55 +326,55 @@ namespace ExcelEdit
             return string.Empty;
         }
 
-        #endregion ¼±ÅÃÇÑ °æ·Î¿¡ ÀÖ´Â ¿¢¼¿ÆÄÀÏ ÀÌ¸§À» ¹İÈ¯
+        #endregion ì„ íƒí•œ ê²½ë¡œì— ìˆëŠ” ì—‘ì…€íŒŒì¼ ì´ë¦„ì„ ë°˜í™˜
 
-        #region ¼±ÅÃµÈ ¿¢¼¿ÀÇ µ¥ÀÌÅÍ ÀÌ¸§°ú Å¸ÀÔÀ» ¹İÈ¯
-        /// <summary> ¼±ÅÃµÈ ¿¢¼¿ÀÇ µ¥ÀÌÅÍ ÀÌ¸§°ú Å¸ÀÔÀ» ¹İÈ¯ </summary>
+        #region ì„ íƒëœ ì—‘ì…€ì˜ ë°ì´í„° ì´ë¦„ê³¼ íƒ€ì…ì„ ë°˜í™˜
+        /// <summary> ì„ íƒëœ ì—‘ì…€ì˜ ë°ì´í„° ì´ë¦„ê³¼ íƒ€ì…ì„ ë°˜í™˜ </summary>
         public void SetExcelData(string path)
         {
             selectColumnNameList.Clear();
             selectColumnTypeList.Clear();
 
-            //°æ·Î¿¡ ÀÖ´Â ÆÄÀÏÀ» ÀĞ±â ¸ğµå·Î ¿ÀÇÂ
+            //ê²½ë¡œì— ìˆëŠ” íŒŒì¼ì„ ì½ê¸° ëª¨ë“œë¡œ ì˜¤í”ˆ
             using (FileStream file = File.Open(path, FileMode.Open, FileAccess.Read))
             {
-                //ÇØ´ç ÆÄÀÏÀ» ¿¢¼¿ µ¥ÀÌÅÍ·Î º¯È¯ÇÒ ¼ö ÀÖ´Â µ¥ÀÌÅÍ »ı¼º
+                //í•´ë‹¹ íŒŒì¼ì„ ì—‘ì…€ ë°ì´í„°ë¡œ ë³€í™˜í•  ìˆ˜ ìˆëŠ” ë°ì´í„° ìƒì„±
                 using (var reader = ExcelReaderFactory.CreateReader(file))
                 {
-                    //µ¥ÀÌÅÍ¼ÂÀ¸·Î º¯È¯
+                    //ë°ì´í„°ì…‹ìœ¼ë¡œ ë³€í™˜
                     DataSet data = reader.AsDataSet(new ExcelDataSetConfiguration()
                     {
                         ConfigureDataTable = item => new ExcelDataTableConfiguration()
                         {
-                            //Ã¹¹øÂ° ÇàÀ» ¿­ ÀÌ¸§À¸·Î »ç¿ëÇÏÁö ¾ÊÀ½
+                            //ì²«ë²ˆì§¸ í–‰ì„ ì—´ ì´ë¦„ìœ¼ë¡œ ì‚¬ìš©í•˜ì§€ ì•ŠìŒ
                             UseHeaderRow = false
                         }
                     });
 
                     if (data.Tables.Count > 0)
                     {
-                        //ÀĞÀº Å×ÀÌºíÀÇ Ã¹¹øÂ° ÆäÀÌÁö¸¦ È®ÀÎ
+                        //ì½ì€ í…Œì´ë¸”ì˜ ì²«ë²ˆì§¸ í˜ì´ì§€ë¥¼ í™•ì¸
                         DataTable TableData = data.Tables[0];
                         if (TableData.Rows.Count > 0)
                         {
-                            //Å×ÀÌºíÀÇ Ã¹¹øÂ° Çà¿¡ Á¢±Ù
+                            //í…Œì´ë¸”ì˜ ì²«ë²ˆì§¸ í–‰ì— ì ‘ê·¼
                             DataRow row = TableData.Rows[0];
-                            //Ã¹¹øÂ° ÇàÀÇ ¸ğµç ¿­¿¡ ´ëÇÑ Á¤º¸¸¦ È¹µæ
+                            //ì²«ë²ˆì§¸ í–‰ì˜ ëª¨ë“  ì—´ì— ëŒ€í•œ ì •ë³´ë¥¼ íšë“
                             object[] firstData = row.ItemArray;
 
-                            //Ã¹¹øÂ° ÇàÀÇ ¿­À» ÀüºÎ StringÀ¸·Î º¯È¯ÇØ¼­ List¿¡ ³ÖÀ½
+                            //ì²«ë²ˆì§¸ í–‰ì˜ ì—´ì„ ì „ë¶€ Stringìœ¼ë¡œ ë³€í™˜í•´ì„œ Listì— ë„£ìŒ
                             List<string> list = new List<string>();
                             foreach (var item in firstData)
                             {
                                 string[] values = item.ToString().Split("-");
 
-                                //Å×ÀÌºí °ª ¿­
+                                //í…Œì´ë¸” ê°’ ì—´
                                 if (values.Length == 2)
                                 {
                                     selectColumnNameList.Add(values[0].ToString());
                                     selectColumnTypeList.Add(ExcelUtility.ConvertStringToeDataType(values[1].ToString()));
                                 }
-                                //¼³¸í¿ë ¿­
+                                //ì„¤ëª…ìš© ì—´
                                 else if (values.Length == 1)
                                 {
                                     selectColumnNameList.Add(values[0].ToString());
@@ -382,7 +382,7 @@ namespace ExcelEdit
                                 }
                                 else
                                 {
-                                    UnityEngine.Debug.LogError($" Àß¸øµÈ Å×ÀÌºí ¿­ Çü½ÄÀÔ´Ï´Ù. : {values.Length}");
+                                    UnityEngine.Debug.LogError($" ì˜ëª»ëœ í…Œì´ë¸” ì—´ í˜•ì‹ì…ë‹ˆë‹¤. : {values.Length}");
                                 }
                             }
                         }
@@ -390,31 +390,31 @@ namespace ExcelEdit
                 }
             }
         }
-        #endregion ¼±ÅÃµÈ ¿¢¼¿ÀÇ µ¥ÀÌÅÍ ÀÌ¸§°ú Å¸ÀÔÀ» ¹İÈ¯
+        #endregion ì„ íƒëœ ì—‘ì…€ì˜ ë°ì´í„° ì´ë¦„ê³¼ íƒ€ì…ì„ ë°˜í™˜
 
-        #region ¿¢¼¿ÆÄÀÏÀ» CSV,¹ÙÀÌ³Ê¸®·Î º¯È¯
-        /// <summary> ¿¢¼¿ÆÄÀÏÀ» CSV·Î º¯È¯ </summary>
+        #region ì—‘ì…€íŒŒì¼ì„ CSV,ë°”ì´ë„ˆë¦¬ë¡œ ë³€í™˜
+        /// <summary> ì—‘ì…€íŒŒì¼ì„ CSVë¡œ ë³€í™˜ </summary>
         public void ConvertExcelToBytes()
         {
             if (string.IsNullOrEmpty(selectTablePath) || 
                 string.IsNullOrEmpty(selectTableCSVPath) || 
                 string.IsNullOrEmpty(selectTableBytesPath))
             {
-                EditorUtility.DisplayDialog("CSV »ı¼º/°»½Å", "½ÇÆĞ : ÁöÁ¤µÈ ÁÖ¼Ò°¡ ¾ø½À´Ï´Ù.", "È®ÀÎ");
+                EditorUtility.DisplayDialog("CSV ìƒì„±/ê°±ì‹ ", "ì‹¤íŒ¨ : ì§€ì •ëœ ì£¼ì†Œê°€ ì—†ìŠµë‹ˆë‹¤.", "í™•ì¸");
                 return;
             }
 
             TableData tData = null;
             
-            //Çà ÀúÀå¿ë
+            //í–‰ ì €ì¥ìš©
             List<string> csvList = new List<string>();
             string typeName = $"{selectTableName}Data";
-            //csv µ¥ÀÌÅÍ Á¤¸® ¸®½ºÆ®
+            //csv ë°ì´í„° ì •ë¦¬ ë¦¬ìŠ¤íŠ¸
 
-            //Å¸ÀÔ ¼¼ÆÃ
+            //íƒ€ì… ì„¸íŒ…
             Assembly ab = Assembly.LoadFrom("Library/ScriptAssemblies/Assembly-CSharp.dll");
             Type type = ab.GetType(typeName);
-            //Å¸ÀÔÀ» Ã£Áö ¸øÇßÀ» °æ¿ì
+            //íƒ€ì…ì„ ì°¾ì§€ ëª»í–ˆì„ ê²½ìš°
             if(type == null)
             {
                 foreach(var item in AppDomain.CurrentDomain.GetAssemblies())
@@ -425,73 +425,73 @@ namespace ExcelEdit
                 }
             }
 
-            //°æ·Î¿¡ ÀÖ´Â ¿¢¼¿ ÆÄÀÏÀ» ÀĞ±â ¸ğµå·Î ¿ÀÇÂ
+            //ê²½ë¡œì— ìˆëŠ” ì—‘ì…€ íŒŒì¼ì„ ì½ê¸° ëª¨ë“œë¡œ ì˜¤í”ˆ
             Dictionary<object, TableBase> dicTable = new Dictionary<object, TableBase>();
             using (FileStream file = File.Open(selectTablePath, FileMode.Open, FileAccess.Read))
             {
-                //ÇØ´ç ÆÄÀÏÀ» ¿¢¼¿ µ¥ÀÌÅÍ·Î º¯È¯ÇÒ ¼ö ÀÖ´Â µ¥ÀÌÅÍ »ı¼º
+                //í•´ë‹¹ íŒŒì¼ì„ ì—‘ì…€ ë°ì´í„°ë¡œ ë³€í™˜í•  ìˆ˜ ìˆëŠ” ë°ì´í„° ìƒì„±
                 using (var reader = ExcelReaderFactory.CreateReader(file))
                 {
-                    #region Å¸ÀÌÆ²°ú Å¸ÀÔÀÌ ÀúÀåµÈ Ã¹¹øÂ° Çà ÀúÀå(Å¸ÀÔ¸¸ ÀúÀåÇÔ)
-                    //Ã¹¹øÂ° ÁÙ - Å¸ÀÔ ¿­ ¼¼ÆÃ
+                    #region íƒ€ì´í‹€ê³¼ íƒ€ì…ì´ ì €ì¥ëœ ì²«ë²ˆì§¸ í–‰ ì €ì¥(íƒ€ì…ë§Œ ì €ì¥í•¨)
+                    //ì²«ë²ˆì§¸ ì¤„ - íƒ€ì… ì—´ ì„¸íŒ…
                     reader.Read();
 
-                    //Å×ÀÌºíÀÇ ¿­ÀÇ Å¸ÀÔµé
+                    //í…Œì´ë¸”ì˜ ì—´ì˜ íƒ€ì…ë“¤
                     string typeStr = string.Empty;
 
-                    //Å¸ÀÔ ¼¼ÆÃ
+                    //íƒ€ì… ì„¸íŒ…
                     for (int i = 0; i < reader.FieldCount; ++i)
                     {
                         var item = reader[i];
                         if (item != null)
                         {
-                            //ÇØ´ç ¿­ÀÌ ¼³¸íÅ¸ÀÔÀÏ °æ¿ì ÀúÀå Äµ½½
+                            //í•´ë‹¹ ì—´ì´ ì„¤ëª…íƒ€ì…ì¼ ê²½ìš° ì €ì¥ ìº”ìŠ¬
                             if (selectColumnTypeList[i] == eDataType.None)
                                 continue;
 
-                            //ÅØ½ºÆ® ¼¼ÆÃ
+                            //í…ìŠ¤íŠ¸ ì„¸íŒ…
                             typeStr = i == 0 ?
                                 ExcelUtility.ConverteDataTypeToString(selectColumnTypeList[i]) : 
                                 $"{typeStr},{ExcelUtility.ConverteDataTypeToString(selectColumnTypeList[i])}";
                         }
                         else
                         {
-                            EditorUtility.DisplayDialog("¹ÙÀÌ³Ê¸® »ı¼º/°»½Å", $"½ÇÆĞ : {i}¹øÂ° ¿­¿¡ ¼³¸íÀÌ ¾ø½À´Ï´Ù.", "È®ÀÎ");
+                            EditorUtility.DisplayDialog("ë°”ì´ë„ˆë¦¬ ìƒì„±/ê°±ì‹ ", $"ì‹¤íŒ¨ : {i}ë²ˆì§¸ ì—´ì— ì„¤ëª…ì´ ì—†ìŠµë‹ˆë‹¤.", "í™•ì¸");
                             return;
                         }
                     }
 
-                    //Á¾·á ÈÄ CSV ÁÙ ¹Ù²ŞÀ» À§ÇØ "" ¾º¿ò
+                    //ì¢…ë£Œ í›„ CSV ì¤„ ë°”ê¿ˆì„ ìœ„í•´ "" ì”Œì›€
                     csvList.Add(typeStr);
-                    #endregion Å¸ÀÌÆ²°ú Å¸ÀÔÀÌ ÀúÀåµÈ Ã¹¹øÂ° Çà ÀúÀå(Å¸ÀÔ¸¸ ÀúÀåÇÔ)
+                    #endregion íƒ€ì´í‹€ê³¼ íƒ€ì…ì´ ì €ì¥ëœ ì²«ë²ˆì§¸ í–‰ ì €ì¥(íƒ€ì…ë§Œ ì €ì¥í•¨)
 
-                    #region Á¤º¸°¡ µé¾îÀÖ´Â µÎ¹øÂ° ÇàºÎÅÍ ÀúÀå
+                    #region ì •ë³´ê°€ ë“¤ì–´ìˆëŠ” ë‘ë²ˆì§¸ í–‰ë¶€í„° ì €ì¥
                     
-                    //´õ ÀúÀåÇÒ µ¥ÀÌÅÍ°¡ ¾øÀ» ¶§ ±îÁö ÁøÇà
+                    //ë” ì €ì¥í•  ë°ì´í„°ê°€ ì—†ì„ ë•Œ ê¹Œì§€ ì§„í–‰
                     while (reader.Read())
                     {
-                        //Å×ÀÌºí Á¤º¸ÀÇ °ª ¸ñ·Ï
+                        //í…Œì´ë¸” ì •ë³´ì˜ ê°’ ëª©ë¡
                         List<object> valueList = new List<object>();
-                        //Å×ÀÌºí Á¤º¸ ÀúÀå
+                        //í…Œì´ë¸” ì •ë³´ ì €ì¥
                         string rowText = string.Empty;
 
                         for (int i = 0; i < reader.FieldCount; ++i)
                         {
-                            //ÇØ´ç µ¥ÀÌÅÍÀÇ Å¸ÀÔÀÌ None(¸Ş¸ğ¿ë)ÀÏ °æ¿ì ÀúÀå Äµ½½
+                            //í•´ë‹¹ ë°ì´í„°ì˜ íƒ€ì…ì´ None(ë©”ëª¨ìš©)ì¼ ê²½ìš° ì €ì¥ ìº”ìŠ¬
                             if (selectColumnTypeList[i] == eDataType.None)
                                 continue;
 
-                            //µ¥ÀÌÅÍ¿¡ Á¤º¸°¡ ÀÖ´Â °æ¿ì
+                            //ë°ì´í„°ì— ì •ë³´ê°€ ìˆëŠ” ê²½ìš°
                             var item = reader[i];
                             if (item != null)
                             {
-                                //Å¸ÀÔ¿¡ ¸Â°Ô °ªÀ» Çüº¯È¯ÇØ¼­ ÀúÀå
+                                //íƒ€ì…ì— ë§ê²Œ ê°’ì„ í˜•ë³€í™˜í•´ì„œ ì €ì¥
                                 valueList.Add(ExcelUtility.GetValue(selectColumnTypeList[i], item.ToString()));
                             }
-                            //µ¥ÀÌÅÍ¿¡ Á¤º¸°¡ ¾ø´Â °æ¿ì
+                            //ë°ì´í„°ì— ì •ë³´ê°€ ì—†ëŠ” ê²½ìš°
                             else
                             {
-                                //Å¸ÀÔ¿¡ µû¶ó µğÆúÆ® ¼¼ÆÃ Àû¿ë
+                                //íƒ€ì…ì— ë”°ë¼ ë””í´íŠ¸ ì„¸íŒ… ì ìš©
                                 switch(selectColumnTypeList[i])
                                 {
                                     case eDataType.Bool:
@@ -507,33 +507,33 @@ namespace ExcelEdit
                                 }
                             }
 
-                            //CSV ÅØ½ºÆ® ¼¼ÆÃ
+                            //CSV í…ìŠ¤íŠ¸ ì„¸íŒ…
                             rowText = rowText == string.Empty ? item.ToString() : $"{rowText},{item}";
                         }
 
-                        //Á¾·á ÈÄ CSV ÁÙ ¹Ù²ŞÀ» À§ÇØ "" ¾º¿ò
+                        //ì¢…ë£Œ í›„ CSV ì¤„ ë°”ê¿ˆì„ ìœ„í•´ "" ì”Œì›€
                         csvList.Add(rowText);
 
                         TableBase tableObj = (TableBase)Activator.CreateInstance(type, valueList.ToArray());
                         dicTable.Add(tableObj.GetKey, tableObj);
                     }
-                    #endregion Á¤º¸°¡ µé¾îÀÖ´Â µÎ¹øÂ° ÇàºÎÅÍ ÀúÀå
+                    #endregion ì •ë³´ê°€ ë“¤ì–´ìˆëŠ” ë‘ë²ˆì§¸ í–‰ë¶€í„° ì €ì¥
 
                     tData = new TableData(dicTable);
                 }
             }
 
-            #region µ¥ÀÌÅÍ ÀúÀå
+            #region ë°ì´í„° ì €ì¥
             if (tData != null)
             {
-                //¹ÙÀÌ³Ê¸® ¼¼ÆÃ
+                //ë°”ì´ë„ˆë¦¬ ì„¸íŒ…
                 using (FileStream binaryFile = new FileStream(selectTableBytesPath, FileMode.OpenOrCreate, FileAccess.Write))
                 {
                     BinaryFormatter bf = new BinaryFormatter();
                     bf.Serialize(binaryFile, tData);
                 }
 
-                //CSV ¼¼ÆÃ
+                //CSV ì„¸íŒ…
                 using (StreamWriter csvWriter = new StreamWriter(selectTableCSVPath, false, System.Text.Encoding.UTF8))
                 {
                     csvWriter.Flush();
@@ -542,28 +542,28 @@ namespace ExcelEdit
                         csvWriter.WriteLine(csvList[i]);
                     }
 
-                    EditorUtility.DisplayDialog("¹ÙÀÌ³Ê¸®,CSV »ı¼º/°»½Å", "¿Ï·á", "È®ÀÎ");
+                    EditorUtility.DisplayDialog("ë°”ì´ë„ˆë¦¬,CSV ìƒì„±/ê°±ì‹ ", "ì™„ë£Œ", "í™•ì¸");
                 }
             }
             else
             {
-                EditorUtility.DisplayDialog("¹ÙÀÌ³Ê¸® »ı¼º/°»½Å", $"½ÇÆĞ : Å×ÀÌºí µ¥ÀÌÅÍ »ı¼º¿¡ ½ÇÆĞÇß½À´Ï´Ù.", "È®ÀÎ");
+                EditorUtility.DisplayDialog("ë°”ì´ë„ˆë¦¬ ìƒì„±/ê°±ì‹ ", $"ì‹¤íŒ¨ : í…Œì´ë¸” ë°ì´í„° ìƒì„±ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.", "í™•ì¸");
                 return;
             }
-            #endregion µ¥ÀÌÅÍ ÀúÀå
+            #endregion ë°ì´í„° ì €ì¥
         }
-        #endregion ¿¢¼¿ÆÄÀÏÀ» CSV,¹ÙÀÌ³Ê¸®·Î º¯È¯
+        #endregion ì—‘ì…€íŒŒì¼ì„ CSV,ë°”ì´ë„ˆë¦¬ë¡œ ë³€í™˜
 
-        #region ¿¢¼¿ÆÄÀÏÀ» CS·Î º¯È¯
+        #region ì—‘ì…€íŒŒì¼ì„ CSë¡œ ë³€í™˜
         private void ConvertExcelToCS()
         {
-            //CSÆÄÀÏ »ı¼º¿¡ ÇÊ¿äÇÑ µ¥ÀÌÅÍ ¼¼ÆÃ
+            //CSíŒŒì¼ ìƒì„±ì— í•„ìš”í•œ ë°ì´í„° ì„¸íŒ…
             scGenerator.SetExcelData(selectTableName, selectColumnNameList, selectColumnTypeList);
 
-            //CS ½ºÅ©¸³Æ®
+            //CS ìŠ¤í¬ë¦½íŠ¸
             string csText = scGenerator.ConvertExcelToCSText();
 
-            //µ¥ÀÌÅÍ¸¦ ÀúÀå
+            //ë°ì´í„°ë¥¼ ì €ì¥
             using (FileStream file = File.Open(selectTableCSPath, FileMode.OpenOrCreate, FileAccess.Write))
             {
                 using (StreamWriter writer = new StreamWriter(file))
@@ -572,16 +572,16 @@ namespace ExcelEdit
                     writer.Write(csText);
                 }
 
-                EditorUtility.DisplayDialog("CS »ı¼º/°»½Å", "¿Ï·á", "È®ÀÎ");
+                EditorUtility.DisplayDialog("CS ìƒì„±/ê°±ì‹ ", "ì™„ë£Œ", "í™•ì¸");
             }
         }
-        #endregion ¿¢¼¿ÆÄÀÏÀ» CS·Î º¯È¯
+        #endregion ì—‘ì…€íŒŒì¼ì„ CSë¡œ ë³€í™˜
     }
 
-    #region ¿¢¼¿¿¡µğÅÍ À¯Æ¿¸®Æ¼
+    #region ì—‘ì…€ì—ë””í„° ìœ í‹¸ë¦¬í‹°
     public static class ExcelUtility
     {
-        /// <summary> string¿¡ ¸Â´Â eDataTypeÀ» ¹İÈ¯ </summary>
+        /// <summary> stringì— ë§ëŠ” eDataTypeì„ ë°˜í™˜ </summary>
         public static string ConverteDataTypeToString(eDataType type)
         {
             return type switch
@@ -594,7 +594,7 @@ namespace ExcelEdit
             };
         }
 
-        /// <summary> string¿¡ ¸Â´Â eDataTypeÀ» ¹İÈ¯ </summary>
+        /// <summary> stringì— ë§ëŠ” eDataTypeì„ ë°˜í™˜ </summary>
         public static eDataType ConvertStringToeDataType(string typeName)
         {
             return typeName switch
@@ -607,10 +607,10 @@ namespace ExcelEdit
             };
         }
 
-        /// <summary> ÁöÁ¤µÈ Å¸ÀÔÀ¸·Î °ªÀ» Çüº¯È¯ÇØ¼­ ¹İÈ¯ </summary>
-        /// <param name="type"> °ªÀÇ Å¸ÀÔ </param>
-        /// <param name="value"> Å×ÀÌºí°ª </param>
-        /// <returns> °ªÀÌ Á¦´ë·Î ÁöÁ¤µÇÁö ¾ÊÀ¸¸é stringÀ¸·Î º¯È¯ </returns>
+        /// <summary> ì§€ì •ëœ íƒ€ì…ìœ¼ë¡œ ê°’ì„ í˜•ë³€í™˜í•´ì„œ ë°˜í™˜ </summary>
+        /// <param name="type"> ê°’ì˜ íƒ€ì… </param>
+        /// <param name="value"> í…Œì´ë¸”ê°’ </param>
+        /// <returns> ê°’ì´ ì œëŒ€ë¡œ ì§€ì •ë˜ì§€ ì•Šìœ¼ë©´ stringìœ¼ë¡œ ë³€í™˜ </returns>
         public static object GetValue(eDataType type, string value)
         {
             switch (type)
@@ -628,5 +628,5 @@ namespace ExcelEdit
             }
         }
     }
-    #endregion ¿¢¼¿¿¡µğÅÍ À¯Æ¿¸®Æ¼
+    #endregion ì—‘ì…€ì—ë””í„° ìœ í‹¸ë¦¬í‹°
 }
